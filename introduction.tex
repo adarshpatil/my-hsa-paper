@@ -1,17 +1,15 @@
 \section{Introduction}
+The remarkable advances in computing power of the modern microprocessor over the last few decades can predominantly be attributed to Moore's Law [] and advances in manufacturing technology that has allowed shrinking of transistor sizes. Miniaturization of transistors has allowed addition of specialized on-chip hardware circuitry for acceleration units. Koomey et. al in 2010 found that the amount of computation that could be done per unit of energy doubled about every 18 months. However to reach exascale and beyond requires a thousand fold decrease in energy consumed per flop computed. Graphics processing units (GPUs) have transformed from fixed function hardware to a far more general compute platform.  Compared with multi-core CPUs, GPGPU computing offers the potential for better performance at lower energy. Traditionally these processors have had their own independent memory systems. To take advantage of GPUs, the CPU must copy data to the GPUs memory. This data movement is inefficient and adds to energy expended and added latency as the transfer happens over slower PCIe bus. Complex programming models further impede expansion of the workloads that benefit from GPGPU computing. Therefore, processor manufacturers including AMD, Intel\cite{inteliris}, and NVIDIA beginning to integrate CPUs and GPUs on the same silicon chip thus yielding better efficiency by sharing memory interface, power delivery and cooling infrastructure. Secondly this provides a shared virtual allowing pointer sharing semantics possible to be deferenced on CPU and the GPU which simplified programming. Further shared physical address space reduces GPU initialization time and enables several high level languages to also take advantage of the parallel processing in concert with the CPU.\\
 
-This document is intended to serve as a sample for submissions to ISCA 2016. It is heavily derived from previous conferences, in particular MICRO 2015 and HPCA 2016.
+Parallely, DRAM memory speeds have not kept pace commensurate to CPU speeds and this coupled with a limited growth in pin counts has led to memory and bandwidth wall for off-chip DRAM systems. The advent of die-stacking technology [7] provides a way to integrate disparate silicon die of NMOS DRAM chips and CMOS logic chips with better interconnects. The implementation is accomplished either by 3D vertical stacking of DRAM chips using through-silicon vias (TSV) interconnects or horizontally/2.5D stacking on a interposer chip as depicted in Figure \ref{hsa-arch}. This allows the addition of a sizable DRAM chip close to processing cores. The onchip DRAM memory can provide anywhere from a couple of hundreds of megabytes to a few gigabytes of storage at high bandwidths of 400GB/s compared to the 90GB/s of DDR4 bandwidth. The better interconnect also lowers the latency of access by around 20-25\% compared to off-chip memory. This on-chip DRAM capacity has been advocated to be used as a large last level cache which is transparent to software in several works in literature. In this context, throughput oriented GPUs with high MLP and bandwidth requirement can benefit from the high bandwidth capabilities, meanwhile latency sensitive CPUs applications can benefit from reduced latency of data access from the DRAM Cache thus improving the overall system performance. The stacked DRAM Cache also reduces energy consumed per access for the overall system. \\
 
-We provide some guidelines that authors should follow when submitting papers to the conference. \textbf{This format is derived from the ACM \texttt{sig-alternate.cls} file, with the major difference that it is 10pt Times font}.
+However, this introduces complexity in managing shared system resources, which we mitigate with 
 
-In an effort to respect the efforts of reviewers and in the interest of fairness to all prospective authors, we request that all submissions follow the formatting and submission rules detailed below. Submissions that (grossly) violate these instructions may not be reviewed, at the discretion of the Program Chair, in order to maintain a review process that is fair to all potential authors.
-
-\vspace{1ex}In a nutshell:
-
-\begin{itemize}
-\item Paper must be submitted in printable PDF format.
-\item Text must be minimum 10pt Times font.
-\item Papers must be at most 11 pages, not including references, in two-column format.
-\item References must include all authors to facilitate the reviewing process (no \emph{et al.})
-\item There is no page limit for references.
-\end{itemize}
+% HSA Arch diagram
+\input{hsa-arch}
+\begin{figure*}[!htb]
+    \centering
+    \hsacpu
+    \caption{Architecture of a Integrated Heterogeneous System}
+    \label{hsa-arch}
+\end{figure*}

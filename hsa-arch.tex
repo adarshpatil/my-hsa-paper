@@ -1,0 +1,193 @@
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{matrix, positioning, fit}
+\usetikzlibrary{patterns}
+\definecolor{forestgreen}{rgb}{0.0, 0.5, 0.0}
+
+\tikzstyle{circle} = [draw, semicircle, inner sep=0pt,minimum size=2pt]
+\tikzstyle{dullblock} = [draw, fill=black!20, circle, minimum height=2em, minimum width=2em]
+\tikzstyle{block} = [draw=black, rounded corners, thick, line width=0.3mm, rectangle, minimum height=10em, minimum width=7em]
+\tikzstyle{blocksmall} = [draw=black, thick, line width=0.5mm, rectangle, minimum height=6em, minimum width=3em, fill=white]
+\tikzstyle{group} = [draw=black, line width=0.3mm, rectangle, minimum height=2em, minimum width=2em]
+\tikzstyle{textblock} = [draw, fill=blue!20, rectangle, rounded corners]
+\tikzstyle{plain} = []
+\tikzstyle{input} = [draw, thick, fill=blue!20, circle, minimum size=1pt]
+\tikzstyle{output} = [draw, fill=blue!20, circle, minimum size=1pt]
+\tikzstyle{pinstyle} = [pin edge={to-,thin,black}]
+\tikzset{toprule/.style={%
+        execute at end cell={%
+            \draw [line cap=rect,#1] (\tikzmatrixname-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn.north west) -- (\tikzmatrixname-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn.north east);%
+        }
+    },
+    bottomrule/.style={%
+        execute at end cell={%
+            \draw [line cap=rect,#1] (\tikzmatrixname-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn.south west) -- (\tikzmatrixname-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn.south east);%
+        }
+    }
+}
+
+
+
+\newcommand{\hsacpu}[0]{
+    \begin{tikzpicture}[auto, >=latex']
+        %CPU
+        \node [blocksmall, minimum height=1em] (cpu1){\begin{varwidth}{4cm} \centering{CPU \\Core 1} \end{varwidth}};
+        \node [blocksmall, above = 0.1cm of cpu1, minimum height=1.5em] (l11){\begin{varwidth}{4cm} \centering{L1} \end{varwidth}};
+        
+        \node [blocksmall, right = 0.1cm of cpu1, minimum height=1em] (cpu2) {\begin{varwidth}{4cm} \centering{CPU\\ Core 2} \end{varwidth}};
+        \node [blocksmall, above = 0.1cm of cpu2, minimum height=1.5em] (l12){\begin{varwidth}{4cm} \centering{L1} \end{varwidth}};
+        
+        \node [blocksmall, right = 0.1cm of cpu2, minimum height=1em] (cpu3){\begin{varwidth}{4cm} \centering{CPU\\ Core 3} \end{varwidth}};
+        \node [blocksmall, above = 0.1cm of cpu3, minimum height=1.5em] (l13){\begin{varwidth}{4cm} \centering{L1} \end{varwidth}};
+        
+        \node [blocksmall, right = 0.1cm of cpu3, minimum height=1em] (cpu4){\begin{varwidth}{4cm} \centering{CPU\\ Core 4} \end{varwidth}};
+        \node [blocksmall, above = 0.1cm of cpu4, minimum height=1.5em] (l14){\begin{varwidth}{4cm} \centering{L1} \end{varwidth}};
+        \node [blocksmall, above = 1.7cm of l12.north east, minimum height=2.8em, minimum width=7.5em] (l24){\begin{varwidth}{4cm} \centering{L2} \end{varwidth}};
+        
+       % \begin{scope}[on background layer]
+            \node[group, inner sep = 3pt, line width=0.3mm, draw=red, fit=(cpu1)(cpu2)(cpu3)(cpu4)(l11)(l12)(l13)(l14)(l24)] (grpcpu) {};
+       % \end{scope}
+        
+        
+        %GPU
+        \node [blocksmall, right = 0.5cm of cpu4, minimum height=2.5em, minimum width=1em] (sm1) {CU};
+        \node [blocksmall, above = 0.1cm of sm1, minimum height=1em, minimum width=1em] (sm1l1) {L1};
+        \node [blocksmall, right = 0.2cm of sm1, minimum height=2.5em, minimum width=1em] (sm2) {CU};
+        \node [blocksmall, above = 0.1cm of sm2, minimum height=1em, minimum width=1em] (sm2l1) {L1};
+        \node [blocksmall, right = 0.2cm of sm2, minimum height=2.5em, minimum width=1em] (sm3) {CU};
+        \node [blocksmall, above = 0.1cm of sm3, minimum height=1em, minimum width=1em] (sm3l1) {L1};
+        \node [blocksmall, right = 0.2cm of sm3, minimum height=2.5em, minimum width=1em] (sm4) {CU};
+        \node [blocksmall, above = 0.1cm of sm4, minimum height=1em, minimum width=1em] (sm4l1) {L1};
+        \node [blocksmall, above = 2.5cm of sm1, minimum height=2.5em, minimum width=1em] (sm5) {CU};
+        \node [blocksmall, below = 0.1cm of sm5, minimum height=1em, minimum width=1em] (sm5l1) {L1};
+        \node [blocksmall, right = 0.2cm of sm5, minimum height=2.5em, minimum width=1em] (sm6) {CU};
+        \node [blocksmall, below = 0.1cm of sm6, minimum height=1em, minimum width=1em] (sm6l1) {L1};
+        \node [blocksmall, right = 0.2cm of sm6, minimum height=2.5em, minimum width=1em] (sm7) {CU};
+        \node [blocksmall, below = 0.1cm of sm7, minimum height=1em, minimum width=1em] (sm7l1) {L1};
+        \node [blocksmall, right = 0.2cm of sm7, minimum height=2.5em, minimum width=1em] (sm8) {CU};
+        \node [blocksmall, below = 0.1cm of sm8, minimum height=1em, minimum width=1em] (sm8l1) {L1};  
+        
+        \node [blocksmall, minimum height=2.5em, minimum width=6em] at (7.8,1.7)
+        (l2gpu) {Coherent GPU L2};
+        
+         %\begin{scope}[on background layer]
+            \node[group, inner sep = 3pt, line width=0.3mm, draw=red, fit=(sm1)(sm1l1)(sm2)(sm2l1)(sm3)(sm3l1)(sm4)(sm4l1)(sm5)(sm5l1)(sm6)(sm6l1)(sm7)(sm7l1)(sm8)(sm8l1)(l2gpu)] (grpgpu) {};
+         %\end{scope}                        
+        
+        
+        %Interconnect
+        \node [blocksmall, minimum height=2em, minimum width=19em] at (2.8,1.7)
+        (interconnect) {Cache Coherent Interconnect};
+                
+        %Connections to interconnect
+        \draw [-,very thick] (l11.north) to ++(0, 0.2); 
+        \draw [-, very thick] (l24.south) to ++(0, -0.8); 
+        \draw [-, very thick] (l2gpu.west) to ++(-0.17,0); 
+        \draw [-, very thick] (l14.north) to ++(0, 0.2);
+        \draw [-, very thick] (l13.north) to ++(0, 0.2);
+        \draw [-, very thick] (l12.north) to ++(0, 0.2);
+        
+        
+        
+        %Chip
+        \begin{scope}[on background layer]
+             \node[group, inner sep = 4pt, line width=0.6mm, fill=cyan!70, fit=(grpcpu)(grpgpu)] (grpchip) {};
+        \end{scope}
+        
+        %DRAM Cache  
+        \node [block, draw=red, dashed, minimum height=7em, minimum width=5.5em] at (0.5,7.0) (sid){\begin{varwidth}{4cm} \centering{Silicon\\ interposed\\ DRAM} \end{varwidth}};
+        
+        \node [block, draw=red, right = 2.7cm of sid, dashed, minimum height=7em, minimum width=5.5em] (sid1){\begin{varwidth}{4cm} \centering{Silicon\\ interposed\\ DRAM} \end{varwidth}};               
+        
+        \node [block, draw=red, minimum height=0.1em, minimum width=20em] at (2.8, 5.5) (blk1){\begin{varwidth}{4cm} \end{varwidth}};
+        
+        \node [block, draw=black, above = 0.05cm of blk1, minimum height=1.5em, minimum width=5.5em] (cpud){\begin{varwidth}{4cm} \centering{CPU-GPU Die} \end{varwidth}};
+        
+        \node [block, draw=red, above = 0.2cm of cpud, minimum height=4em, dashed, minimum width=5.5em] (vsd) {\begin{varwidth}{4cm} \centering{Vertically\\ Stacked\\ DRAM\\} \end{varwidth}}; 
+        
+        \node [blocksmall, draw=white, above = 0.01cm of sid.north east, minimum height=1em, minimum width=1.2em] (lbl3){On Package region}; 
+        
+        \node[group, inner sep = 3pt, rounded corners, fit=(sid)(vsd)(sid1)(cpud)(blk1)(lbl3)] (g1) {};
+        
+        \draw [-,very thick] (2.3,6.25) to (2.3,6.5);
+        \draw [-,very thick] (2.6,6.25) to (2.6,6.5);
+        \draw [-,very thick] (2.9,6.25) to (2.9,6.5);
+        \draw [-,very thick] (3.2,6.25) to (3.2,6.5);
+        
+        % semicircles
+        \node [circle] at (0.3,5.7) (s1) {};
+        \node [circle] at (0,5.7) (s2) {};
+        \node [circle] at (0.6,5.7) (s3) {};
+        \node [circle] at (0.9,5.7) (s4) {};
+        
+        \node [circle] at (2,5.7) (s5) {};
+        \node [circle] at (2.3,5.7) (s6) {};
+        \node [circle] at (2.6,5.7) (s7) {};
+        \node [circle] at (2.9,5.7) (s8) {};
+        \node [circle] at (3.2,5.7) (s9) {};
+        \node [circle] at (3.5,5.7) (s10) {};
+        
+        \node [circle] at (4.7,5.7) (s11) {};
+        \node [circle] at (5.0,5.7) (s12) {};
+        \node [circle] at (5.3,5.7) (s13) {};
+        \node [circle] at (5.6,5.7) (s14) {};
+        
+        % GPU L1 to L2 connections
+        \draw [-,very thick] (sm1l1.north) -- (l2gpu);
+        \draw [-,very thick] (sm2l1.north) -- (l2gpu);
+        \draw [-,very thick] (sm3l1.north) -- (l2gpu);
+        \draw [-,very thick] (sm4l1.north) -- (l2gpu);
+        \draw [-,very thick] (sm5l1.south east) -- (l2gpu);
+        \draw [-,very thick] (sm6l1.south) -- (l2gpu);
+        \draw [-,very thick] (sm7l1.south) -- (l2gpu);                
+        \draw [-,very thick] (sm8l1.south) -- (l2gpu);
+        
+        % Off package Region
+        \node [blocksmall, draw=blue, minimum height=1.2em, minimum width=1.2em] at (7.9,7.7)(mm1){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm1, minimum height=1.2em, minimum width=1.2em] (mm2){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm2, minimum height=1.2em, minimum width=1.2em] (mm3){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm3, minimum height=1.2em, minimum width=1.2em] (mm4){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm4, minimum height=1.2em, minimum width=1.2em] (mm5){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm5, minimum height=1.2em, minimum width=1.2em] (mm6){};
+        
+        \node [blocksmall, draw=blue, minimum height=1.2em, below = 0.7cm of mm2, minimum width=1.2em] (mm7){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm7, minimum height=1.2em, minimum width=1.2em] (mm8){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm8, minimum height=1.2em, minimum width=1.2em] (mm9){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm9, minimum height=1.2em, minimum width=1.2em] (mm10){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm10, minimum height=1.2em, minimum width=1.2em] (mm11){};
+        \node [blocksmall, draw=blue, right = 0.2cm of mm11, minimum height=1.2em, minimum width=1.2em] (mm12){};
+        
+        \node [blocksmall, draw=white, below = 0.3cm of mm11, minimum height=1em, minimum width=1.2em] (lbl1){DIMMs};
+        \node [blocksmall, draw=white, above = 0.2cm of mm2.north east, minimum height=1em, minimum width=1.2em] (lbl2){Off Package region};
+        
+        
+        % Memory Grouping
+        \begin{scope}[on background layer]
+              \node[group, inner sep = 4pt, line width=0.6mm, fill=black!30, fit=(mm1)(mm2)(mm3)(mm4)(mm5)(mm6)] (mmgrp1) {};
+        \end{scope}
+        \begin{scope}[on background layer]
+              \node[group, inner sep = 4pt, line width=0.6mm, fill=black!30, fit=(mm7)(mm8)(mm9)(mm10)(mm11)(mm12)] (mmgrp2) {};
+        \end{scope}
+        \node[group, inner sep = 3pt, line width=0.3mm, fit=(mmgrp1)(mmgrp2)(lbl1)(lbl2)] (mmgrp3) {};
+        
+        \draw [-,very thick] (7.9,7.3) to (7.9, 7.1) to (11.3,7.1) to (11.3,7.3);
+        \draw [-,very thick] (8.5,6.15) to (8.5, 5.95) to (11.9,5.95) to (11.9,6.15);
+        
+        % Big Arrows
+        \node[single arrow, draw, below = 0.1mm of cpud.south, xshift=1em,
+        yshift=-1.8em, rotate=-90, minimum height=4.3em, minimum width=5em, line width=0.5mm, fill=white](arrow1){};
+        \node[double arrow, draw, right = 0.1mm of sid1.east,
+        yshift=0em, rotate=0, minimum height=4.3em, minimum width=3em, line width=0.5mm, fill=white](arrow2){};   
+        
+        % Labels
+        \node [blocksmall, draw=white, minimum height=1em, minimum width=1.2em] at (0.5,4.5)
+        (lbl4){Through Silicon Vias};  
+        \node [blocksmall, draw=white, right=1.3cm of lbl4, minimum height=1em, minimum width=1.2em] (lbl5) {Silicon Interposer};  
+        \node [blocksmall, draw=white, right=0.1cm of lbl5, minimum height=1em, minimum width=1.2em, yshift=0.7em] (lbl6) {\begin{varwidth}{4cm} \centering{External Memory \\Interface (e.g.DDR)} \end{varwidth}}; 
+        
+        % Label Arrows
+        \draw[->, very thick] (lbl5.north) to (blk1);
+        \draw[<-, very thick] (arrow2.south) to [in=90,out=-90] ++(0,-1.5);
+        
+    \end{tikzpicture}
+}

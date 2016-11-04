@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This is the template for submission to ISCA 2016
+% This is the template for submission to ISCA 2017
 % The cls file is a modified from  'sig-alternate.cls'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -12,22 +12,26 @@
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
 
+% ADARSH packages
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{varwidth}
 
 %%%%%%%%%%%---SETME-----%%%%%%%%%%%%%
-\newcommand{\hpcasubmissionnumber}{NaN}
+\newcommand{\iscasubmissionnumber}{NaN}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \fancypagestyle{firstpage}{
   \fancyhf{}
 \setlength{\headheight}{50pt}
 \renewcommand{\headrulewidth}{0pt}
-  \fancyhead[C]{\normalsize{ISCA 2016 Submission
-      \textbf{\#\hpcasubmissionnumber} \\ Confidential Draft: DO NOT DISTRIBUTE}} 
+  \fancyhead[C]{\normalsize{ISCA 2017 Submission
+      \textbf{\#\iscasubmissionnumber} \\ Confidential Draft: DO NOT DISTRIBUTE}} 
   \pagenumbering{arabic}
 }  
 
 %%%%%%%%%%%---SETME-----%%%%%%%%%%%%%
-\title{DRAMCache with HSA} 
+\title{Shared DRAMCache Management for Integrated Heterogeneous Systems} 
 \author{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
