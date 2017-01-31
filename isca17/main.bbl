@@ -1,0 +1,86 @@
+\begin{thebibliography}{10}
+
+\bibitem{koomey}
+J.~Koomey, S.~Berard, M.~Sanchez, and H.~Wong, ``Implications of historical
+  trends in the electrical efficiency of computing,'' {\em IEEE Annals of the
+  History of Computing}, vol.~33, pp.~46--54, March 2011.
+
+\bibitem{amd-apu}
+``The future of the apu - braided parallelism.''
+  \url{http://developer.amd.com/wordpress/media/2013/06/2901_final.pdf}.
+
+\bibitem{inteliris}
+``Intel graphics opencl.'' \url{https://software.intel.com/en-us/node/540387}.
+
+\bibitem{denver}
+``Fastest processors, smartphones, and tablets - nvidia tegra.''
+  \url{http://www.nvidia.com/object/tegra.html}.
+
+\bibitem{hsafoundation}
+``Hsa foundation standards.'' \url{http://www.hsafoundation.com/standards/}.
+
+\bibitem{sumatra}
+``Java sumatra.'' \url{http://openjdk.java.net/projects/sumatra/}.
+
+\bibitem{apu-exascale}
+M.~J. Schulte, M.~Ignatowski, G.~H. Loh, B.~M. Beckmann, W.~C. Brantley,
+  S.~Gurumurthi, N.~Jayasena, I.~Paul, S.~K. Reinhardt, and G.~Rodgers,
+  ``Achieving exascale capabilities through heterogeneous computing,'' {\em
+  IEEE Micro}, vol.~35, pp.~26--36, July 2015.
+
+\bibitem{memory-wall}
+W.~A. Wulf and S.~A. McKee, ``Hitting the memory wall: Implications of the
+  obvious,'' {\em SIGARCH Comput. Archit. News}, vol.~23, pp.~20--24, Mar.
+  1995.
+
+\bibitem{bandwidth-wall}
+B.~M. Rogers, A.~Krishna, G.~B. Bell, K.~Vu, X.~Jiang, and Y.~Solihin,
+  ``Scaling the bandwidth wall: Challenges in and avenues for cmp scaling,'' in
+  {\em Proceedings of the 36th Annual International Symposium on Computer
+  Architecture}, ISCA '09, (New York, NY, USA), pp.~371--382, ACM, 2009.
+
+\bibitem{3d-stacking}
+B.~Black, M.~Annavaram, N.~Brekelbaum, J.~DeVale, L.~Jiang, G.~H. Loh,
+  D.~McCaule, P.~Morrow, D.~W. Nelson, D.~Pantuso, P.~Reed, J.~Rupley,
+  S.~Shankar, J.~Shen, and C.~Webb, ``Die stacking (3d) microarchitecture,'' in
+  {\em Proceedings of the 39th Annual IEEE/ACM International Symposium on
+  Microarchitecture}, MICRO 39, (Washington, DC, USA), pp.~469--479, IEEE
+  Computer Society, 2006.
+
+\bibitem{oscar}
+J.~Zhan, O.~Kayıran, G.~H. Loh, C.~R. Das, and Y.~Xie, ``Oscar: Orchestrating
+  stt-ram cache traffic for heterogeneous cpu-gpu architectures,'' in {\em 2016
+  49th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)},
+  pp.~1--13, Oct 2016.
+
+\bibitem{gem5-gpu}
+J.~Power, J.~Hestness, M.~Orr, M.~Hill, and D.~Wood, ``gem5-gpu: A
+  heterogeneous cpu-gpu simulator,'' {\em Computer Architecture Letters},
+  vol.~13, Jan 2014.
+
+\bibitem{spec2006}
+J.~L. Henning, ``Spec cpu2006 benchmark descriptions,'' {\em SIGARCH Comput.
+  Archit. News}, vol.~34, pp.~1--17, Sept. 2006.
+
+\bibitem{rodinia}
+S.~Che, M.~Boyer, J.~Meng, D.~Tarjan, J.~W. Sheaffer, S.-H. Lee, and
+  K.~Skadron, ``Rodinia: A benchmark suite for heterogeneous computing,'' in
+  {\em Proceedings of the 2009 IEEE International Symposium on Workload
+  Characterization (IISWC)}, IISWC '09, (Washington, DC, USA), pp.~44--54, IEEE
+  Computer Society, 2009.
+
+\bibitem{dca}
+A.~J. Cheng-Chieh~Huang, Vijay~Nagarajan, ``Dca: a dram-cache-aware dram
+  controller,'' in {\em Proceedings of the International Conference for High
+  Performance Computing, Networking, Storage and Analysis}, November. 2016.
+
+\bibitem{dramctrl}
+{\em 2014 IEEE International Symposium on Performance Analysis of Systems and
+  Software, ISPASS 2014, Monterey, CA, USA, March 23-25, 2014}, IEEE Computer
+  Society, 2014.
+
+\bibitem{antt}
+S.~Eyerman and L.~Eeckhout, ``System-level performance metrics for multiprogram
+  workloads,'' {\em IEEE Micro}, vol.~28, pp.~42--53, May 2008.
+
+\end{thebibliography}

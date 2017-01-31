@@ -1,0 +1,29 @@
+\section{Experimental Setup \& Methodology} \label{methodology}
+We evaluate the performance of the DRAMCache over a Integrated Heterogeneous Processor using the a cycle accurate simulator gem5-gpu \cite{gem5-gpu} which is configured to simulate cache coherent unified CPUs and GPUs. The cache hierarchy has per SM private GPU L1  that are non-inclusive of the shared GPU L2 cache and can hold stale data. However, GPU L2 cache is coherent with all levels of the CPU hierarchy. The CPU and GPU cache are kept coherent using the VI\_Hammer protocol. Table X provides the setup details.\\
+\textbf{Workloads} Applications having high and medium memory intensive behaviours from SPEC CPU2006 suite \cite{spec2006} were chosen to form a multi-programmed workload. We use the Rodinia benchmark suite \cite{rodinia} to represent applications that use the GPU offload for execution. These Rodinia applications are modified to elide the memcpy api calls so as to run with unified virtual and physical address spaces. Combinations of quad-core and eight-core multi-programmed workloads were coupled with a full Rodinia benchmark to create a representative mix of applications that would run in a intergrated heterogenous system. These composite workloads embody different levels of total memory intensity produced by the CPU and GPU cores. \\
+\textbf{DRAMCache Design} The DRAMCache we evaluate here is the first level shared cache between the 2 split cache hierarchies of CPUs and GPUs, while they already share a last level on-chip SRAM cache homogenously. Acess to memory is interleaved across across multiple memory controllers and a biased interleaving, due to uniformly strided address patters, is restricted by using a basic XOR-based hashing mechanism. Each memory controller manages a 4GB DDR3 memory device at 1600MHz DRAM and a 32MB HMC vault at 2500MHz. The stacked DRAM vault caches data from corresponding the 4GB memory device that the controller is responsible for. This setup ensures that there are no cross bus requests between controllers. Since our setup has the limitations of having a 1 to 1 channel mapping between a stacked DRAM vault and a off-chip DRAM channel, we are not able to provide sufficient channel level parallelism as is quintessential in a stacked DRAM device, where the large number of vaults and TSVs allow the stacked DRAM to provide a larger bandwidth. To circumvent this limiation we fix the bank capacity and proportionally increase the number of layers (ranks) to provide higher amount of parallelism in our stacked DRAM device. We faithfully model a Fill Queue \cite{dca} for fill requests to insert data into the cache on the return path from main memory. We also model MSHR and WriteBuffers with their associated latencies to realize the precise working of caches.Our DRAMCache also respects all significant timing and functional parameters using the DRAMCtrl \cite{dramctrl} model. \\
+\textbf{Simulation Methodology} We fast-forward the initialization phase of each workloads up until just before the launch of the first kernel of the GPU program. We ensure that each core is fast-forwarded by atleast 2 Billion instructions and in total each quad-core workload by 20 billion instructions and each eight-core workload executes x Billion, on average in the fast-forward phase. We is accomplished by adding no-ops to the Rodinia benchmarks for the duration until the initialization quota of the SPEC programs is complete. We then warm the cache until the fastest core completes 250 million instructions. During the warmup phase the GPU program is not executed. Timing simulations were then run for 250 million and 100 million for each CPU core for quad-core workload and eight-core workloads respectively. As is the norm, when a core finishes its quota of instructions, it continues to execute until all the cores have completed. \\
+Secondly, the Rodinia application uses an extra CPU core and offloads to the integrated GPU. These applications are modified to execute in a \textit{conditioned loop} such that there is no corruption of data structures in the program. The \textit{conditioned loop} is run infinitely and represents the region of interest of the Rodinia benchmark. This region includes sections of CPU activity and GPU offloads in the execution, as is typical of a HSA program which will exhibit an interleave of offloaded regions and serial CPU sections. However, only the performance statistics for the first execution of the \textit{conditioned loop} in the program are considered, in cases where the ROI is shorter than the complete run of the CPU workload or until end of the simulation otherwise. 
+
+\textbf{Performance Metric} We report performance by adapting the ANTT \cite{antt} metric for Integrated Heterogeneous Systems and define it as ANTT system
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{{@{}ll@{}}}
+    \toprule
+    CPU Core & GHz, OoO x86-64 ISA\\
+    \midrule
+    Abstract font & 10pt, italicized\\
+    \midrule
+    as & 12pt, bold\\
+    \midrule
+    as & 10pt, bold\\
+    \midrule
+    Caption font & 9pt, bold\\
+    \midrule
+    References & 8pt\\
+    \bottomrule
+  \end{tabular}
+  \caption{Configuration of the simulated system}
+  \label{table:formatting}
+\end{table}
