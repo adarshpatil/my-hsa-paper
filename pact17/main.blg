@@ -17,48 +17,49 @@ Warning--to sort, need author, organization, or key in inteliris
 Warning--to sort, need author, organization, or key in denver
 Warning--to sort, need author, organization, or key in hsafoundation
 Warning--to sort, need author, organization, or key in sumatra
+Warning--to sort, need author, organization, or key in xeonphi
 Warning--to sort, need editor, organization, or key in dramctrl
 
 Done.
-You've used 17 entries,
+You've used 20 entries,
             4498 wiz_defined-function locations,
-            991 strings with 11245 characters,
-and the built_in function-call counts, 13834 in all, are:
-= -- 1196
-> -- 426
-< -- 73
-+ -- 219
-- -- 116
-* -- 752
-:= -- 2096
-add.period$ -- 37
-call.type$ -- 17
-change.case$ -- 108
-chr.to.int$ -- 156
-cite$ -- 23
-duplicate$ -- 896
-empty$ -- 1051
-format.name$ -- 125
-if$ -- 3069
+            1006 strings with 11883 characters,
+and the built_in function-call counts, 16243 in all, are:
+= -- 1401
+> -- 485
+< -- 87
++ -- 250
+- -- 130
+* -- 873
+:= -- 2443
+add.period$ -- 44
+call.type$ -- 20
+change.case$ -- 124
+chr.to.int$ -- 192
+cite$ -- 27
+duplicate$ -- 1057
+empty$ -- 1258
+format.name$ -- 141
+if$ -- 3620
 int.to.chr$ -- 0
-int.to.str$ -- 17
-missing$ -- 176
-newline$ -- 88
-num.names$ -- 22
-pop$ -- 499
+int.to.str$ -- 20
+missing$ -- 206
+newline$ -- 99
+num.names$ -- 26
+pop$ -- 588
 preamble$ -- 1
-purify$ -- 92
+purify$ -- 105
 quote$ -- 2
-skip$ -- 973
+skip$ -- 1149
 stack$ -- 0
-substring$ -- 464
-swap$ -- 665
-text.length$ -- 21
+substring$ -- 565
+swap$ -- 778
+text.length$ -- 23
 text.prefix$ -- 0
 top$ -- 6
-type$ -- 178
-warning$ -- 6
-while$ -- 54
-width$ -- 19
-write$ -- 191
-(There were 6 warnings)
+type$ -- 210
+warning$ -- 7
+while$ -- 65
+width$ -- 22
+write$ -- 219
+(There were 7 warnings)

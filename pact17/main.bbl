@@ -35,6 +35,10 @@
 \bibitem{inteliris}
 ``Intel graphics opencl,'' \url{https://software.intel.com/en-us/node/540387}.
 
+\bibitem{xeonphi}
+``Intel xeonphi processor datasheet,''
+  \url{http://www.intel.com/content/dam/www/public/us/en/documents/datasheets/xeon-phi-processor-x200-product-family-datasheet.pdf}.
+
 \bibitem{sumatra}
 ``Java sumatra,'' \url{http://openjdk.java.net/projects/sumatra/}.
 
@@ -83,6 +87,12 @@ J.~L. Henning, ``Spec cpu2006 benchmark descriptions,'' \emph{SIGARCH Comput.
   \url{http://doi.acm.org/10.1145/1186736.1186737}
 \BIBentrySTDinterwordspacing
 
+\bibitem{coherence-dramcache}
+C.~C. Huang, R.~Kumar, M.~Elver, B.~Grot, and V.~Nagarajan, ``C3d: Mitigating
+  the numa bottleneck via coherent dram caches,'' in \emph{2016 49th Annual
+  IEEE/ACM International Symposium on Microarchitecture (MICRO)}, Oct 2016, pp.
+  1--12.
+
 \bibitem{koomey}
 J.~Koomey, S.~Berard, M.~Sanchez, and H.~Wong, ``Implications of historical
   trends in the electrical efficiency of computing,'' \emph{IEEE Annals of the
@@ -94,6 +104,16 @@ J.~Power, J.~Hestness, M.~Orr, M.~Hill, and D.~Wood, ``gem5-gpu: A
   heterogeneous cpu-gpu simulator,'' \emph{Computer Architecture Letters},
   vol.~13, no.~1, Jan 2014. [Online]. Available:
   \url{http://gem5-gpu.cs.wisc.edu}
+\BIBentrySTDinterwordspacing
+
+\bibitem{alloy}
+\BIBentryALTinterwordspacing
+M.~K. Qureshi and G.~H. Loh, ``Fundamental latency trade-off in architecting
+  dram caches: Outperforming impractical sram-tags with a simple and practical
+  design,'' in \emph{Proceedings of the 2012 45th Annual IEEE/ACM International
+  Symposium on Microarchitecture}, ser. MICRO-45.\hskip 1em plus 0.5em minus
+  0.4em\relax Washington, DC, USA: IEEE Computer Society, 2012, pp. 235--246.
+  [Online]. Available: \url{http://dx.doi.org/10.1109/MICRO.2012.30}
 \BIBentrySTDinterwordspacing
 
 \bibitem{bandwidth-wall}
