@@ -1,4 +1,4 @@
-EPS := template.eps
+EPS := template.eps motivation-cpu.eps motivation-gpu.eps
 
 all: $(EPS) 
 
