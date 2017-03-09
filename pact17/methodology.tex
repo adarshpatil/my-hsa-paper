@@ -34,35 +34,33 @@ where ${CPI_i^{IHS}}$ and $CPI^{GPU_{IHS}}$ denote the cycles per instruction ac
   \centering
   \begin{tabular}{{|l|l|l|}}
     \hline
-    \textbf{Workload} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia}\\
+    \textbf{Name} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia}\\
     \hline
-    Qne1(2) & cactusADM;gcc;bzip2;sphinx3 & needle\\
+    Qg1& cactusADM;gcc;bzip2;sphinx3 & needle\\
     \hline
-    Qne2(8) & astar;mcf;gcc;bzip2 & needle\\
+    Qg2 & astar;mcf;gcc;bzip2 & needle\\
     \hline
-    Qne3(16) & gcc;libquantum;leslie3d;bwaves & needle\\
+    Qg3 & gcc;libquantum;leslie3d;bwaves & needle\\
     \hline
-    Qkm1(10) & astar;soplex;cactusADM;libquantum & k-means\\
+    Qg4 & astar;soplex;cactusADM;libquantum & k-means\\
     \hline
-    Qkm2(12) & milc;mcf;libquantum;bzip2 & k-means\\
+    Qg5 & milc;mcf;libquantum;bzip2 & k-means\\
     \hline
-    Qkm3(15) & bzip2;gobmk;hmmer;sphinx3 & k-means\\
+    Qg6 & bzip2;gobmk;hmmer;sphinx3 & k-means\\
     \hline
-    Qga1(14) & astar;mcf;soplex;cactusADM & gaussian\\
+    Qg8 & soplex;milc;cactusADM;libquantum & gaussian\\
     \hline
-    Qga2(23) & soplex;milc;cactusADM;libquantum & gaussian\\
+    Qg9 & milc;libquantum;gobmk;leslie3d & gaussian\\
     \hline
-    Qga3(26) & milc;libquantum;gobmk;leslie3d & gaussian\\
+    Qg10 & astar;milc;gcc;leslie3d & hotspot\\
     \hline
-    Qhs1(4) & astar;milc;gcc;leslie3d & hotspot\\
+    Qg11 & gcc;gobmk;leslie3d;sphinx3 & hotspot\\
     \hline
-    Qhs2(32) & gcc;gobmk;leslie3d;sphinx3 & hotspot\\
+    Qg12 & astar;cactusADM;libquantum;sphinx3 & srad\\
     \hline
-    Qsr1(6) & astar;cactusADM;libquantum;sphinx3 & srad\\
+    Qg13 & astar;mcf;gobmk;sphinx3 & scluster\\
     \hline
-    Qsc1(7) & astar;mcf;gobmk;sphinx3 & streamcluster\\
-    \hline
-    Qlu1(21) & astar;cactusADM;libquantum;sphinx3 & lud\\
+    Qg14 & astar;cactusADM;libquantum;sphinx3 & lud\\
     \hline
   \end{tabular}
   \caption{Workloads}
