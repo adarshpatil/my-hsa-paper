@@ -1,0 +1,81 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\input{barcolors}
+
+\pgfplotsset{width=12cm, height=8cm, compat=newest} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.8]
+    \pgfplotstableread{
+X Class	CPU+GPU	onlyCPU	CPU+GPUD onlyCPUD
+1 Qg1 1 3.265515934 1.306570078 3.801327406
+2 Qg2 1 3.160224271 1.357185991 3.790847063
+3 Qg3 1 3.313320972 1.282146135 3.176052543
+4 Qg4 1 2.301104704 1.210359256 2.483831203
+5 Qg5 1 1.65949062 1.194693362 1.897475757
+6 Qg6 1 2.683742506 1.195848938 2.853286416
+7 Qg7 1 18.66659505 1.516060959 18.51111594
+8 Qg8 1 13.21406102 1.546292152 14.38414565
+9 Qg9 1 2.009617293 1.397673262 2.066835983
+10 Qg10 1 2.32231335 1.547818395 2.563594942
+11 Qg11 1 1.26041689 0.9866374924 1.278814272
+12 Qg12 1 1.776615774 1.032091603 2.049035252
+13 Qg13 1 4.371659645 1.903696033 4.652983768
+14 GEOMEAN 1 3.216778423 1.324614606 3.47029519
+    }\datatable
+
+    \begin{axis}[
+        ylabel style={align=center}, ylabel = ANTT Improvement,
+        ybar=1pt,
+        bar width=5.5pt,
+        xlabel=Workloads,
+        xticklabels from table={\datatable}{X},
+        xtick=data,
+        x tick label style={},
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
+        x=45pt,
+        ymin=0,
+        ymax=4,
+        axis x line*=left,
+        axis y line*=left,
+        enlarge x limits=0.2,
+        after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
+        after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
+        legend image code/.code={%
+                    \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.2cm,0.1cm);
+        },  
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.13,0.98)},
+             font=\tiny,
+             anchor=north west,
+             legend columns=4,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=5pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+       ]
+
+        \addplot [bar1] table[x=X,y=CPU+GPU] {\datatable};
+        \addplot [bar2] table[x=X,y=onlyCPU] {\datatable};
+        \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
+        \addplot [bar4] table[x=X,y=onlyCPUD] {\datatable};
+
+        \addlegendentry{CPU+GPU}
+        \addlegendentry{onlyCPU}
+        \addlegendentry{CPU+GPUD}
+        \addlegendentry{onlyCPUD}
+
+    \end{axis}
+\end{tikzpicture}
+\end{document}
