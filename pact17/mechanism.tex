@@ -1,8 +1,72 @@
 \section{\cachename Organization} \label{mechanism}
-\subsection{Stacked DRAM Organization} \label{rbhvblp}
-\subsubsection{Metadata organization}
-\cachename builds on a direct mapped cache as proposed in \cite{alloy} and commercially adopted in the stacked MCDRAM on the Knights Landing generation of the Intel XeonPhi processor \cite{xeonphi}. In this organization the metadata is stored as a TAD (Tag-and-Data) unit alongside the data and is retrieved from the DRAM in multiple bursts. To improve the hit latency the Alloy Cache Design uses a MAP-I prediction structure which starts early access to memory if the request is predicted to be a miss in the DRAMCache. Intuitively, as cpu requests are latency sensitive we adopt the MAP-I predictor for cpu requests and the gpu requests are served serially i.e. verify for tag match in the corresponding set, proceed to memory on a miss.
-\subsection{Request Prioritization at DRAMCache}
-\subsection{Temporal CPU bypass}
-\subsection{Spatial Occupancy Control}
-As observed in section \ref{motivation} there are contrasting design goals from the cache for the two heterogeneous processing elements. An important observation we make here is that the working sets of CPU applications tend to be limited to few tens of MBs due to the limited amount of MLP that can be exploited by the CPUs. Hence providing larger than certain partitions of cache leads to no improvement in hit rates and IPC. To accommodate these goals we use a technique inspired by the collision resolution mechanism of a hash map - namely open addressing. However, 
+\subsection{Overview}
+\cachename builds on an aggressive direct mapped cache design with tags stored in DRAM as TAD units. If the predictor anticipates a CPU request miss in the DRAMCache it launches an early request to the memory. However, the baseline organization that uses such a predictor is not sufficient to improve CPU performance. This is due to (a) smaller caches of the GPU and the massively multi-threaded nature of GPU workloads creates a large number of requests from the GPU at the DRAMCache. (b) GPU applications' threads are scheduled in groups called warps which gives good spatial locality for GPU requests. This biased contention severely increases service latency for CPU requests. To avoid this, firstly, \cachename prioritizes the CPU requests at DRAMCache without starving GPU requests. Secondly, \cachename avoids the requirement to verify a  CPU request miss in the DRAMCache by completely bypassing such requests using a temporal bypass scheme when the GPU is running. On the other hand, \cachename improves the performance of GPU by increasing occupancy of GPU lines in the DRAMCache by providing a low overhead, dynamic pseudo associativity mechanism without significantly impacting the direct mapped advantages for the CPU. This ensures the GPU is able to better use the DRAMCache bandwidth.
+\subsection{Asymmetry aware DRAMCache scheduling}
+DRAM devices operate at a much lower clock rate compared to the cores and caches. Moreover DRAM cells have to be periodically refreshed due to leakage to preserve the data which further reduces the available time of the device. This imbalance in request arrival rate and service times creates a queuing effect. Hence DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions at the DRAMCache  leading to requests being rejected for a retry. The CPU requests, which are interleaved with the GPU requests, are few and far spaced and thus suffer large waiting time due to retries. This is compounded by the fact that GPU exploits good row buffer locality and is preferentially scheduled by the DRAMCache. This further causes increased queue latencies for CPU requests.
+\par \cachename reduces waiting time for CPU requests by selectively rejecting GPU requests when the queues reach critical level which allows CPU requests to occupy these locations instead of being rejected. Further, \cachename prioritizes CPU requests at DRAMCache without starving the GPU requests. \cachename uses a modified FR-FCFS algorithm \ref{algo-cpupriofrfcfs} to prioritize CPU requests without starving the GPU requests in each of the Read, Write and Fill Queues of the DRAMCache.
+
+\begin{algorithm}
+ \KwIn{DRAMCache Queue}
+ \KwOut{selected\_req to be scheduled}
+ all bool variables are initialize to \textit{false}\\
+ %found\_seamless\_gpu\_req = false\\
+ %found\_prepped\_req = false\\
+ %found\_prepped\_cpu\_req = false \\
+ %found\_earliest\_req = false \\
+ %found\_earliest\_cpu\_req = false \\
+\small
+\While{not at end of Queue}{
+	read \textit{rank}, \textit{bank} and \textit{row} of current\_req \\
+	\If{rank.isAvailable} {
+		\uIf{row.isOpen}{
+			\uIf{bank.colAllowedAt <= minColAt}{
+				\tcc{seamless row buffer hit}
+				\uIf{req.isCPU}{
+					selected\_req = current\_req \\
+					break \\
+				}
+				\ElseIf{!found\_seamless\_gpu} {
+					selected\_req = current\_req \\
+					found\_seamless\_gpu = true \\
+				}
+    		} \ElseIf {!found\_hidden\_bank \&\& !found\_prepped\_cpu \&\& !found\_seamless\_gpu} {
+				\tcc{req to prepped row}
+				\uIf{req.isCPU}{
+					selected\_req = current\_req \\
+					found\_prepped\_cpu = true \\
+					found\_prepped = true \\
+				}
+				\ElseIf{!found\_seamless\_gpu} {
+					selected\_req = current\_req \\
+					found\_prepped = true  \\
+				}
+    		}
+		} \ElseIf {!found\_earliest\_cpu \&\& !found\_seamless\_gpu} {
+			\tcc{find earliest bank that can be issued hidden cmd}
+			\tcc{executed only once per scheduling decision}
+			found\_hidden\_bank, earliest\_bank = find\_earliest\_bank() \\
+			\If{earliest\_bank == bank \&\& \\ (found\_hidden\_bank || !found\_prepped)} {
+				\uIf{req.isCPU}{
+					selected\_req = current\_req \\
+					found\_earliest\_cpu = true
+					found\_earliest = true
+				}
+				\ElseIf{!found\_seamless\_gpu} {
+					selected\_req = current\_req\;
+					found\_earliest = true \;
+				}
+			}
+			
+		}
+	}
+}
+ \caption{Asymmetry aware scheduling policy}
+ \label{algo-cpupriofrfcfs}
+\end{algorithm}
+
+\subsection{Asymmetry aware Temporal bypass}
+PAM returned early
+\subsection{Asymmetry aware Spatial Occupancy Control}
+As noted in Section \ref{motivation} GPGPU can trade access latencies for higher hit rates. Providing associativity for GPU requests improves the likelihood of retaining useful blocks which can be beneficial for the GPU. Additionally the working sets of CPU applications tend to be limited to few tens of MBs due to the limited amount of MLP that can be exploited by the CPUs. Thus, providing larger than certain partitions of cache leads to no improvements in hit rates and IPC for CPU. Nevertheless, the CPU can gain from some share of the DRAMCache due to reduced latency of access.
+To accommodate these goals we use a technique inspired by the collision resolution mechanism of a hash table - namely open addressing. \cachename modifies the replacement policy in the DRAMCache depending on the requesting core type. For a GPU request that is evicting another GPU line \cachename places the request in a location other than its own. We look for another block belonging to a CPU to replace within the same row in the next consecutive \textit{c} locations. This type of collision resolution is done until the occupancy of the CPU lines in the row reaches a low threshold \textit{l}. We refer to this new location as the chained set. Once the low occupancy threshold is reached GPU lines are either not inserted into the DRAMCache (if it is tying to evict a CPU line) or replaces the block in the right location (if its trying to evict a GPU line). This ensures a minimum occupancy for the CPU lines in the DRAMCache and effectively allows the GPU to occupy the rest of the cache. Note that this scheme also does not compromise the hotness of the lines in the DRAMCache or store dead lines.
+On a lookup into the cache for all requests we now have to lookup 2 locations if the set is chained to another set. More subtly this lookup is now to be done for CPU and GPU requests that come to chained locations due to the fact that the processors share the address space and data via caches.
