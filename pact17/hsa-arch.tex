@@ -12,6 +12,7 @@
 \tikzstyle{group} = [draw=black, line width=0.3mm, rectangle, minimum height=2em, minimum width=2em]
 \tikzstyle{textblock} = [draw, fill=blue!20, rectangle, rounded corners]
 \tikzstyle{plain} = []
+\tikzstyle{decisionblock} = [draw, diamond, fill=blue!20]
 \tikzstyle{input} = [draw, thick, fill=blue!20, circle, minimum size=1pt]
 \tikzstyle{output} = [draw, fill=blue!20, circle, minimum size=1pt]
 \tikzstyle{pinstyle} = [pin edge={to-,thin,black}]
@@ -25,6 +26,27 @@
             \draw [line cap=rect,#1] (\tikzmatrixname-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn.south west) -- (\tikzmatrixname-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn.south east);%
         }
     }
+}
+
+\newcommand{\chainaccess}[0]{
+    \begin{tikzpicture}[auto, >=latex']
+        % We start by placing the blocks
+        \node [textblock, thick, minimum width=6em] (act){\begin{varwidth}{4cm} \centering{\footnotesize{DRAM $\$$ \\Row Act.}} \end{varwidth}};
+        \node [textblock, thick, right = 0.5cm of act, minimum width=4em] (burst) {\begin{varwidth}{4cm} \centering{\footnotesize{TAD \\Burst}} \end{varwidth}};
+        \node [textblock, thick, right = 0.5cm of burst] (tagmatch) {\begin{varwidth}{4cm} \centering{\footnotesize{TAG \\Match}} \end{varwidth}};
+        \node [textblock, thick, below = 0.5cm of tagmatch] (chaintable) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\Offset}} \end{varwidth}};
+        \node [decisionblock, thick, right = 0.5cm of tagmatch, minimum height=5em] (clean) {\begin{varwidth}{4cm} \centering{\footnotesize{Clean?}} \end{varwidth}};
+        \node [decisionblock, thick, right = 0.5cm of clean, minimum height=5em] (pamreturn) {\begin{varwidth}{4cm} \centering{\footnotesize{PAM \\return?}} \end{varwidth}};
+        \node [textblock, thick, right = 5.5cm of chaintable] (chaintad) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\TAD}} \end{varwidth}};
+        \node [textblock, thick, right = 3cm of pamreturn, minimum height=7em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Memory}} \end{varwidth}};
+
+        \draw [->,very thick] (act) -- (burst);
+        \draw [->,very thick] (chaintable) -- (clean);
+        \draw [->,very thick] (burst) -- (tagmatch);
+        \draw [->,very thick] (tagmatch) -- (clean);
+        %\draw [->,very thick] (clean.south)  to [out=-90, in=0] --(0,-2) to (chaintad);
+
+    \end{tikzpicture}
 }
 
 \newcommand{\hsacpu}[0]{
