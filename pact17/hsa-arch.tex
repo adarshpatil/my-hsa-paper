@@ -10,9 +10,9 @@
 \tikzstyle{block} = [draw=black, rounded corners, thick, line width=0.3mm, rectangle, minimum height=10em, minimum width=7em]
 \tikzstyle{blocksmall} = [draw=black, thick, line width=0.5mm, rectangle, minimum height=6em, minimum width=3em, fill=white]
 \tikzstyle{group} = [draw=black, line width=0.3mm, rectangle, minimum height=2em, minimum width=2em]
-\tikzstyle{textblock} = [draw, fill=blue!20, rectangle, rounded corners]
+\tikzstyle{textblock} = [draw, fill=black!20, rectangle, rounded corners]
 \tikzstyle{plain} = []
-\tikzstyle{decisionblock} = [draw, diamond, fill=blue!20]
+\tikzstyle{decisionblock} = [draw, diamond, fill=black!20]
 \tikzstyle{input} = [draw, thick, fill=blue!20, circle, minimum size=1pt]
 \tikzstyle{output} = [draw, fill=blue!20, circle, minimum size=1pt]
 \tikzstyle{pinstyle} = [pin edge={to-,thin,black}]
@@ -35,16 +35,38 @@
         \node [textblock, thick, right = 0.5cm of act, minimum width=4em] (burst) {\begin{varwidth}{4cm} \centering{\footnotesize{TAD \\Burst}} \end{varwidth}};
         \node [textblock, thick, right = 0.5cm of burst] (tagmatch) {\begin{varwidth}{4cm} \centering{\footnotesize{TAG \\Match}} \end{varwidth}};
         \node [textblock, thick, below = 0.5cm of tagmatch] (chaintable) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\Offset}} \end{varwidth}};
-        \node [decisionblock, thick, right = 0.5cm of tagmatch, minimum height=5em] (clean) {\begin{varwidth}{4cm} \centering{\footnotesize{Clean?}} \end{varwidth}};
-        \node [decisionblock, thick, right = 0.5cm of clean, minimum height=5em] (pamreturn) {\begin{varwidth}{4cm} \centering{\footnotesize{PAM \\return?}} \end{varwidth}};
-        \node [textblock, thick, right = 5.5cm of chaintable] (chaintad) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\TAD}} \end{varwidth}};
-        \node [textblock, thick, right = 3cm of pamreturn, minimum height=7em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Memory}} \end{varwidth}};
+        \node [decisionblock, thick, right = 1.5cm of tagmatch.south] (clean) {\begin{varwidth}{4cm} \centering{\footnotesize{Clean?}} \end{varwidth}};
+        \node [decisionblock, thick, right = 3cm of tagmatch.north, yshift=1.5em] (pamreturn) {\begin{varwidth}{4cm} \centering{\footnotesize{PAM \\return?}} \end{varwidth}};
+        \node [textblock, thick, right = 1.5cm of pamreturn.south, yshift=-1em] (chaintad) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\TAD}} \end{varwidth}};
+        \node [textblock, thick, right = 3cm of pamreturn.south, minimum height=7em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Memory}} \end{varwidth}};
 
+        % Arrows
         \draw [->,very thick] (act) -- (burst);
         \draw [->,very thick] (chaintable) -- (clean);
         \draw [->,very thick] (burst) -- (tagmatch);
         \draw [->,very thick] (tagmatch) -- (clean);
-        %\draw [->,very thick] (clean.south)  to [out=-90, in=0] --(0,-2) to (chaintad);
+        \draw [->,very thick] (tagmatch.east) to [out=0,in=180] ++(0.5,0) to [out=90,in=-90] ++(0,1.5);
+        \draw [->,very thick] (clean.north) to [out=90,in=-90] ++(0,0.65) to (pamreturn.west);
+        \draw [->,very thick] (pamreturn.south)to [out=-90,in=90] ++(0,-0.3) to [out=0,in=180] ++(1.5,0);
+        \draw [->,very thick] (pamreturn.east) to [out=0,in=180] ++(0.5,0) to [out=90,in=-90] ++(0,0.5);
+        \draw [->,very thick] (clean.east) to [out=0,in=180] ++(2.5,0);
+        \draw [->,very thick] (chaintable.east) to [out=0,in=180] ++(7.1,0) to (mem.south);
+        \draw [->,very thick] (chaintad.east) to [out=0,in=180] ++(0.6,0);
+        \draw [->,very thick] (chaintad.north) to [out=90,in=-90] ++(0,1.4);
+
+        %Labels
+        \node [plain, right=0.01em of tagmatch, minimum height=1em, minimum width=1em, yshift=1em] (lbl1) {\scriptsize{\emph{Hit}}};
+        \node [plain, right=0.01em of tagmatch, minimum height=1em, minimum width=1em, yshift=-1em, xshift=-0.01em] (lbl2) {\scriptsize{\emph{Miss}}};
+        \node [plain, below=0.1cm of lbl2, minimum height=1em, minimum width=1em] (lbl3) {\scriptsize{\emph{Yes}}};
+        \node [plain, below=0.3cm of lbl3, minimum height=1em, minimum width=1em] (lbl4) {\scriptsize{\emph{No}}};
+        \node [plain, right=0.01em of chaintad, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-0.11em] (lbl5) {\scriptsize{\emph{Miss}}};
+        \node [plain, above=3em of lbl5, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-1em] (lbl8) {\scriptsize{\emph{Hit}}};
+        \node [plain, right=0.01em of clean, minimum height=1em, minimum width=1em, yshift=-0.5em] (lbl6) {\scriptsize{\emph{No}}};
+        \node [plain, right=3em of lbl6, minimum height=1em, minimum width=1em, yshift=1.5em] (lbl7) {\scriptsize{\emph{No}}};
+        \node [plain, above=1.8em of clean, minimum height=1em, minimum width=1em, xshift=-0.1em] (lbl9) {\scriptsize{\emph{Yes}}};
+        \node [plain, left=1.8em of lbl8, minimum height=1em, minimum width=1em, yshift=1.2em] (lbl10) {\scriptsize{\emph{Yes}}};
+        \node [plain, above=0.3em of lbl10, minimum height=1em, minimum width=1em, xshift=1.5em] (lbl11) {\scriptsize{\emph{Return Data}}};
+        \node [plain, left=9.5em of lbl11, minimum height=1em, minimum width=1em] (lbl12) {\scriptsize{\emph{Return Data}}};
 
     \end{tikzpicture}
 }
