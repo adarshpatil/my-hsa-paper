@@ -6,20 +6,18 @@
   booktitle = "Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis"
 }
 
-@article{gem5-gpu,
-    title = "gem5-gpu: A Heterogeneous CPU-GPU Simulator",
-    author = "Power, Jason and Hestness, Joel and Orr, Marc and Hill, Mark and Wood, David",
-    journal = "Computer Architecture Letters",
-    volume = "13",
-    number = "1",
-    month = "Jan",
-    year = "2014",
-    publisher = "IEEE",
-    url = "http://gem5-gpu.cs.wisc.edu",
-    keywords = "Modeling techniques;general-purpose graphics processors;heterogeneous (hybrid) systems;simulators",
-    doi = "10.1109/LCA.2014.2299539",
-    ISSN = "1556-6056"
-}
+@ARTICLE{gem5-gpu, 
+author={J. Power and J. Hestness and M. S. Orr and M. D. Hill and D. A. Wood}, 
+journal={IEEE Computer Architecture Letters}, 
+title={gem5-gpu: A Heterogeneous CPU-GPU Simulator}, 
+year={2015}, 
+volume={14}, 
+number={1}, 
+pages={34-36}, 
+keywords={computer architecture;graphics processing units;GPGPUSim;gem5-gpu simulator;heterogeneous CPU-GPU simulator;modular full-system CPU simulator;nonblocking kernels;software architecture;Coherence;Computational modeling;Computer architecture;Graphics processing units;Kernel;Object oriented modeling;Protocols;Modeling techniques;general-purpose graphics processors;heterogeneous (hybrid) systems;simulators}, 
+doi={10.1109/LCA.2014.2299539}, 
+ISSN={1556-6056}, 
+month={Jan},}
 
 @inproceedings{rodinia,
  author = "Che, Shuai and Boyer, Michael and Meng, Jiayuan and Tarjan, David and Sheaffer, Jeremy W. and Lee, Sang-Ha and Skadron, Kevin",
@@ -71,6 +69,21 @@ title = "Java Sumatra",
 howpublished = "\url{http://openjdk.java.net/projects/sumatra/}"
 }
 
+@misc{julia,
+title = "Julia GPU",
+howpublished = "\url{https://github.com/JuliaGPU/HSA.jl}"
+}
+
+@misc{cuda,
+title = "CUDA. CUDA C Programming Guide.",
+howpublished = "\url{http://docs.nvidia.com/cuda/cuda-c-programming-guide/}"
+}
+
+@misc{opencl,
+title = "Opencl",
+howpublished = "\url{www.khronos.org/opencl}"
+}
+
 @misc{amd-apu,
 title = "The future of the APU - Braided Parallelism",
 howpublished = "\url{http://developer.amd.com/wordpress/media/2013/06/2901_final.pdf}"
@@ -96,6 +109,34 @@ howpublished = "\url{http://www.nvidia.com/object/tegra.html}"
  publisher = "IEEE Computer Society",
  address = "Washington, DC, USA",
 } 
+
+@inproceedings{atcache,
+ author = {Huang, Cheng-Chieh and Nagarajan, Vijay},
+ title = {ATCache: Reducing DRAM Cache Latency via a Small SRAM Tag Cache},
+ booktitle = {Proceedings of the 23rd International Conference on Parallel Architectures and Compilation},
+ series = {PACT '14},
+ year = {2014},
+ isbn = {978-1-4503-2809-8},
+ location = {Edmonton, AB, Canada},
+ pages = {51--60},
+ numpages = {10},
+ url = {http://doi.acm.org/10.1145/2628071.2628089},
+ doi = {10.1145/2628071.2628089},
+ acmid = {2628089},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {design, dram cache, performance},
+} 
+
+@INPROCEEDINGS{footprint, 
+author={H. Jang and Y. Lee and J. Kim and Y. Kim and J. Kim and J. Jeong and J. W. Lee}, 
+booktitle={2016 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+title={Efficient footprint caching for Tagless DRAM Caches}, 
+year={2016}, 
+pages={237-248}, 
+keywords={DRAM chips;SRAM chips;cache storage;power aware computing;3D through-silicon-via-based in-package DRAM;F-TDC;TDCs;auxiliary on-die structure;bandwidth efficiency;cache tag management;energy efficiency;footprint caching;footprint prediction;footprint thrashing;footprint-augmented tagless DRAM cache;in-package DRAM caches;multigigabyte DRAM caches;off-package DRAM bandwidth waste;on-die SRAM;page granularity;page-based caching;tagging structures;tagless DRAM caches;translation management;Bandwidth;History;Random access memory;Resource management;Scalability;Tagging;Three-dimensional displays}, 
+doi={10.1109/HPCA.2016.7446068}, 
+month={March},}
 
 @inproceedings{bimodal, 
 author="N. Gulur and M. Mehendale and R. Manikantan and R. Govindarajan", 
@@ -192,15 +233,14 @@ pages="26-36",
 keywords="energy conservation;graphics processing units;parallel machines;parallel programming;AMD;GPU capability;accelerated processing units;energy efficiency;energy-efficient data-parallel computing;exascale capability;exascale computing;hardware optimization;heterogeneous computing;heterogeneous exascale system;high-end high-performance computing system;high-volume GPU technology;performance capability;supercomputer;Bandwidth;Computer programs;Energy efficiency;Graphics processing units;Memory management;Random access memory;Supercomputers;data-parallel computing;energy efficiency;exascale computing;hardware;heterogeneous computing", 
 doi="10.1109/MM.2015.71", 
 ISSN="0272-1732", 
-month="July",
+month="July"
 }
 
 @INPROCEEDINGS{amd-exascale1, 
-author={Thiruvengadam Vijayaraghavan, Yasuko Eckert, Gabriel H. Loh, Michael J. Schulte, Mike Ignatowski,
-Bradford M. Beckmann, William C. Brantley, Joseph L. Greathouse, Wei Huang, Arun Karunanithi, Onur Kayiran}, 
+author={Thiruvengadam Vijayaraghavan, Yasuko Eckert, Gabriel H. Loh}, 
 booktitle={2017 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
 title={Design and Analysis of an APU for Exascale Computing}, 
-year={2017}, 
+year={2017}
 }
 
 @INPROCEEDINGS{dramspec, 
@@ -268,6 +308,18 @@ month={May},}
  publisher = {ACM},
  address = {New York, NY, USA},
 } 
+
+@INPROCEEDINGS{tlb-translation, 
+author={J. Power and M. D. Hill and D. A. Wood}, 
+booktitle={2014 IEEE 20th International Symposium on High Performance Computer Architecture (HPCA)}, 
+title={Supporting x86-64 address translation for 100s of GPU lanes}, 
+year={2014}, 
+pages={568-578}, 
+keywords={cache storage;graphics processing units;multi-threading;storage management;virtualisation;CPU threads;GPGPU workloads;GPU MMU design;GPU lanes;GPU memory reference behavior;GPU memory references;GPU threads;Rodinia benchmarks;TLB bandwidth filters;memory access patterns;memory management unit;memory sharing;memory virtualization;postcoalescer TLBs;programmability;scratchpad memory;shared highly-threaded page table walker;shared page walk cache;translation rate reduction;x86-64 address translation;Arrays;Benchmark testing;Graphics processing units;Kernel;Memory management;Resource management}, 
+doi={10.1109/HPCA.2014.6835965}, 
+ISSN={1530-0897}, 
+month={Feb},}
+
 @INPROCEEDINGS{coherence-dramcache, 
 author={C. C. Huang and R. Kumar and M. Elver and B. Grot and V. Nagarajan}, 
 booktitle={2016 49th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
