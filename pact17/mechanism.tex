@@ -1,10 +1,13 @@
-\section{\cachename Mechanism} \label{mechanism}
-In this section, we propose 3 optimization to improve the performance of IHS processors.
-\subsection{Asymmetry aware DRAMCache scheduling}
-DRAM devices operate at a much lower clock rate compared to the cores and caches. Moreover DRAM cells have to be periodically refreshed due to leakage to preserve the data which further reduces the available time of the device. This imbalance in request arrival rate and service times creates a queuing effect. Hence DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions at the DRAMCache  leading to requests being rejected for a retry. The CPU requests, which are interleaved with the GPU requests, are few and far spaced and thus suffer large waiting time due to retries. This is compounded by the fact that GPU exploits good row buffer locality and is preferentially scheduled by the DRAMCache. This further causes increased queue latencies for CPU requests.
-\par \cachename reduces waiting time for CPU requests by selectively rejecting GPU requests when the queues reach critical level which allows CPU requests to occupy these locations instead of being rejected. Further, \cachename prioritizes CPU requests at DRAMCache without starving the GPU requests. \cachename uses a modified FR-FCFS algorithm \ref{algo-cpupriofrfcfs} to prioritize CPU requests without starving the GPU requests in each of the Read, Write and Fill Queues of the DRAMCache.
+\newcommand{\bypassname}{\textit{ByE }}
+\newcommand{\prioname}{\textit{PrIS }}
+\subsection{\cachename Mechanism} \label{mechanism}
+In this section, we propose 3 optimizations to improve the performance of IHS processors.
 
+\subsubsection{Heterogeneity aware DRAMCache scheduling}
+DRAM devices operate at a much lower clock rate compared to the cores and caches. Moreover DRAM cells tend to leak and have to be periodically refreshed to preserve the data which further reduces the available time of the device. This imbalance in request arrival rate and service times creates a queuing effect. Hence DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However, in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions at the DRAMCache  leading to requests being rejected for a retry. The CPU requests, which are interleaved with the GPU requests, are few and far spaced and thus suffer large waiting time due to retries. This is compounded by the fact that GPU exploits good row buffer locality and is preferentially scheduled by the DRAMCache, causing increased queue latencies for CPU requests.
+\par \cachename reduces waiting time for CPU requests by selectively rejecting GPU requests when the queues reach critical level which allows CPU requests to occupy these locations instead of being rejected. Further, \cachename prioritizes CPU requests at DRAMCache without starving the GPU requests. \cachename uses a CPU Prioritized FR-FCFS, IHS aware scheduling (\prioname) algorithm \ref{algo-cpupriofrfcfs} to prioritize CPU requests without starving the GPU requests in each of the Read, Write and Fill Queues of the DRAMCache.
 \begin{algorithm}
+ \scriptsize
  \KwIn{DRAMCache Queue}
  \KwOut{selected\_req to be scheduled}
  all bool variables are initialize to \textit{false}\\
@@ -13,7 +16,7 @@ DRAM devices operate at a much lower clock rate compared to the cores and caches
  %found\_prepped\_cpu\_req = false \\
  %found\_earliest\_req = false \\
  %found\_earliest\_cpu\_req = false \\
-\small
+
 \While{not at end of Queue}{
 	read \textit{rank}, \textit{bank} and \textit{row} of current\_req \\
 	\If{rank.isAvailable} {
@@ -41,7 +44,7 @@ DRAM devices operate at a much lower clock rate compared to the cores and caches
 				}
     		}
 		} \ElseIf {!found\_earliest\_cpu \&\& !found\_seamless\_gpu} {
-			\tcc{find earliest bank that can be issued hidden cmd}
+			\tcc{earliest bank that can be issued hidden cmd}
 			\tcc{executed only once per scheduling decision}
 			found\_hidden\_bank, earliest\_bank = find\_earliest\_bank() \\
 			\If{earliest\_bank == bank \&\& \\ (found\_hidden\_bank || !found\_prepped)} {
@@ -51,21 +54,36 @@ DRAM devices operate at a much lower clock rate compared to the cores and caches
 					found\_earliest = true
 				}
 				\ElseIf{!found\_seamless\_gpu} {
-					selected\_req = current\_req\;
-					found\_earliest = true \;
+					selected\_req = current\_req\\
+					found\_earliest = true \\
 				}
 			}
 			
 		}
 	}
 }
- \caption{Asymmetry aware scheduling policy}
+ \caption{\prioname DRAMCache scheduling policy}
  \label{algo-cpupriofrfcfs}
 \end{algorithm}
 
-\subsection{Asymmetry aware Temporal bypass}
-PAM returned early
-\subsection{Asymmetry aware Spatial Occupancy Control}
-As noted in Section \ref{motivation} GPGPU can trade access latencies for higher hit rates. Providing associativity for GPU requests improves the likelihood of retaining useful blocks which can be beneficial for the GPU. Additionally the working sets of CPU applications tend to be limited to few tens of MBs due to the limited amount of MLP that can be exploited by the CPUs. Thus, providing larger than certain partitions of cache leads to no improvements in hit rates and IPC for CPU. Nevertheless, the CPU can gain from some share of the DRAMCache due to reduced latency of access.
-To accommodate these goals we use a technique inspired by the collision resolution mechanism of a hash table - namely open addressing. \cachename modifies the replacement policy in the DRAMCache depending on the requesting core type. For a GPU request that is evicting another GPU line \cachename places the request in a location other than its own. We look for another block belonging to a CPU to replace within the same row in the next consecutive \textit{c} locations. This type of collision resolution is done until the occupancy of the CPU lines in the row reaches a low threshold \textit{l}. We refer to this new location as the chained set. Once the low occupancy threshold is reached GPU lines are either not inserted into the DRAMCache (if it is tying to evict a CPU line) or replaces the block in the right location (if its trying to evict a GPU line). This ensures a minimum occupancy for the CPU lines in the DRAMCache and effectively allows the GPU to occupy the rest of the cache. Note that this scheme also does not compromise the hotness of the lines in the DRAMCache or store dead lines.
-On a lookup into the cache for all requests we now have to lookup 2 locations if the set is chained to another set. More subtly this lookup is now to be done for CPU and GPU requests that come to chained locations due to the fact that the processors share the address space and data via caches.
+\subsubsection{Heterogeneity aware Temporal bypass}
+The large sizes of the stacked DRAMCache ensures cache lines have fairly long residency times before being evicted. Hence, many requests are satisfied from the DRAMCache which leads to idling of off-chip DRAM bandwidth.
+In a IHS architecture, the increased access latencies incurred by a CPU request when the GPU is running make the DRAM an attractive target to direct some of the CPU requests. This leads to improved resource utilization without incurring any increased latencies for CPU requests. 
+\par To hide the latency of miss, our aggressive baseline design already incorporates a hit/miss predictor for CPUs. It initiates an early access to off-chip DRAM when it predicts a miss for the CPU requests in the DRAMCache. These requests are then enqueued in the DRAMCache queues for verification of a miss by a tag match. 
+In most cases when the GPU is running, the parallel memory request return earlier and waits in the MSHRs. Once the tag is matched, in the case of a hit the data from the DRAMCache is forwarded to the requestor. In the case of a miss the data from the memory is forwarded and inserted into the cache. 
+\par \cachename exploits the opportunity to bypass CPU requests for both misses and clean lines. \cachename uses a Bypass Enabler ( \bypassname). \bypassname is a counting bloom filter that tracks the dirty lines in the cache. A bloom filter provides a space efficient way to determine if a given request can be bypassed. The property of a bloom filter to answer "definitely not in set" allows us to bypass requests correctly i.e. without verifying tags in the set of the DRAMCache. 
+On a write request when a cache line becomes dirty in the cache, the address is hashed into \bypassname and the corresponding counters are incremented. 
+During the execution of the GPU, all CPU read requests lookup into \bypassname. If \bypassname returns negative result the line is surely not dirty in the DRAMCache and the request can safely be bypassed to utilize the off-chip DRAM bandwidth. 
+When a dirty line is evicted from the cache \bypassname attempts to remove the entry from the table \footnote{Counting bloom filters use saturating counters. If the counters saturates, removal is not possible}.
+\par However, all write requests and GPU read requests proceed serially after looking into the cache. Writes cannot be bypassed due to the need to back invalidate the cache line, if present in the DRAMCache, which would need a full DRAMCache access.
+On the return path from memory these bypassed requests are not inserted into the cache. This is to ensure that future write requests for the line do not hit in the cache causing reduced bypass efficiency.
+\par We find that a small 2-bit counting bloom filter with 2 hash functions and 512K entries per controller is sufficient to produce reasonable bypass efficiency with a reasonably low mispredictions rate. The total overhead for \bypassname is 256KB for a 64MB DRAMCache which is less than 4\% of the cache size.
+
+
+\subsubsection{Heterogeneity aware Spatial Occupancy Control}
+As noted in Section \ref{motivation} GPGPU can trade access latencies for higher hit rates. Providing associativity for GPU requests improves the likelihood of retaining useful lines which can be beneficial for the GPU. Additionally the working sets of CPU applications tend to be limited to few tens of MBs due to the limited amount of MLP that can be exploited by the CPUs. Thus, providing larger than certain partitions of cache leads to no improvements in hit rates and IPC for CPU. Nevertheless, the CPU can gain from some share of the DRAMCache due to reduced latency of access.
+\par To accommodate these goals \cachename uses a technique inspired by the collision resolution mechanism of a hash map. \cachename modifies the replacement policy in the DRAMCache depending on the requesting core type. For a GPU request that is evicting another GPU line \cachename places the request in a location other than its own. \cachename looks for a line belonging to a CPU to replace within the same row in the next consecutive \textit{c} locations. A set is defined as belonging to a core that last requested the line resident there. This set ownership information is stored as a bit vector using the unused bytes at the end of the row. The offset of the chained location is then represented as a 2 bit offset and stored along with the metadata in the TAD unit. We refer to this inserted location as the chained set. 
+\par This type of set chaining is done until the occupancy of the CPU lines in the row reaches a threshold \textit{$l_{cpu}$}. Once this lower threshold occupancy is reached, GPU lines are not allowed to evict a CPU line. In such a scenario, a GPU contending to evict a CPU line in a set, is forced to chain to another set belonging to a GPU and evicting that instead, thus maintaining the \textit{$l_{cpu}$} occupancy for CPU. 
+In the rare case that a GPU set is not found within the \textit{c} consecutive locations the request is not inserted into the cache.
+\par At first blush, this technique adds latency only for GPU requests due to two set lookups. However due to the shared address space and inter-processor sharing of lines through the cache, all requests to a chained set now incur a double set lookup. \cachename adds another bit to the TAD unit that tracks if the chained set is dirty. This allows us to avoid the second set lookup for CPU if the parallel memory access has returned and the chained set is clean. 
+\par Firstly, this ensures a minimum occupancy for the CPU lines in the DRAMCache while effectively allowing the GPU to occupy the rest of the cache by providing pseudo-associativity. Secondly, this scheme also does not compromise the hotness of the lines in the DRAMCache or result in storing dead lines. Thirdly, the CPU requests never actively inserts data into chained locations thus maintaining the direct mapped-ness of the cache for majority of the CPU requests. Lastly, this scheme is dynamic and allows adaptively setting CPU occupancy threshold \textit{$l_{cpu}$} based on the workloads requirements. This occupancy control mechanism does not incur any additional hardware and uses the unused bits in the DRAMCache row. Once the GPU finishes execution \cachename returns to a direct mapped cache as the lines inserted into the DRAMCache occupy chained location thereby unlinking chains. 

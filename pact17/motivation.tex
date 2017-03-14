@@ -1,11 +1,50 @@
-\section{DRAMCache Design for IHS} \label{motivation}
-As seen in section \ref{introduction}, the large capacity provided by the stacked DRAM are in line with the working set requirements of IHS processors. Using this capacity as a hardware managed cache could provide performance gains without any application modifications. The bandwidth benefits and modestly improved latency provided by the DRAMCache help improve performance of IHS processors over on-chip SRAM caches of reasonable sizes \cite{amd-exascale1}. However, the organization of the DRAMCache for this type of heterogeneous processors is not immediately intuitive.
-\par \textbf{Effect of interference:} The effect of co-running impairs the performance of the latency sensitive CPU application heavily as compared to the performance loss by the GPU. In Figure \ref{fig:motivation} we plot the ANTT improvement normalized to a baseline of CPU+GPU without a stacked DRAM.  The CPU looses on an average of 3.2X performance (maximum drop of 18.6X) while the GPU drops merely by 7\% compared to when they run separately. This suggests that the DRAMCache should be organized to improve the lost CPU performance without compromising the GPU performance. Moreover GPUs capability to context switching warps make it more latency tolerant.
-\par \textbf{Metadata overhead:} The large storage requirement for metadata in DRAMCaches - of the order of the last level SRAM caches, for merely hundreds of MBs of stacked DRAM capacity has driven DRAMCache designs to either use larger block sizes (e.g. page size allocation \cite{footprint}) to reduce metadata overhead or co-locate metadata alongside data in DRAMCache \cite{loh-hill,alloy,atcache}. In the former case, misses waste precious off-chip bandwidth in the absence of spatial locality while the latter design faces tag-serialization. Tags-in-DRAM designs have further focused on improving access latencies by removing tag-serialization overhead using overlapped tag lookups \cite{loh-hill} or storing Tag-and-Data units \cite{alloy}. These designs come close to tags-in-SRAM like access latency without concerns of spatial locality characteristics of large block sizes. Hence, \cachename organizes data at 128 byte block size and stores data in DRAMCache in a cohesive TAD unit.
-\par \textbf{Associativity:} Providing set associativity is known to improve cache hit rates by reducing conflict misses. In DRAMCaches where tag is stored in DRAM,  associativity comes at a cost. Hit latencies increase due to the tag requiring to be burst out of the stacked DRAM. Hence there is an implicit trade-off between providing better hit-rates and reduced access latency. A higher associativity design is suitable for a GPGPU processor which can trade increased access latency for higher hit rates to make better use the larger bandwidth of the DRAMCache. On the other hand, a CPU would suffer when using such a design but would benefit from a latency-optimized direct-mapped cache \cite{alloy}. Thus, \cachename is organized as a direct mapped cache to achieve better hit times for improved CPU performance. Further, this simplifies the design and eschews the need for tag-caches \cite{atcache} and way locators \cite{bimodal} to improve hit times. Our findings are inline with the commercially adopted stacked MCDRAM on the Knights Landing generation of the Intel XeonPhi processor \cite{xeonphi} where the DRAMCache is organized as a direct mapped cache.
-\par \textbf{Miss Penalty:} The access latency reduction provided by a stacked DRAM are marginal compared to the off-chip DRAMs and misses incur an almost double DRAM access latency. To overcome this, researchers have proposed cache line hit predictors \cite{loh-hill,alloy} which are critical to extract performance from DRAMCaches. These predictors start an early access to memory on the probability that the block will miss in the DRAMCache. Intuitively, we apply the MAP-I prediction \cite{alloy} to CPU requests to start early memory access when an access is predicted to be a miss. GPU requests always proceed serially through the cache after verifying via tag match. This helps (a) reduce the wastage of off-chip bandwidth for mis-predictions for GPU (b) avoid large structures that will be required for making reliable predictions for GPUs which might require correlating warp, thread, and SM IDs.
-\par \textbf{Row Buffer Hits (RBH) vs Bank Level Parallelism (BLP):} Staked DRAMs are organized as vaults (channels), layers (ranks) and banks within each layer. Each vault has several TSVs which constitute lanes in a channel. Stacked DRAMs provide large bandwidth by organizing DRAMs as several smaller banks within layers. Given this abundant BLP, should DRAMCaches exploit this parallelism over improved RBH? In other words, the addressing scheme of a DRAMCache be organized as RoCoRaBaCh which distributes the cache line in banks of different ranks as opposed to RoRaBaCoCh which stores cache blocks consecutively in the row of a bank. We plot the performance of an IHS processor for both addressing schemes in figure x. We observe that both the CPU and GPU perform x\% and y\% better using the RBH scheme. Consequently, \cachename is addressed using a RBH friendly addressing scheme.
-\par Using the above design decisions, we add a DRAMCache to an IHS processor. The third bar in Figure \ref{fig:motivation} plots the performance for this setup. However, we observe that there is an average of 2.6X gap (maximum of 12.2X) between the performance of an onlyCPU with DRAMCache configuration and that obtained by the CPU in an IHS architecture. Meanwhile the GPU comes within 9\% of its performance with DRAMCache [Figure \ref{fig:motivation}]. Although we cannot reach the performance of only CPU or onlyGPU with DRAMCache due to the presence of cross-processor interference, there is still enough headroom to bridge the performance.
+\section{Motivation} \label{motivation}
+As seen in section \ref{introduction}, the large capacity provided by the stacked DRAM are in line with the working set requirements of IHS processors. Using this capacity as a hardware managed cache could provide performance gains without any application modifications. The bandwidth benefits and modestly improved latency provided by the DRAMCache help improve performance of IHS processors over on-chip SRAM caches of reasonable sizes \cite{amd-exascale1}. 
+
+In this paper, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in designing the DRAM cache for IHS architecture. We justify the design decisions in the following section. 
+Each CPU core has a private L1 cache and a shared split L2 cache across the CPU cores. The GPU cores have private L1 and shared L2 cache among themselves.  
+The stacked DRAM cache (of size 64MB) is the first level shared cache across CPU cores and GPU cores. In our experiments, we consider a multi-programmed workload on the CPU cores and a GPGPU application on a single CPU core and multiple SMs. It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the SMs (kernel execution), and our study on the interference due to co-running CPU and GPU application, reports performance numbers of the GPU application when the GPU kernel is running on the SMs.  
+Other details relating the experimental methodology and workloads are described in Section \ref{methodology}
+
+First we evaluate the benefits of having a large DRAM cache in IHS architecture. Figure \ref{motivation} presents the performance
+improvement (in terms of Average Normalized Turn-around Time (ANTT) \cite{antt} for the CPU applications with and without
+the stacked DRAM cache, and when they are running with and without the GPU application. As can be seen from the figure,
+the performance of CPU applications experience significant improvement (by almost a factor of x.y) with the introduction 
+of the DRAM cache, but when they are run without the GPU application. Corunning with GPU application, however results
+only in XX\% improvement in ANTT. This loss in performance is essentially due to co-running GPU application, which hampers
+%% \par \textbf{Effect of interference:} The effect of co-running impairs 
+the performance of latency-sensitive CPU application heavily. Figures~\ref{???} and \ref{???} present the cache hit rate
+and the average hit time in DRAM Cache (or you can present average memory access latency).  We can see that the presence
+of GPU applications significantly increase average hit time (by a factor of x.y), while hit rates are impacted only marginally 
+(only by XX\%). The reasons for the increase in average hit time and the decrease in ANTT is primarily due to the large
+number of GPU memory requests flooding the DRAM cache controller when the GPU application is co-run with the CPU applications.
+
+Next, let us study the impact of co-unning on GPU application.  Figure~\ref{???}(b) again presents GPU ANTT improvement\footnote{In this 
+paper we report CPU ANTT and GPU ANTT (and the improvement in them) independently. This is done to identify the impact of CPU 
+and GPU applications on each other, as well as to understand the impact of the proposed modifications on each of the application
+type.} for various workloads. 
+We observe the following: 
+(i)  the introduction of DRAM Cache improves the performance of GPU application by xx\% and yy\% with and without co-running CPU applications;
+and (ii) Co-running CPU applications has only a minor impact on the GPU ANTT (with or without the DRAM Cache). 
+%% one sentence on why in some of the workloads there is no improvement in ANTT. 
+%% If required you can present the GPU hit rate and average hit time in DRAM Cache for GPU appln. 
+
+%% Do you want to present the data to establish that the GPU application only occupies certain part of the DRAM cache 
+%% and is unable to use beyond this due to cache contention, making a case of pseudo associativity?
+%% you shd. do this without getting into chaining, etc. 
+
+Based on the above motivtion study we conclude that there are significant performance benefits that one could obtain 
+with the introduction of the stacked DRAM cache for the latency-senstive CPU applications. However in a naive implementation
+of the DRAM cache, these benefits can be undone by the co-running GPU application.  Hence it is imporant to carefully 
+architect the DRAM cache design so that CPU applications are not hampered due to interference of co-running GPU application.
+This requires the design to be aware of the heterogeneity of the applications (CPU vs GPU) and their demands on the 
+memory hierarchy.  Hard partioning of DRAM cache may not be an effective design as it leads to under-utilization of the large capacity 
+stacked DRAM, as the interference due to GPU application primarily happens when the kernel is running on the CUs. 
+Further, effectively utilizing the under-utilized main memory bandwidth~\cite{Nagendra's Memsys paper, Mainak's HPCA paper}
+is also important to achieve higher performance.  Further the design should ensure that the CPU applications and the 
+GPU application are able to utilize the large capacity of the stacked DRAM effecively to meet as much as possible the working set 
+requirements of the applications. 
+
 \begin{figure}[htbp]
    \includegraphics[scale=1.0]{graphs/motivation-cpu}
    \includegraphics[scale=1.0]{graphs/motivation-gpu}
