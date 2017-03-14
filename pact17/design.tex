@@ -1,4 +1,5 @@
-\section{\cachename Design} \label{design}
+\section{\cachename for IHS} \label{design}
+\subsection{\cachename Design} \label{design}
 \cachename builds on an aggressive direct mapped cache design with tags stored in DRAM as TAD units. \cachename caches lines at 128B granularity. In this section, we rationalize these design decision from the observations.
 
 \par \textbf{Effect of interference:} The effect of co-running impairs the performance of the latency sensitive CPU application heavily as compared to the performance loss by the GPU. As in Figure \ref{fig:motivation} the CPU suffers significant performance losses while the GPU is relatively unaffected by co-running, compared to when they run separately. GPUs capability to context switching warps make it more latency tolerant. This suggests that the DRAMCache should be organized to regain the lost CPU performance without compromising the GPU performance.
