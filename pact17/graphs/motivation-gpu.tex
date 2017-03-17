@@ -12,23 +12,7 @@
 \begin{document}
 
 \begin{tikzpicture}[scale=0.5]
-    \pgfplotstableread{
-X Class	CPU+GPU	onlyGPU	CPU+GPUD onlyGPUD
-1 Qg1 1 1.129434574 1.335560111 1.60801150
-2 Qg2 1 1.115271743 1.397269622 1.58784743
-3 Qg3 1 1.121379934 1.261746906 1.59654385
-4 Qg4 1 1.063903371 1.453763714 1.56497849
-5 Qg5 1 1.062355147 1.383987574 1.53037160
-6 Qg6 1 1.060854061 1.459482093 1.56049302
-7 Qg7 1 1.075211657 1.560923483 1.73459211
-8 Qg8 1 1.085249389 1.548454891 1.75078555
-9 Qg 1 1.014779742 0.9972502853 1.010956549
-10 Qg10 1 1.021773539 1.004192917 1.01792399
-11 Qg11 1 1.072552573 0.9576439767 1.0276429
-12 Qg12 1 1.036775063 0.9941809374 0.9997797
-13 Qg13 1 1.08493824 1.148042467 1.179902852
-14 GEO 1 1.072104058 1.250540224 1.36611076
-    }\datatable
+    \pgfplotstableread[col sep = comma]{motivation-gpu.csv}\datatable
 
     \begin{axis}[
         ylabel style={}, ylabel = ANTT Improvement,
@@ -66,15 +50,15 @@ X Class	CPU+GPU	onlyGPU	CPU+GPUD onlyGPUD
         }
        ]
 
-        \addplot [bar1] table[x=X,y=CPU+GPU] {\datatable};
-        \addplot [bar2] table[x=X,y=onlyGPU] {\datatable};
+        \addplot [bar1] table[x=X,y=onlyGPU] {\datatable};
+        \addplot [bar2] table[x=X,y=CPU+GPU] {\datatable};
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
         \addplot [bar4] table[x=X,y=onlyGPUD] {\datatable};
 
+        \addlegendentry{\footnotesize{onlyGPU}}
         \addlegendentry{\footnotesize{CPU+GPU}}
-        \addlegendentry{\footnotesize{onlyCPU}}
         \addlegendentry{\footnotesize{CPU+GPU D$\$$}}
-        \addlegendentry{\footnotesize{onlyCPU D$\$$}}
+        \addlegendentry{\footnotesize{onlyGPU D$\$$}}
 
     \end{axis}
 \end{tikzpicture}
