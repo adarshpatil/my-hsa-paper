@@ -12,7 +12,7 @@
 \begin{document}
 
 \begin{tikzpicture}[scale=0.5]
-    \pgfplotstableread[col sep = comma]{motivation-gpu.csv}\datatable
+    \pgfplotstableread[col sep = comma]{design-rbhblp.csv}\datatable
 
     \begin{axis}[
         ylabel style={}, ylabel = Speedup,
@@ -24,11 +24,11 @@
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
         x=30pt,
-        ymin=0,
-        ymax=2,
+        %ymin=0,
+        %ymax=4,
         axis x line*=left,
         axis y line*=left,
-        %enlarge x limits=0.2,
+        %enlarge x limits=false,
         %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
         after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
         legend image code/.code={%
@@ -50,15 +50,11 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=onlyGPU] {\datatable};
-        \addplot [bar2] table[x=X,y=CPU+GPU] {\datatable};
-        \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
-        \addplot [bar4] table[x=X,y=onlyGPUD] {\datatable};
+        \addplot [bar1] table[x=X,y=CPU] {\datatable};
+        \addplot [bar2] table[x=X,y=GPU] {\datatable};
 
-        \addlegendentry{\footnotesize{onlyGPU}}
-        \addlegendentry{\footnotesize{CPU+GPU}}
-        \addlegendentry{\footnotesize{CPU+GPU D$\$$}}
-        \addlegendentry{\footnotesize{onlyGPU D$\$$}}
+        \addlegendentry{\footnotesize{CPU}}
+        \addlegendentry{\footnotesize{GPU}}
 
     \end{axis}
 \end{tikzpicture}
