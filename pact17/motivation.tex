@@ -24,7 +24,7 @@ the performance of CPU applications experiences significant improvement (by almo
 of the DRAMCache when they are run without the GPU application. Co-running with GPU application, however results in a severe performance degradation of 3.2X for the CPU. 
 %Clearly this loss in performance is due to co-running GPU application, which hampers 
 %the performance of latency-sensitive CPU application heavily.
-Adding a stacked DRAMCache over a IHS architecture is able to recover back just 42\% of its performance when running alone without a DRAMCache. 
+Adding a stacked DRAMCache over an IHS architecture, the CPU is able to recover just 42\% of its performance when running alone without a DRAMCache. 
 We further investigate the cause of this immense disparity in the performance of CPU workloads despite adding a stacked DRAM. Figures \ref{fig:motivation-cpu-cache} presents the DRAMCache access latency experienced by a CPU request in cycles on the primary y-axis and the CPU hit rates on the secondary y-axis, with and without the GPU application co-running. We find that the presence of GPU applications increases the average access time of the DRAMCache by 213\% while hit rates of the CPU are marginally impacted (only by about 4\%) when co-running.
 The increase in average access time is primarily attributed to the large
 number of GPU memory requests flooding the DRAMCache controller when the GPU kernels are co-running with the CPU applications.
@@ -34,10 +34,9 @@ paper we report CPU ANTT/speedups and GPU ANTT/speedups (and the improvement in 
 and GPU applications on each other, as well as to understand the impact of the proposed modifications on each of the application
 type} 
 for our workloads. 
-We observe the following: 
-(i)  the introduction of DRAMCache improves the performance of GPU application by 27\% and 15\% with and without co-running CPU applications with respect to its performance when running alone
-(ii) Co-running with CPU applications has only a minor impact on the GPU performance (with or without the DRAM Cache). 
-Some cache sensitive GPU workloads show some benefits from the addition of the DRAMCache while other workloads do not significantly reuse cached data thus showing no performance benefits.
+We observe the that the introduction of DRAMCache improves the performance of GPU application by 27\% and 15\% with and without co-running CPU applications with respect to its performance when running alone
+Thus,  co-running with CPU applications has only a minor impact on the GPU performance (with or without the DRAM Cache). 
+Cache sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads that do not significantly reuse cached data show no performance benefits.
 %% one sentence on why in some of the workloads there is no improvement in ANTT. 
 %% If required you can present the GPU hit rate and average hit time in DRAM Cache for GPU appln. 
 

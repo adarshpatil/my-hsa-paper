@@ -27,6 +27,7 @@
 \begin{frame}[t,fragile]{}
 \begin{columns}[t]
 
+\footnotesize
 %-----------------------------------------------------------------------------
 %                                                                     COLUMN 1
 % ----------------------------------------------------------------------------
@@ -36,13 +37,14 @@
     \begin{exampleblock}{Integrated Heterogenous Systems (IHS) Architecture}
     \begin{itemize}
     	\item \textit{Throughput-oriented} GPGPU SMs placed alongside \textit{Latency-oriented} CPU cores on-chip
-   		\item Shared Address Space and Unified Memory Hierarchy 
+   		\item Shared Physical/Virtual Address Space and a Unified Memory Hierarchy 
 		\item Cache Coherent Interconnect
     	\item Improved Programmability
-    	\begin{enumerate}
-	    	\item Avoids explicit management of data (memcpy, cudaalloc etc.)
+    	\begin{enumerate}[i]
+	    	\item Avoids explicit management of data (memcpy, cudamalloc etc.)
 	    	\item Allows pointer sharing
-	    	\item Enables HLLs to exploit fine grained parallelism
+	    	\item GPU data set sizes need not be constrained by memory size
+	    	\item Enables HLLs to exploit fine grained parallelism synergistically with CPUs
     	\end{enumerate}
 		\item AMD APUs, Intel Iris, NVIDIA Denver
     \end{itemize}
@@ -63,31 +65,44 @@
     \end{exampleblock}
 % ----------------------------------------------------------------------------        
     % motivation
+    \definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
     \begin{exampleblock}{Motivation}
-        \begin{itemize}
-        	\item Severe CPU performance degradation - 320\% compared to onlyCPU
-       		\item 
-       		\item CPU performance reduces due to co-running GPU
-       		\item Adding a DRAM\$ naively does not provide sufficient improvements
-       		\item GPU remains relatively unaffected by co-running
+    \centering 
+    {\small \underline{Performance}}
 
-       		\item Large bandwidths of stacked DRAM should benefit GPU
-        \end{itemize}
-        
-    \end{exampleblock}
-    
-    
+    \begin{itemize}
+       	\item CPU and GPU both gain from addition of DRAM\$ when running alone
+      	\item Effect of Co-running \\
+      		\qquad - CPU performance severely degraded, drops 320\% from onlyCPU\\
+      		\qquad - GPU remain relatively unaffected, drops 7\% from onlyGPU
+      	\item Naive addition of DRAM\$ over IHS \\
+      		\qquad - CPU recovers 42\% of the lost performance over onlyCPU \\
+      		\qquad - GPU still performs  15\% better than onlyGPU \\
+    \end{itemize}
     \begin{figure}
        \includegraphics[scale=2.2]{../graphs/motivation-cpu}
        \includegraphics[scale=2.2]{../graphs/motivation-gpu}
-       \caption{Performance comparison of CPU \& GPU when alone, co-running, with and without D\$}
+       \caption{Performance comparison of CPU \& GPU when-alone, co-running, with and without D\$}
        \label{fig:motivation}
     \end{figure}
+    \normalsize \underline{Causes for sub-optimality of DRAM\$}
+    \normalsize
+    \begin{itemize}
+   		\item Increased DRAM\$ access times despite comparable hit rates
+        \item Set contention between CPU and GPU
+    \end{itemize}
+    
     \begin{figure}
        \includegraphics[scale=2.2]{../graphs/motivation-cpu-cache}
        \caption{CPU D\$ Access Latency and Hit Rates}
        \label{fig:motivation-cpu-cache}
-    \end{figure}
+    \end{figure}  
+        
+    \end{exampleblock}
+     
+    
+    
+
 % ----------------------------------------------------------------------------    
     % bypass
     \begin{exampleblock}{Temporal Selective Bypass Enabler (\textit{ByE})}
@@ -97,7 +112,7 @@
 	    \item Achieved using a \textit{Bloom Filter} that tracks dirty lines in cache
 	    \item Overhead: 256KB (0.4\% of cache capacity)
     \end{itemize}
-    \vspace{\baselineskip}\linebreak
+    \vspace{\baselineskip}
     \centering
 	\includegraphics[scale=3]{bloom}
 	\end{exampleblock}
@@ -112,20 +127,21 @@
 
 	% hsa arch
 	\centering
-   \includegraphics[scale=3.7]{hsa-arch}
-   
+   \includegraphics[scale=3]{hsa-arch}
+% ----------------------------------------------------------------------------   
+
     % Design
     \begin{exampleblock}{HAShCache Design for IHS Processors}
-        \large Large Metadata overhead \\
-        \normalsize \qquad- Tags-in-DRAM, 128 Byte TAD Units \\
-        \large Set Associativity \\
-        \normalsize \qquad- Direct Mapped to avoid multiple tag lookups \\
-        \large Miss Penalty \\
-        \normalsize \qquad- Initiate early access to memory for CPU using a miss predictor \\
-        \large RBH vs BLP addressing scheme \\
-        \normalsize \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
-        \large Effect of Interference \\
-        \normalsize \qquad- DRAM\$ must try to regain CPU performance lost due to interference\\
+        {\small Large Metadata overhead} \\
+        	\qquad- Tags-in-DRAM, 128 Byte TAD Units \\
+        {\small Set Associativity} \\
+        	\qquad- Direct Mapped to avoid multiple tag lookups \\
+        {\small Miss Penalty} \\
+        	\qquad- Initiate early access to memory for CPU using a miss predictor \\
+        {\small RBH vs BLP addressing scheme} \\
+	        \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
+        {\small Effect of Interference} \\
+        	\qquad- DRAM\$ must try to regain CPU performance lost due to interference\\
     \end{exampleblock}
     
 % ----------------------------------------------------------------------------    
@@ -138,7 +154,7 @@
 	    \item Chaining done until minimum CPU occupancy threshold is reached
 	    \item Overhead: NIL, uses unused bits in the DRAM rows to track
     \end{itemize}
-    \vspace{\baselineskip}\linebreak
+    \vspace{\baselineskip}
     \centering
     \includegraphics[scale=2.2]{chaining}
     \end{exampleblock}
