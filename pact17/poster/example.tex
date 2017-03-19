@@ -36,8 +36,7 @@
     \begin{exampleblock}{Integrated Heterogenous Systems (IHS) Architecture}
     \begin{itemize}
     	\item \textit{Throughput-oriented} GPGPU SMs placed alongside \textit{Latency-oriented} CPU cores on-chip
-   		\item Shared Physical and Virtual Address Space
-		\item Unified Memory Hierarchy
+   		\item Shared Address Space and Unified Memory Hierarchy 
 		\item Cache Coherent Interconnect
     	\item Improved Programmability
     	\begin{enumerate}
@@ -52,10 +51,13 @@
     % intro D$
     \begin{exampleblock}{Vertically Stacked DRAM}
     \begin{itemize}
-        	\item Stacked using 2.5D interposer or 3D TSV
-       		\item Large capacity \textasciitilde order of GBs
-    		\item Very High Bandwidth \textasciitilde 500 GB/s (90GB/s DDR4)
-    		\item 20 \% reduction in access latency
+        	\item DRAM Layers stacked using 2.5D interposer or 3D TSV
+       		\item Large capacity \textasciitilde order of GBs \\
+       				\qquad - can help contain the working sets of IHS workloads
+    		\item Very High Bandwidth \textasciitilde 500 GB/s (90GB/s DDR4)\\
+    				\qquad - can assist throughput-oriented GPU
+    		\item 20 \% reduction in access latency \\
+    				\qquad - can enhance CPU performance
         	\item Samsung Wide IO, AMD/Hynix HBM, Intel/Micron HMC
         \end{itemize}
     \end{exampleblock}
@@ -63,11 +65,13 @@
     % motivation
     \begin{exampleblock}{Motivation}
         \begin{itemize}
-        	\item Contention for Cache Sets
-       		\item Congestion in Memory controllers
+        	\item Severe CPU performance degradation - 320\% compared to onlyCPU
+       		\item 
        		\item CPU performance reduces due to co-running GPU
        		\item Adding a DRAM\$ naively does not provide sufficient improvements
        		\item GPU remains relatively unaffected by co-running
+
+       		\item Large bandwidths of stacked DRAM should benefit GPU
         \end{itemize}
         
     \end{exampleblock}
@@ -76,20 +80,27 @@
     \begin{figure}
        \includegraphics[scale=2.2]{../graphs/motivation-cpu}
        \includegraphics[scale=2.2]{../graphs/motivation-gpu}
-       \caption{ANTT Improvement of CPU and GPU}
+       \caption{Performance comparison of CPU \& GPU when alone, co-running, with and without D\$}
        \label{fig:motivation}
+    \end{figure}
+    \begin{figure}
+       \includegraphics[scale=2.2]{../graphs/motivation-cpu-cache}
+       \caption{CPU D\$ Access Latency and Hit Rates}
+       \label{fig:motivation-cpu-cache}
     \end{figure}
 % ----------------------------------------------------------------------------    
     % bypass
-    \begin{exampleblock}{Temporal Selective Bypass : \textit{ByE}}
+    \begin{exampleblock}{Temporal Selective Bypass Enabler (\textit{ByE})}
     \begin{itemize}
 	    \item Utilize the idle DRAM bandwidth
 	    \item Bypass CPU requests to clean cache lines and cache misses
 	    \item Achieved using a \textit{Bloom Filter} that tracks dirty lines in cache
-	    \item Overhead: 256KB (4\% of cache capacity)
+	    \item Overhead: 256KB (0.4\% of cache capacity)
     \end{itemize}
-    \end{exampleblock}
-
+    \vspace{\baselineskip}\linebreak
+    \centering
+	\includegraphics[scale=3]{bloom}
+	\end{exampleblock}
 \end{column}
 
 
@@ -97,10 +108,12 @@
 %                                                                     COLUMN 2
 % ----------------------------------------------------------------------------
 \begin{column}{.47\linewidth}
-    % hsa arch
-       \includegraphics[scale=2.2]{hsa-arch}
-    %\end{exampleblock}
 % ----------------------------------------------------------------------------
+
+	% hsa arch
+	\centering
+   \includegraphics[scale=3.7]{hsa-arch}
+   
     % Design
     \begin{exampleblock}{HAShCache Design for IHS Processors}
         \large Large Metadata overhead \\
@@ -121,12 +134,17 @@
     \begin{itemize}
 	    \item Improve GPU hit rates in cache by providing pseudo-associativity
 	    \item Provides guaranteed occupancy for CPU lines in the cache
-	    \item GPU requests placed in an adjoining "\textit{chained}" set in the same row on a set conflict with another GPU line
+	    \item GPU set conflicts are resolved by placing the data in an adjoining "\textit{chained}" set in the same row
+	    \item Chaining done until minimum CPU occupancy threshold is reached
+	    \item Overhead: NIL, uses unused bits in the DRAM rows to track
     \end{itemize}
+    \vspace{\baselineskip}\linebreak
+    \centering
+    \includegraphics[scale=2.2]{chaining}
     \end{exampleblock}
     
-       \includegraphics[scale=2.2]{chaining}
-    
+       
+% ----------------------------------------------------------------------------    
 \end{column}
 
 \end{columns}

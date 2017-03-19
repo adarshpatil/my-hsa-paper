@@ -4,70 +4,11 @@
 In this section, we propose 3 optimizations to improve the performance of IHS processors.
 
 \subsubsection{Heterogeneity aware DRAMCache scheduling}
-DRAM devices operate at a much lower clock rate compared to the cores and caches. Moreover DRAM cells tend to leak and have to be periodically refreshed to preserve the data which further reduces the available time of the device. This imbalance in request arrival rate and service times creates a queuing effect. Hence DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However, in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions at the DRAMCache  leading to requests being rejected for a retry. The CPU requests, which are interleaved with the GPU requests, are few and far spaced and thus suffer large waiting time due to retries. This is compounded by the fact that GPU exploits good row buffer locality and is preferentially scheduled by the DRAMCache, causing increased queue latencies for CPU requests.
-\par \cachename reduces waiting time for CPU requests by selectively rejecting GPU requests when the queues reach critical level which allows CPU requests to occupy these locations instead of being rejected. Further, \cachename prioritizes CPU requests at DRAMCache without starving the GPU requests. \cachename uses a CPU Prioritized FR-FCFS, IHS aware scheduling (\prioname) algorithm \ref{algo-cpupriofrfcfs} to prioritize CPU requests without starving the GPU requests in each of the Read, Write and Fill Queues of the DRAMCache.
-\begin{algorithm}
- \scriptsize
- \KwIn{DRAMCache Queue}
- \KwOut{selected\_req to be scheduled}
- all bool variables are initialize to \textit{false}\\
- %found\_seamless\_gpu\_req = false\\
- %found\_prepped\_req = false\\
- %found\_prepped\_cpu\_req = false \\
- %found\_earliest\_req = false \\
- %found\_earliest\_cpu\_req = false \\
-
-\While{not at end of Queue}{
-	read \textit{rank}, \textit{bank} and \textit{row} of current\_req \\
-	\If{rank.isAvailable} {
-		\uIf{row.isOpen}{
-			\uIf{bank.colAllowedAt <= minColAt}{
-				\tcc{seamless row buffer hit}
-				\uIf{req.isCPU}{
-					selected\_req = current\_req \\
-					break \\
-				}
-				\ElseIf{!found\_seamless\_gpu} {
-					selected\_req = current\_req \\
-					found\_seamless\_gpu = true \\
-				}
-    		} \ElseIf {!found\_hidden\_bank \&\& !found\_prepped\_cpu \&\& !found\_seamless\_gpu} {
-				\tcc{req to prepped row}
-				\uIf{req.isCPU}{
-					selected\_req = current\_req \\
-					found\_prepped\_cpu = true \\
-					found\_prepped = true \\
-				}
-				\ElseIf{!found\_seamless\_gpu} {
-					selected\_req = current\_req \\
-					found\_prepped = true  \\
-				}
-    		}
-		} \ElseIf {!found\_earliest\_cpu \&\& !found\_seamless\_gpu} {
-			\tcc{earliest bank that can be issued hidden cmd}
-			\tcc{executed only once per scheduling decision}
-			found\_hidden\_bank, earliest\_bank = find\_earliest\_bank() \\
-			\If{earliest\_bank == bank \&\& \\ (found\_hidden\_bank || !found\_prepped)} {
-				\uIf{req.isCPU}{
-					selected\_req = current\_req \\
-					found\_earliest\_cpu = true
-					found\_earliest = true
-				}
-				\ElseIf{!found\_seamless\_gpu} {
-					selected\_req = current\_req\\
-					found\_earliest = true \\
-				}
-			}
-			
-		}
-	}
-}
- \caption{\prioname DRAMCache scheduling policy}
- \label{algo-cpupriofrfcfs}
-\end{algorithm}
+DRAM devices operate at a much lower clock rate compared to the cores and caches. Moreover DRAM cells tend to leak and have to be periodically refreshed to preserve the data which further reduces the available time of the device. This imbalance in request arrival rate and service times creates a queuing effect. Hence DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However, in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions at the DRAMCache  leading to requests being rejected for a retry. The CPU requests, which are interleaved with the GPU requests, are few and far spaced and thus suffer large waiting time due to retries. This is compounded by the fact that GPU exploits good row buffer locality and is preferentially scheduled by the DRAMCache, causing increased queue latencies for CPU requests. Increasing queue lengths beyond a certain measure increases scheduling overheads as DRAM schedulers search the queues for the most suitable request to schedule based on a certain heuristics.
+\par \cachename reduces waiting time for CPU requests by selectively rejecting GPU requests when the queues reach critical level which allows CPU requests to occupy these locations instead of being rejected. If no CPU requests arrive within a few GPU rejects, the GPU requests are entered into the queue. Further, \cachename prioritizes CPU requests at DRAMCache without starving the GPU requests. \cachename applies a CPU Prioritized FR-FCFS, IHS aware scheduling (\prioname) algorithm over each of the Read, Write and Fill queues to schedule a request at each bank. \prioname is cognizant of the request heterogeneity and searches the short queues for either a CPU row buffer hit request or a CPU row activation request to schedule before scheduling a GPU request in a FR-FCFS manner.
 
 \subsubsection{Heterogeneity aware Temporal bypass}
-The large sizes of the stacked DRAMCache ensures cache lines have fairly long residency times before being evicted. Hence, many requests are satisfied from the DRAMCache which leads to idling of off-chip DRAM bandwidth.
+The large sizes of the stacked DRAMCache ensures cache lines have fairly long residency times before being evicted. Hence, DRAMCache have fairly large hit rates which leads to idling of off-chip DRAM bandwidth.
 In a IHS architecture, the increased access latencies incurred by a CPU request when the GPU is running make the DRAM an attractive target to direct some of the CPU requests. This leads to improved resource utilization without incurring any increased latencies for CPU requests. 
 \par To hide the latency of miss, our aggressive baseline design already incorporates a hit/miss predictor for CPUs. It initiates an early access to off-chip DRAM when it predicts a miss for the CPU requests in the DRAMCache. These requests are then enqueued in the DRAMCache queues for verification of a miss by a tag match. 
 In most cases when the GPU is running, the parallel memory request return earlier and waits in the MSHRs. Once the tag is matched, in the case of a hit the data from the DRAMCache is forwarded to the requestor. In the case of a miss the data from the memory is forwarded and inserted into the cache. 
@@ -79,6 +20,12 @@ When a dirty line is evicted from the cache \bypassname attempts to remove the e
 On the return path from memory these bypassed requests are not inserted into the cache. This is to ensure that future write requests for the line do not hit in the cache causing reduced bypass efficiency.
 \par We find that a small 2-bit counting bloom filter with 2 hash functions and 512K entries per controller is sufficient to produce reasonable bypass efficiency with a reasonably low mispredictions rate. The total overhead for \bypassname is 256KB for a 64MB DRAMCache which is less than 4\% of the cache size.
 
+\begin{figure}[htb]
+    \centering
+    \bloom
+    \caption{Heterogeneity aware Bypass Enabler (\bypassname)}
+    \label{fig:chain-access}
+\end{figure}
 
 \subsubsection{Heterogeneity aware Spatial Occupancy Control}
 As noted in Section \ref{motivation} GPGPU can trade access latencies for higher hit rates. Providing associativity for GPU requests improves the likelihood of retaining useful lines which can be beneficial for the GPU. Additionally the working sets of CPU applications tend to be limited to few tens of MBs due to the limited amount of MLP that can be exploited by the CPUs. Thus, providing larger than certain partitions of cache leads to no improvements in hit rates and IPC for CPU. Nevertheless, the CPU can gain from some share of the DRAMCache due to reduced latency of access.
@@ -92,6 +39,6 @@ In the rare case that a GPU set is not found within the \textit{c} consecutive l
 \begin{figure*}[!htb]
     \centering
     \chainaccess
-    \caption{HASHCache Row organization and path of an access}
+    \caption{\cachename Row organization (2KB) and path of an access}
     \label{fig:chain-access}
 \end{figure*}

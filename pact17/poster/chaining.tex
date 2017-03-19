@@ -67,7 +67,7 @@
         \draw [->,very thick] (chaintable.east) to [out=0,in=180] ++(0.3,-0.4) to [out=0,in=180] ++(9.65,0) to (mem.south);
 
         % Groups
-        \node [blocksmall, draw=white, above = 1cm of clean, minimum height=1em, minimum width=0.2em, xshift=-0.7em, yshift=0.4em] (lblcpu){\textbf{CPU}};
+        \node [blocksmall, opacity=0,text opacity=1, draw=white, above = 1cm of clean, minimum height=1em, minimum width=0.2em, xshift=-0.7em, yshift=0.4em] (lblcpu){\textbf{CPU}};
         \node[group, dashed, inner sep = 1pt, line width=0.3mm, draw=red, fit=(clean)(pamreturn)] (cpugroup) {};
 
         % Labels
@@ -75,16 +75,16 @@
         \node [plain, below=0.01em of tagmatch, minimum height=1em, minimum width=1em, xshift=-1em] (lbl2) {\scriptsize{\emph{Miss}}};
         \node [plain, below=0.52cm of tagmatch, minimum height=1em, minimum width=1em, xshift=4em] (lbl3) {\scriptsize{\emph{Yes}}};
         \node [plain, below=0.1cm of lbl3, minimum height=1em, minimum width=1em] (lbl4) {\scriptsize{\emph{No}}};
-        \node [plain, above=0.08cm of lbl3, minimum height=1em, minimum width=1em, red] (lb15) {\scriptsize{\emph{Yes}}};
+        \node [plain, above=0.01cm of lbl3, minimum height=1em, minimum width=1em, red] (lb15) {\scriptsize{\emph{Yes}}};
         \node [plain, right=0.01em of chainmatch, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-0.71em] (lbl5) {\scriptsize{\emph{Miss}}};
         \node [plain, above=3em of lbl5, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-2em] (lbl8) {\scriptsize{\emph{Hit}}};
-        \node [plain, right=0.01em of clean, minimum height=1em, minimum width=1em, yshift=-0.5em] (lbl6) {\scriptsize{\emph{No}}};
-        \node [plain, right=2.5em of lbl6, minimum height=1em, minimum width=1em, yshift=1.5em] (lbl7) {\scriptsize{\emph{No}}};
-        \node [plain, above=1.8em of clean, minimum height=1em, minimum width=1em, xshift=-0.1em] (lbl9) {\scriptsize{\emph{Yes}}};
-        \node [plain, above=1.8em of chaintad, minimum height=1em, minimum width=1em, yshift=0.5em, xshift=-1.5em] (lbl10) {\scriptsize{\emph{Yes}}};
+        \node [plain, right=0.01em of clean, minimum height=1em, minimum width=1em, yshift=-0.5em, red] (lbl6) {\scriptsize{\emph{No}}};
+        \node [plain, right=1.7em of lbl6, minimum height=1em, minimum width=1em, yshift=1.5em, red] (lbl7) {\scriptsize{\emph{No}}};
+        \node [plain, above=1.8em of clean, minimum height=1em, minimum width=1em, xshift=-0.1em, red] (lbl9) {\scriptsize{\emph{Yes}}};
+        \node [plain, above=1.8em of chaintad, minimum height=1em, minimum width=1em, yshift=0.5em, xshift=-1.3em, red] (lbl10) {\scriptsize{\emph{Yes}}};
         \node [plain, above=0.3em of lbl10, minimum height=1em, minimum width=1em, xshift=0.1cm] (lbl11) {\scriptsize{\emph{Return Data}}};
-        \node [plain, left=9.7em of lbl11, minimum height=1em, minimum width=1em] (lbl12) {\scriptsize{\emph{Return Data}}};
-        \node [plain,right =2.5em of lbl11, minimum height=1em, minimum width=1em] (lbl13) {\scriptsize{\emph{Return Data}}};
+        \node [plain, left=9.9em of lbl11, minimum height=1em, minimum width=1em] (lbl12) {\scriptsize{\emph{Return Data}}};
+        \node [plain,right =2em of lbl11, minimum height=1em, minimum width=1em] (lbl13) {\scriptsize{\emph{Return Data}}};
 
         % Row Buffer
         \node [rectblock, thick, above = 2.2cm of act, minimum width=6em] (data) {\begin{varwidth}{4cm} \centering{\scriptsize{Data}} \end{varwidth}};

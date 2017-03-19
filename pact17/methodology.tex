@@ -20,7 +20,8 @@ ANTT_{IHS_{CPU}} = \frac{1}{n_{cpu}} \sum_{i=1}^{n_{cpu}} \frac{CPI_i^{CPU_{IHS}
 ANTT_{IHS_{GPU}} = \frac{CPI^{GPU_{IHS}}}{CPI^{GPU}}
 \end{equation}
 where ${CPI_i^{CPU_{IHS}}}$ and $CPI^{GPU_{IHS}}$ denote the cycles per instruction achieved by the $i^{th}$ CPU and the GPU when running in a IHS setup respectively; whereas $CPI_i^{SP}$ and $CPI^{GPU}$ denote the same when $i^{th}$ CPU and the GPU are running standalone respectively. The overall system performance is then given as $ANTT_{IHS} = ANTT_{IHS_{CPU}} + ANTT_{IHS_{GPU}} $
-In addition we also report the harmonic mean of the IPC which is defined as the 
+In addition we also report the harmonic mean of the GPU and CPU IPC which is defined as the 
+$H\textnormal{-}MEAN_{xPU} = \frac{n}{\sum_{i=1}^{n} \frac{1}{IPC_{IHS}}} $
 
 \begin{table}[h!]
   \small

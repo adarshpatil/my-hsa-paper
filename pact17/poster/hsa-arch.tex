@@ -123,7 +123,7 @@
         
         \node [block, draw=red, above = 0.2cm of cpud, minimum height=4em, dashed, minimum width=4em] (vsd) {\begin{varwidth}{4cm} \centering{\footnotesize{Vertically\\ Stacked\\ DRAM\\}} \end{varwidth}};
         
-        \node [blocksmall, draw=white, above = 0.01cm of sid.north east, minimum height=1em, minimum width=0.2em] (lbl3){\footnotesize{On Package region}};
+        \node [blocksmall,opacity=0,text opacity=1, draw=white, above = 0.01cm of sid.north east, minimum height=1em, minimum width=0.2em] (lbl3){\footnotesize{On Package region}};
         
         \node[group, inner sep = 3pt, rounded corners, fit=(sid)(vsd)(sid1)(cpud)(blk1)(lbl3)] (g1) {};
         
@@ -179,10 +179,10 @@
         \node [blocksmall, draw=blue, above = 0.15cm of mm10, minimum height=0.5em, minimum width=0.5em] (mm11){};
        % \node [blocksmall, draw=blue, above = 0.2cm of mm11, minimum height=0.5em, minimum width=0.5em] (mm12){};
         \begin{scope}[on background layer]
-            \node [blocksmall, draw=white, below = 0.3cm of mm7, minimum height=1em, minimum width=1.2em] (lbl1){\scriptsize{DIMMs}};
+            \node [blocksmall, opacity=0,text opacity=1, draw=white, below = 0.3cm of mm7, minimum height=1em, minimum width=1.2em] (lbl1){\scriptsize{DIMMs}};
         \end{scope}
         \begin{scope}[on background layer]
-            \node [blocksmall, draw=white, above = 0.21cm of mm5.north east, minimum height=0.1em, minimum width=0.1em] (lbl2){\begin{varwidth}{4cm} \scriptsize{Off Package\\region}\end{varwidth}};
+            \node [blocksmall, opacity=0,text opacity=1, draw=white, above = 0.21cm of mm5.north east, minimum height=0.1em, minimum width=0.1em] (lbl2){\begin{varwidth}{4cm} \scriptsize{Off Package\\region}\end{varwidth}};
        \end{scope}
         
         % Memory Grouping
@@ -207,10 +207,10 @@
         yshift=0em, rotate=0, minimum height=3em, minimum width=1.3em, line width=0.5mm, fill=white](arrow2){};
         
         % Labels
-        \node [blocksmall, draw=white, minimum height=1em, minimum width=1.2em] at (0.3,4.0)
+        \node [blocksmall, opacity=0,text opacity=1, draw=white, minimum height=1em, minimum width=1.2em] at (0.3,4.0)
         (lbl4){\begin{varwidth}{4cm} \centering{\scriptsize{Through Silicon\\Vias}}\end{varwidth}};
-        \node [blocksmall, draw=white, right=1.2cm of lbl4, minimum height=1em, minimum width=1.2em] (lbl5) {\begin{varwidth}{4cm} \centering{\scriptsize{Silicon\\Interposer}}\end{varwidth}};
-        \node [blocksmall, draw=white, right=0.1cm of lbl5, minimum height=1em, minimum width=1.2em, yshift=0.4em, inner sep=2pt] (lbl6) {\begin{varwidth}{4cm} \centering{\scriptsize{External Memory \\Interface (e.g.DDR)}} \end{varwidth}};
+        \node [blocksmall, opacity=0,text opacity=1, draw=white, right=1.2cm of lbl4, minimum height=1em, minimum width=1.2em] (lbl5) {\begin{varwidth}{4cm} \centering{\scriptsize{Silicon\\Interposer}}\end{varwidth}};
+        \node [blocksmall, opacity=0,text opacity=1, draw=white, right=0.1cm of lbl5, minimum height=1em, minimum width=1.2em, yshift=0.4em, inner sep=2pt] (lbl6) {\begin{varwidth}{4cm} \centering{\scriptsize{External Memory \\Interface (e.g.DDR)}} \end{varwidth}};
         
         % Label Arrows
         \draw[->, very thick] (lbl5.north) to (blk1);
