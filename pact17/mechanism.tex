@@ -11,20 +11,20 @@ DRAM devices operate at a much lower clock rate compared to the cores and caches
 The large sizes of the stacked DRAMCache ensures cache lines have fairly long residency times before being evicted. Hence, DRAMCache have fairly large hit rates which leads to idling of off-chip DRAM bandwidth.
 In a IHS architecture, the increased access latencies incurred by a CPU request when the GPU is running make the DRAM an attractive target to direct some of the CPU requests. This leads to improved resource utilization without incurring any increased latencies for CPU requests. 
 \par To hide the latency of miss, our aggressive baseline design already incorporates a hit/miss predictor for CPUs. It initiates an early access to off-chip DRAM when it predicts a miss for the CPU requests in the DRAMCache. These requests are then enqueued in the DRAMCache queues for verification of a miss by a tag match. 
-In most cases when the GPU is running, the parallel memory request return earlier and waits in the MSHRs. Once the tag is matched, in the case of a hit the data from the DRAMCache is forwarded to the requestor. In the case of a miss the data from the memory is forwarded and inserted into the cache. 
-\par \cachename exploits the opportunity to bypass CPU requests for both misses and clean lines. \cachename uses a Bypass Enabler ( \bypassname). \bypassname is a counting bloom filter that tracks the dirty lines in the cache. A bloom filter provides a space efficient way to determine if a given request can be bypassed. The property of a bloom filter to answer "definitely not in set" allows us to bypass requests correctly i.e. without verifying tags in the set of the DRAMCache. 
+In most cases when the GPU is running, the parallel memory request return earlier and waits in the MSHRs. This is due to reduced queuing latencies at the DRAM compared to the DRAMCache. Once tag is matched in the DRAMCache, in the case of a hit the data from the DRAMCache is forwarded to the requestor. In the case of a miss the data from the memory is forwarded and inserted into the cache. 
+\par \cachename exploits the opportunity to bypass CPU read requests for both misses and clean lines. \cachename uses a Bypass Enabler ( \bypassname). \bypassname is a counting bloom filter that tracks the dirty lines in the cache. A bloom filter provides a space efficient way to determine if a given request can be bypassed. The property of a bloom filter to answer "definitely not in set" allows us to bypass requests correctly i.e. without verifying tags in the set of the DRAMCache. 
 On a write request when a cache line becomes dirty in the cache, the address is hashed into \bypassname and the corresponding counters are incremented. 
-During the execution of the GPU, all CPU read requests lookup into \bypassname. If \bypassname returns negative result the line is surely not dirty in the DRAMCache and the request can safely be bypassed to utilize the off-chip DRAM bandwidth. 
+During the execution of the GPU, all CPU read requests lookup into \bypassname as shown in Figure \ref{bye}. If \bypassname returns a  negative result the address is guaranteed to not be dirty in the DRAMCache. Thus, the request can safely be bypassed to utilize the off-chip DRAM bandwidth. 
 When a dirty line is evicted from the cache \bypassname attempts to remove the entry from the table \footnote{Counting bloom filters use saturating counters. If the counters saturates, removal is not possible}.
 \par However, all write requests and GPU read requests proceed serially after looking into the cache. Writes cannot be bypassed due to the need to back invalidate the cache line, if present in the DRAMCache, which would need a full DRAMCache access.
-On the return path from memory these bypassed requests are not inserted into the cache. This is to ensure that future write requests for the line do not hit in the cache causing reduced bypass efficiency.
-\par We find that a small 2-bit counting bloom filter with 2 hash functions and 512K entries per controller is sufficient to produce reasonable bypass efficiency with a reasonably low mispredictions rate. The total overhead for \bypassname is 256KB for a 64MB DRAMCache which is less than 4\% of the cache size.
+When the request returns from the off-chip DRAM access, these bypassed requests are not inserted into the cache. This is to ensure that future write requests for the line do not hit in the cache causing reduced bypass efficiency.
+\par We find that a small 2-bit counting bloom filter with 2 hash functions and 512K entries per controller is sufficient to produce reasonable bypass efficiency with a reasonably low mis-prediction rate. The total overhead for \bypassname is 256KB for a 64MB DRAMCache which is less than 0.4\% of the cache size.
 
 \begin{figure}[htb]
     \centering
     \bloom
-    \caption{Heterogeneity aware Bypass Enabler (\bypassname)}
-    \label{fig:chain-access}
+    \caption{Working of \cachename with \bypassname }
+    \label{fig:bye}
 \end{figure}
 
 \subsubsection{Heterogeneity aware Spatial Occupancy Control}
@@ -40,20 +40,10 @@ Occupancy control in \cachename is based on the following observations and infer
 Lastly, this scheme is dynamic and allows to adaptively set CPU occupancy threshold \textit{$l_{cpu}$} based on the workloads requirements. This occupancy control mechanism does not incur any additional hardware and uses the unused space in the DRAMCache rows. Once the GPU finishes execution \cachename returns to a direct mapped cache as the lines inserted into the DRAMCache occupy chained location thereby unlinking chains. 
 
 
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow}
 \begin{table}[]
 \centering
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Threshold \\ Reached?\end{tabular}} & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Original\\ Set\end{tabular}} & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Not \\ Chained\end{tabular}} & \multicolumn{2}{c|}{Chained Set}                                                                                         \\ \cline{4-5} 
-                                                                               &                                                                         &                                                                         & CPU                                                        & GPU                                                        \\ \hline
-\multirow{2}{*}{No}                                                             & CPU                                                                     & \begin{tabular}[c]{@{}l@{}}replace\\ original\end{tabular}              & \begin{tabular}[c]{@{}l@{}}replace\\ chained\end{tabular}  & \begin{tabular}[c]{@{}l@{}}replace\\ original\end{tabular} \\ \cline{2-5} 
-                                                                               & GPU                                                                     & \begin{tabular}[c]{@{}l@{}}Chain to\\ nearest \\ CPU set\end{tabular}   & \begin{tabular}[c]{@{}l@{}}replace\\ chained\end{tabular}  & \begin{tabular}[c]{@{}l@{}}replace\\ original\end{tabular} \\ \hline
-\multirow{2}{*}{Yes}                                                             & CPU                                                                     & \begin{tabular}[c]{@{}l@{}}Chain to\\ nearest\\ GPU Set\end{tabular}    & \begin{tabular}[c]{@{}l@{}}do not\\ insert\end{tabular}    & \begin{tabular}[c]{@{}l@{}}replace\\ chained\end{tabular}  \\ \cline{2-5} 
-                                                                               & GPU                                                                     & \begin{tabular}[c]{@{}l@{}}replace\\ original\end{tabular}              & \begin{tabular}[c]{@{}l@{}}replace\\ original\end{tabular} & \begin{tabular}[c]{@{}l@{}}replace\\ original\end{tabular} \\ \hline
-\end{tabular}
-
+\small
+\input{chaining-table}
 \caption{GPU Fill request insertion policy \\ Threshold reached is calculated as $O_{gpu}>=(1-l_{cpu})$ \\ where $O_{gpu}$ - current GPU ocupancy in DRAMCache}
 \label{chaining-replacement}
 \end{table}

@@ -48,7 +48,7 @@
     	\begin{enumerate}[i]
 	    	\item Avoids explicit management of data (memcpy, cudamalloc etc.)
 	    	\item Allows pointer sharing
-	    	\item GPU data set sizes need not be constrained by memory size
+	    	\item GPU application data set sizes need not be constrained by memory size
 	    	\item Enables HLLs to exploit fine grained parallelism synergistically with CPUs
     	\end{enumerate}
 		\item AMD APUs, Intel Iris, NVIDIA Denver
@@ -70,7 +70,6 @@
     \end{exampleblock}
 % ----------------------------------------------------------------------------        
     % motivation
-    \definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
     \begin{exampleblock}{Motivation}
     \centering 
     \underline{Performance}
@@ -85,8 +84,8 @@
       		\qquad - GPU still performs  15\% better than onlyGPU \\
     \end{itemize}
     \begin{figure}
-       \includegraphics[scale=2.2]{../graphs/motivation-cpu}
-       \includegraphics[scale=2.2]{../graphs/motivation-gpu}
+       \includegraphics[scale=2.1]{../graphs/motivation-cpu}
+       \includegraphics[scale=2.1]{../graphs/motivation-gpu}
        \caption{Performance comparison of CPU \& GPU - alone, co-running, with and without DRAM\$}
        \label{fig:motivation}
     \end{figure}
@@ -94,30 +93,19 @@
     \underline{Causes for sub-optimality of DRAM\$}
     \begin{itemize}
    		\item Increased DRAM\$ access times for CPU despite comparable hit rates
-        \item Set contention between CPU and GPU does not allow GPU to occupy 
+        \item Set contention does not allow GPU to occupy enough cache to use the bandwidth benefit
     \end{itemize}
     
     \begin{figure}
-       \includegraphics[scale=2.2]{../graphs/motivation-cpu-cache}
-       \caption{CPU D\$ Access Latency and Hit Rates}
+       \includegraphics[scale=2.05]{../graphs/motivation-cpu-cache}
+       \includegraphics[scale=2.05]{../graphs/motivation-gpu-cache}
+       \caption{(a)CPU D\$ Access Latency and Hit Rates (b)GPU Hit rate with 2-way assoc cache}
        \label{fig:motivation-cpu-cache}
     \end{figure}  
-        
+
     \end{exampleblock}
      
-% ----------------------------------------------------------------------------    
-    % Priority
-    \begin{exampleblock}{ \circled{1} Hetereogenity Aware DRAM\$ Scheduling: PrIS}
-    \begin{itemize}
-    	\item \emph{OBJECTIVE:} Reduce large access latencies for CPU requests at DRAM\$
-    	\item Large number of GPU requests $\implies$ queues to fill up rapidly $\implies$ CPU request rejected
-    	\item GPU requests exploit good row buffer locality $\implies$ preferentially scheduled $\implies$ large queuing latency for CPU requests
-    	\item Achieved using \\
-    	\qquad - Queue entry reservation for CPU requests when queues reach critical levels \\
-    	\qquad - CPU Prioritized FR-FCFS, IHS-aware scheduling algorithm
-    \end{itemize} 
-	\end{exampleblock}
-	
+
 %-----------------------------------------------------------------------------
     % bypass
     \begin{exampleblock}{\circled{3} Temporal Selective Bypass Enabler : \textit{ByE}}
@@ -126,19 +114,22 @@
     	    \begin{itemize}
     	    	\item \emph{OBJECTIVE:} Utilize the idle DRAM bandwidth
     	    	\item Bypass CPU requests to clean cache lines and cache misses
-    	    	\item Achieved using a \textit{Bloom Filter} that tracks dirty lines in cache
+    	    	\item \emph{Achieved} using a \textit{Counting Bloom Filter} that tracks dirty lines in cache
     	    	\item Overhead: 256KB (0.4\% of cache capacity)
+			    \item Adjoining Fig shows working of HAShCache + ByE
     	    \end{itemize}     			
     		\end{column}
     		\begin{column}{0.4\linewidth}
-    	        \centering
-    	    	\includegraphics[scale=1.8]{bloom} 
+    			\begin{figure}
+					\centering
+    			    \includegraphics[scale=1.9]{bloom}
+    			\end{figure}
     	    \end{column}
     	\end{columns}
 	\end{exampleblock}
 	
 %-----------------------------------------------------------------------------
-
+    % experimental setup
 	\begin{exampleblock} {Experimental Setup}
 	{
 	\footnotesize
@@ -183,23 +174,52 @@
         \quad RBH vs BLP addressing scheme \\
 	        \quad \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
         \quad Effect of Interference \\
-        	\quad \qquad- DRAM\$ must try to regain CPU performance lost due to interference\\
+        	\quad \qquad- DRAM\$ must be designed to try to regain CPU performance lost due to interference\\
     \end{exampleblock}
-    
+
+% ----------------------------------------------------------------------------    
+    % Priority
+    \begin{exampleblock}{ \circled{1} Hetereogenity Aware DRAM\$ Scheduling: PrIS}
+    \begin{itemize}
+    	\item \emph{OBJECTIVE:} Reduce large access latencies for CPU requests at DRAM\$
+    	\item Large number of GPU requests $\implies$ queues to fill up rapidly $\implies$ CPU request rejected
+    	\item GPU requests have good row buffer locality $\implies$ preferentially scheduled $\implies$ large queuing latency for CPU requests
+    	\item \emph{Achieved} using \\
+    	\qquad - Queue entry reservation for CPU requests when queues reach critical levels \\
+    	\qquad - CPU Prioritized FR-FCFS, IHS-aware scheduling algorithm
+    \end{itemize} 
+	\end{exampleblock}
+	    
 % ----------------------------------------------------------------------------    
     % chaining
     \begin{exampleblock}{\circled{2} Spatial Occupany Control : \textit{Chaining}}
-    \begin{itemize}
-	    \item \emph{OBJECTIVE:} Allow GPU to better use DRAM\$ bandwidth
-	    \item Achieved by providing pseudo-associativity for GPU, thus improving GPU hit rate
-	    \item Provides guaranteed minimum occupancy for CPU lines in the cache
-	    \item GPU set conflicts resolved by evicting an adjoining "\textit{chained}" set belonging to the CPU in the same row
-	    \item Chaining done until minimum CPU occupancy threshold is reached
-	    \item Overhead: \emph{NIL}, uses unused bits in the DRAM rows to track
-    \end{itemize}
-    \vspace{\baselineskip}
+    \begin{columns} [T]
+    \begin{column}{0.6\linewidth}    
+    	\begin{itemize}
+	    	\item \emph{OBJECTIVE:} Allow GPU to better use DRAM\$ bandwidth
+		    \item \emph{Achieved} by providing pseudo-associativity for GPU, thus improving GPU hit rate
+		    \item Provides guaranteed minimum occupancy for CPU lines in the cache
+	    	\item GPU set conflicts resolved by evicting an adjoining "\textit{chained}" set belonging to the CPU in same row
+		    \item Chaining done until minimum CPU occupancy threshold is reached
+		    \item Overhead: NIL, uses unused bits in DRAM\$ rows
+	    \end{itemize}
+	\end{column}
+	\begin{column}{0.4\linewidth}
+		\scriptsize
+		- CPU fill requests always inserted in original set\\
+		- GPU fill request inserted as per table below\\
+		\begin{table}[]
+		\centering
+			\input{../chaining-table}
+		\end{table}
+	\end{column}
+	\end{columns}
+	\vspace{\baselineskip}
     \centering
-    \includegraphics[scale=2.2]{chaining}
+    \begin{figure}
+    	\includegraphics[scale=2.2]{chaining}
+    	\caption{HAShCache Row Organization and Access Path of a request}
+    \end{figure}
     \end{exampleblock}
     
        
@@ -208,6 +228,29 @@
 
 \end{columns}
 
+\begin{columns}[t]
+\begin{column}{.97\linewidth}
+\begin{exampleblock}{Results \& Conclusion}
+	\begin{columns}[t]
+		\begin{column}{.32\linewidth}
+		    \begin{figure}
+		    	\includegraphics[scale=3]{../graphs/results-cpu}
+		    \end{figure}
+		\end{column}
+		\begin{column}{.32\linewidth}
+		    \begin{figure}
+		    	\includegraphics[scale=3]{../graphs/results-gpu}
+		    \end{figure}
+		\end{column}		
+		\begin{column}{.32\linewidth}
+			asfjasdkjf
+		\end{column}				
+	\end{columns}
+
+
+\end{exampleblock}
+\end{column}
+\end{columns}
 \end{frame}
 
 \end{document}

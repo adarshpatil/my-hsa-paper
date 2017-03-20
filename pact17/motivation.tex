@@ -37,6 +37,12 @@ for our workloads.
 We observe the that the introduction of DRAMCache improves the performance of GPU application by 27\% and 15\% with and without co-running CPU applications with respect to its performance when running alone
 Thus,  co-running with CPU applications has only a minor impact on the GPU performance (with or without the DRAM Cache). 
 Some Cache sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads that do not significantly reuse cached data show no performance benefits.
+\begin{figure}[htbp]
+   \includegraphics[scale=1.0]{graphs/motivation-gpu-cache}
+   \caption{GPU Hit rate for 2-way associative cache}
+   \label{fig:motivation-gpu-cache}
+\end{figure}
+Providing associativity can help improve performance of the GPU applications by allowing the GPU request to better utilize the large  DRAMCache bandwidth and avoiding access the relatively constricted off-chip DRAM bus. Figure \ref{fig:motivation-gpu-cache} plots the DRAMCache hit rates for our direct mapped DRAMCache and also the hit rates for a 128MB 2 way associative and a 64MB 2-way associative cache. The hit rate improves by about 1\% percentage for a 2-way associative 64MB cache and by 3.5\% for a 2 way associative cache with the same number of sets. Despite only modest improvements in hit rates, GPU applications have large number of requests and hence will see a large reduction in number of requests that miss in the cache. Thus, providing some pseudo associativity can improve DRAMCache bandwidth utilization.
 %% one sentence on why in some of the workloads there is no improvement in ANTT. 
 %% If required you can present the GPU hit rate and average hit time in DRAM Cache for GPU appln. 
 
