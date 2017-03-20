@@ -47,7 +47,7 @@
         \node [decisionblock, thick, right = 2.1cm of tagmatch, yshift=1.5em] (pamreturn) {\begin{varwidth}{4cm} \centering{\scriptsize{PAM \\return?}} \end{varwidth}};
         \node [textblock, thick, right = 1.5cm of pamreturn.south, minimum width=4em, yshift=-1em] (chaintad) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\TAD}} \end{varwidth}};
         \node [decisionblock, thick, right = 0.5cm of chaintad] (chainmatch) {\begin{varwidth}{4cm} \centering{\scriptsize{Tag\\Match}} \end{varwidth}};
-        \node [textblock, thick, right = 0.5cm of chainmatch, minimum height=7em, yshift=1.5em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Memory}} \end{varwidth}};
+        \node [textblock, thick, right = 0.5cm of chainmatch, minimum height=7em, yshift=1.5em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Off-chip\\DRAM\\Memory}} \end{varwidth}};
 
         % Arrows
         \draw [->,very thick] (act) -- (burst);

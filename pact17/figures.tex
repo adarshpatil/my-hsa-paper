@@ -36,7 +36,7 @@
         \node [textblock, thick, minimum height=5em] (bye){\begin{varwidth}{4cm} \centering{\footnotesize{B\\Y\\E\\}} \end{varwidth}};
         \node [textblock, thick, minimum width=6em, minimum height=4em, right = 1.5cm of bye, yshift=2.2cm] (dramcache){\begin{varwidth}{4cm} \centering{\footnotesize{DRAM\\Cache}} \end{varwidth}};
         \node [textblock, thick, left = 0.01cm of dramcache, xshift=1.5em] (pred){\begin{varwidth}{4cm} \centering{\tiny{P\\R\\E\\D\\}} \end{varwidth}};
-        \node [textblock, thick, minimum width=4em, right = 5cm of bye, minimum height=7em, yshift=-0.5cm] (dram){\begin{varwidth}{4cm} \centering{\footnotesize{Off Chip\\DRAM}} \end{varwidth}};
+        \node [textblock, thick, minimum width=4em, right = 5cm of bye, minimum height=7em, yshift=-0.5cm] (dram){\begin{varwidth}{4cm} \centering{\footnotesize{Off-Chip\\DRAM\\Memory}} \end{varwidth}};
 
         % Arrows
         \draw [<-,very thick] (bye.west) to [out=180,in=0] ++(-0.6,0);
@@ -77,7 +77,7 @@
         \node [decisionblock, thick, right = 2.1cm of tagmatch, yshift=1.5em] (pamreturn) {\begin{varwidth}{4cm} \centering{\scriptsize{PAM \\return?}} \end{varwidth}};
         \node [textblock, thick, right = 1.5cm of pamreturn.south, minimum width=4em, yshift=-1em] (chaintad) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\TAD}} \end{varwidth}};
         \node [decisionblock, thick, right = 0.5cm of chaintad] (chainmatch) {\begin{varwidth}{4cm} \centering{\scriptsize{Tag\\Match}} \end{varwidth}};
-        \node [textblock, thick, right = 0.5cm of chainmatch, minimum height=7em, yshift=1.5em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Memory}} \end{varwidth}};
+        \node [textblock, thick, right = 0.5cm of chainmatch, minimum height=7em, yshift=1.5em] (mem) {\begin{varwidth}{4cm} \centering{\footnotesize{Off-chip\\DRAM\\Memory}} \end{varwidth}};
 
         % Arrows
         \draw [->,very thick] (act) -- (burst);

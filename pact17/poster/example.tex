@@ -5,11 +5,14 @@
 \usetheme{zurichposter}
 \usepackage{graphicx}
 \usepackage{varwidth}
+\usepackage{multirow}
 % references
 %\usepackage[bibstyle=authoryear, citestyle=authoryear-comp,%
 %hyperref=auto]{biblatex}
 %\bibliography{references}
 
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 %title
 
 % document properties
@@ -27,7 +30,9 @@
 \begin{frame}[t,fragile]{}
 \begin{columns}[t]
 
-\footnotesize
+% gloablly set small font
+\small
+
 %-----------------------------------------------------------------------------
 %                                                                     COLUMN 1
 % ----------------------------------------------------------------------------
@@ -68,28 +73,28 @@
     \definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
     \begin{exampleblock}{Motivation}
     \centering 
-    {\small \underline{Performance}}
+    \underline{Performance}
 
     \begin{itemize}
-       	\item CPU and GPU both gain from addition of DRAM\$ when running alone
+       	\item When running alone CPU and GPU both gain from addition of DRAM\$
       	\item Effect of Co-running \\
       		\qquad - CPU performance severely degraded, drops 320\% from onlyCPU\\
       		\qquad - GPU remain relatively unaffected, drops 7\% from onlyGPU
       	\item Naive addition of DRAM\$ over IHS \\
-      		\qquad - CPU recovers 42\% of the lost performance over onlyCPU \\
+      		\qquad - CPU recovers only 42\% of the lost performance over onlyCPU \\
       		\qquad - GPU still performs  15\% better than onlyGPU \\
     \end{itemize}
     \begin{figure}
        \includegraphics[scale=2.2]{../graphs/motivation-cpu}
        \includegraphics[scale=2.2]{../graphs/motivation-gpu}
-       \caption{Performance comparison of CPU \& GPU when-alone, co-running, with and without D\$}
+       \caption{Performance comparison of CPU \& GPU - alone, co-running, with and without DRAM\$}
        \label{fig:motivation}
     \end{figure}
-    \normalsize \underline{Causes for sub-optimality of DRAM\$}
-    \normalsize
+    
+    \underline{Causes for sub-optimality of DRAM\$}
     \begin{itemize}
-   		\item Increased DRAM\$ access times despite comparable hit rates
-        \item Set contention between CPU and GPU
+   		\item Increased DRAM\$ access times for CPU despite comparable hit rates
+        \item Set contention between CPU and GPU does not allow GPU to occupy 
     \end{itemize}
     
     \begin{figure}
@@ -100,22 +105,56 @@
         
     \end{exampleblock}
      
-    
-    
-
 % ----------------------------------------------------------------------------    
-    % bypass
-    \begin{exampleblock}{Temporal Selective Bypass Enabler (\textit{ByE})}
+    % Priority
+    \begin{exampleblock}{ \circled{1} Hetereogenity Aware DRAM\$ Scheduling: PrIS}
     \begin{itemize}
-	    \item Utilize the idle DRAM bandwidth
-	    \item Bypass CPU requests to clean cache lines and cache misses
-	    \item Achieved using a \textit{Bloom Filter} that tracks dirty lines in cache
-	    \item Overhead: 256KB (0.4\% of cache capacity)
-    \end{itemize}
-    \vspace{\baselineskip}
-    \centering
-	\includegraphics[scale=3]{bloom}
+    	\item \emph{OBJECTIVE:} Reduce large access latencies for CPU requests at DRAM\$
+    	\item Large number of GPU requests $\implies$ queues to fill up rapidly $\implies$ CPU request rejected
+    	\item GPU requests exploit good row buffer locality $\implies$ preferentially scheduled $\implies$ large queuing latency for CPU requests
+    	\item Achieved using \\
+    	\qquad - Queue entry reservation for CPU requests when queues reach critical levels \\
+    	\qquad - CPU Prioritized FR-FCFS, IHS-aware scheduling algorithm
+    \end{itemize} 
 	\end{exampleblock}
+	
+%-----------------------------------------------------------------------------
+    % bypass
+    \begin{exampleblock}{\circled{3} Temporal Selective Bypass Enabler : \textit{ByE}}
+    	\begin{columns} [T]
+    		\begin{column}{0.6\linewidth}
+    	    \begin{itemize}
+    	    	\item \emph{OBJECTIVE:} Utilize the idle DRAM bandwidth
+    	    	\item Bypass CPU requests to clean cache lines and cache misses
+    	    	\item Achieved using a \textit{Bloom Filter} that tracks dirty lines in cache
+    	    	\item Overhead: 256KB (0.4\% of cache capacity)
+    	    \end{itemize}     			
+    		\end{column}
+    		\begin{column}{0.4\linewidth}
+    	        \centering
+    	    	\includegraphics[scale=1.8]{bloom} 
+    	    \end{column}
+    	\end{columns}
+	\end{exampleblock}
+	
+%-----------------------------------------------------------------------------
+
+	\begin{exampleblock} {Experimental Setup}
+	{
+	\footnotesize
+	\begin{itemize}
+		\item Cycle accurate, modified gem5-gpu simulator
+		\item 5 OoO x86-64 cores @2.5GHz running multi-programmed SPEC 2006 workload
+		\item Private 32KB I/D L1, 1MB shared split L2 - all coherent
+		\item 8 Fermi-like SMs @700MHz running mem-copy elided Rodinia workload
+		\item 64KB private L1 non-coherent, 512KB Coherent L2 cache
+		\item Stacked DRAM (HMC\_2500\_x64) - 64MB, 2 vault, 8 layers/vault, peak B/W 40GB/s
+		\item off-chip DRAM (DDR3\_1600\_x64) - 8GB, 2 channel, 1 rank/channel, peak B/W 25GB/s
+	\end{itemize}
+	}
+	\end{exampleblock}	
+%-----------------------------------------------------------------------------
+	
 \end{column}
 
 
@@ -126,33 +165,37 @@
 % ----------------------------------------------------------------------------
 
 	% hsa arch
-	\centering
-   \includegraphics[scale=3]{hsa-arch}
+	\begin{figure}
+		\centering
+    	\includegraphics[scale=3]{hsa-arch} \\
+    	\caption{Architecture of an Integrated Heterogeneous System with a stacked DRAM}
+    \end{figure}
 % ----------------------------------------------------------------------------   
 
     % Design
     \begin{exampleblock}{HAShCache Design for IHS Processors}
-        {\small Large Metadata overhead} \\
-        	\qquad- Tags-in-DRAM, 128 Byte TAD Units \\
-        {\small Set Associativity} \\
-        	\qquad- Direct Mapped to avoid multiple tag lookups \\
-        {\small Miss Penalty} \\
-        	\qquad- Initiate early access to memory for CPU using a miss predictor \\
-        {\small RBH vs BLP addressing scheme} \\
-	        \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
-        {\small Effect of Interference} \\
-        	\qquad- DRAM\$ must try to regain CPU performance lost due to interference\\
+        \quad Large Metadata overhead \\
+        	\quad \qquad- Tags-in-DRAM, 128 Byte TAD Units \\
+        \quad Set Associativity \\
+        	\quad \qquad- Direct Mapped to avoid multiple tag lookups \\
+        \quad Miss Penalty \\
+        	\quad \qquad- Initiate early access to memory for CPU using a miss predictor \\
+        \quad RBH vs BLP addressing scheme \\
+	        \quad \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
+        \quad Effect of Interference \\
+        	\quad \qquad- DRAM\$ must try to regain CPU performance lost due to interference\\
     \end{exampleblock}
     
 % ----------------------------------------------------------------------------    
     % chaining
-    \begin{exampleblock}{Spatial Occupany Control : \textit{Chaining}}
+    \begin{exampleblock}{\circled{2} Spatial Occupany Control : \textit{Chaining}}
     \begin{itemize}
-	    \item Improve GPU hit rates in cache by providing pseudo-associativity
-	    \item Provides guaranteed occupancy for CPU lines in the cache
-	    \item GPU set conflicts are resolved by placing the data in an adjoining "\textit{chained}" set in the same row
+	    \item \emph{OBJECTIVE:} Allow GPU to better use DRAM\$ bandwidth
+	    \item Achieved by providing pseudo-associativity for GPU, thus improving GPU hit rate
+	    \item Provides guaranteed minimum occupancy for CPU lines in the cache
+	    \item GPU set conflicts resolved by evicting an adjoining "\textit{chained}" set belonging to the CPU in the same row
 	    \item Chaining done until minimum CPU occupancy threshold is reached
-	    \item Overhead: NIL, uses unused bits in the DRAM rows to track
+	    \item Overhead: \emph{NIL}, uses unused bits in the DRAM rows to track
     \end{itemize}
     \vspace{\baselineskip}
     \centering
