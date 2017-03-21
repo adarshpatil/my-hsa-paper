@@ -28,6 +28,7 @@
 \input{../figures}
 
 \begin{frame}[t,fragile]{}
+\vspace{-1em}
 \begin{columns}[t]
 
 % gloablly set small font
@@ -40,6 +41,7 @@
 
 	% intro HSA
     \begin{exampleblock}{Integrated Heterogenous Systems (IHS) Architecture}
+    \vspace{-0.2em}
     \begin{itemize}
     	\item \textit{Throughput-oriented} GPGPU SMs placed alongside \textit{Latency-oriented} CPU cores on-chip
    		\item Shared Physical/Virtual Address Space and a Unified Memory Hierarchy 
@@ -57,6 +59,7 @@
 % ----------------------------------------------------------------------------    
     % intro D$
     \begin{exampleblock}{Vertically Stacked DRAM}
+    \vspace{-0.2em}
     \begin{itemize}
         	\item DRAM Layers stacked using 2.5D interposer or 3D TSV
        		\item Large capacity \textasciitilde order of GBs \\
@@ -71,6 +74,7 @@
 % ----------------------------------------------------------------------------        
     % motivation
     \begin{exampleblock}{Motivation}
+    \vspace{-0.2em}
     \centering 
     \underline{Performance}
 
@@ -107,28 +111,24 @@
      
 
 %-----------------------------------------------------------------------------
-    % bypass
-    \begin{exampleblock}{\circled{3} Temporal Selective Bypass Enabler : \textit{ByE}}
-    	\begin{columns} [T]
-    		\begin{column}{0.6\linewidth}
-    	    \begin{itemize}
-    	    	\item \emph{OBJECTIVE:} Utilize the idle DRAM bandwidth
-    	    	\item Bypass CPU requests to clean cache lines and cache misses
-    	    	\item \emph{Achieved} using a \textit{Counting Bloom Filter} that tracks dirty lines in cache
-    	    	\item Overhead: 256KB (0.4\% of cache capacity)
-			    \item Adjoining Fig shows working of HAShCache + ByE
-    	    \end{itemize}     			
-    		\end{column}
-    		\begin{column}{0.4\linewidth}
-    			\begin{figure}
-					\centering
-    			    \includegraphics[scale=1.9]{bloom}
-    			\end{figure}
-    	    \end{column}
-    	\end{columns}
-	\end{exampleblock}
+
+    % Design
+    \begin{exampleblock}{HAShCache Design for IHS Processors}
+    \vspace{-0.2em}
+        \quad Large Metadata overhead \\
+        	\quad \qquad- Tags-in-DRAM, 128 Byte TAD Units \\
+        \quad Set Associativity \\
+        	\quad \qquad- Direct Mapped to avoid multiple tag lookups \\
+        \quad Miss Penalty \\
+        	\quad \qquad- Initiate early access to memory for CPU using a miss predictor \\
+        \quad RBH vs BLP addressing scheme \\
+	        \quad \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
+        \quad Effect of Interference \\
+        	\quad \qquad- DRAM\$ must be designed to try to regain CPU performance lost due to interference\\
+    \end{exampleblock}
 	
 %-----------------------------------------------------------------------------
+\iffalse
     % experimental setup
 	\begin{exampleblock} {Experimental Setup}
 	{
@@ -144,11 +144,20 @@
 	\end{itemize}
 	}
 	\end{exampleblock}	
+\fi	
 %-----------------------------------------------------------------------------
 	
+\begin{exampleblock}{Results}
+                \begin{figure}
+			    	\includegraphics[scale=2.7]{../graphs/results-cpu}
+			    \end{figure}
+			    \begin{figure}
+			    	\includegraphics[scale=2.7]{../graphs/results-gpu}
+			    \end{figure}        			
+
+\end{exampleblock}
+
 \end{column}
-
-
 %-----------------------------------------------------------------------------
 %                                                                     COLUMN 2
 % ----------------------------------------------------------------------------
@@ -163,26 +172,11 @@
     \end{figure}
 % ----------------------------------------------------------------------------   
 
-    % Design
-    \begin{exampleblock}{HAShCache Design for IHS Processors}
-        \quad Large Metadata overhead \\
-        	\quad \qquad- Tags-in-DRAM, 128 Byte TAD Units \\
-        \quad Set Associativity \\
-        	\quad \qquad- Direct Mapped to avoid multiple tag lookups \\
-        \quad Miss Penalty \\
-        	\quad \qquad- Initiate early access to memory for CPU using a miss predictor \\
-        \quad RBH vs BLP addressing scheme \\
-	        \quad \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
-        \quad Effect of Interference \\
-        	\quad \qquad- DRAM\$ must be designed to try to regain CPU performance lost due to interference\\
-    \end{exampleblock}
-
-% ----------------------------------------------------------------------------    
     % Priority
     \begin{exampleblock}{ \circled{1} Hetereogenity Aware DRAM\$ Scheduling: PrIS}
     \begin{itemize}
     	\item \emph{OBJECTIVE:} Reduce large access latencies for CPU requests at DRAM\$
-    	\item Large number of GPU requests $\implies$ queues to fill up rapidly $\implies$ CPU request rejected
+    	\item Large number of GPU requests $\implies$ queues fill up rapidly $\implies$ CPU request rejected
     	\item GPU requests have good row buffer locality $\implies$ preferentially scheduled $\implies$ large queuing latency for CPU requests
     	\item \emph{Achieved} using \\
     	\qquad - Queue entry reservation for CPU requests when queues reach critical levels \\
@@ -222,12 +216,42 @@
     \end{figure}
     \end{exampleblock}
     
-       
+% ----------------------------------------------------------------------------        
+    % bypass
+    \begin{exampleblock}{\circled{3} Temporal Selective Bypass Enabler : \textit{ByE}}
+    	\begin{columns} [T]
+    		\begin{column}{0.6\linewidth}
+    	    \begin{itemize}
+    	    	\item \emph{OBJECTIVE:} Utilize the idle DRAM bandwidth
+    	    	\item Bypass CPU requests to clean cache lines and cache misses
+    	    	\item \emph{Achieved} using a \textit{Counting Bloom Filter} that tracks dirty lines in cache
+    	    	\item Overhead: 256KB (0.4\% of cache capacity)
+			    \item Adjoining Fig shows working of HAShCache + ByE
+    	    \end{itemize}     			
+    		\end{column}
+    		\begin{column}{0.4\linewidth}
+    			\begin{figure}
+					\centering
+    			    \includegraphics[scale=1.9]{bloom}
+    			\end{figure}
+    	    \end{column}
+    	\end{columns}
+	\end{exampleblock}       
 % ----------------------------------------------------------------------------    
+\begin{exampleblock}{Conclusion}
+\vspace{-0.1em}
+\begin{itemize}
+\item HAShCache is heterogeneity aware and improves system throughput and achieves better resource utilization
+\item Spatial Occupancy Control improves performance of CPU by 44\% by trading off just 6\% of GPU performance
+\item Temporal Bypass improves performance of CPU by 48\% while sacrificing just 3\% of GPU performance 
+\item Overall, addition of a stacked DRAM\$ improves CPU and GPU performance by 211\% and 20\% over a IHS baseline system with no stacked DRAM
+\end{itemize}
+
+\end{exampleblock}
 \end{column}
 
 \end{columns}
-
+\iffalse
 \begin{columns}[t]
 \begin{column}{.97\linewidth}
 \begin{exampleblock}{Results \& Conclusion}
@@ -247,10 +271,10 @@
 		\end{column}				
 	\end{columns}
 
-
 \end{exampleblock}
 \end{column}
 \end{columns}
+\fi
 \end{frame}
 
 \end{document}
