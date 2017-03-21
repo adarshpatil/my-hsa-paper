@@ -28,6 +28,12 @@ When the request returns from the off-chip DRAM access, these bypassed requests 
 \end{figure}
 
 \subsubsection{Heterogeneity aware Spatial Occupancy Control}
+\begin{figure*}[!htb]
+    \centering
+    \chainaccess
+    \caption{\cachename (a)Row organization (2KB) (b) Access path}
+    \label{fig:chain-access}
+\end{figure*}
 Occupancy control in \cachename is based on the following observations and inferences: (i) for the GPU to be able to better utilize the DRAMCache bandwidth, the hit rates for GPU workloads should be large enough that the GPU does not have to frequently use the relatively constricted off-chip DRAM buses. (ii) As noted in Section \ref{motivation} GPUs can trade access latencies for higher hit rates. Further, providing associativity for GPU requests improves the likelihood of retaining useful lines which can be beneficial for the GPU. (iii) the working sets of CPU applications tend to be limited to few tens of MBs due to the limited amount of MLP that can be exploited by the CPUs. Thus, providing larger than certain partitions of cache leads to no improvements in hit rates and IPC for CPU. Nevertheless, the CPU can still gain from some share of the DRAMCache due to reduced latency of access. (iv) Given that GPU can exploit much higher MLP using several thousands of threads, the relatively small GPU L2 cache provides limited filtering of traffic and has significantly high miss rates while on the other hand CPUs have sufficiently sized L2 cache sizes to be able to retain blocks longer before re-requesting a block.
 \par To accommodate these goals \cachename uses a technique inspired by the collision resolution mechanism of a hash map. \cachename modifies the replacement policy in the DRAMCache depending on the requesting core type. For a GPU request that is evicting another GPU line, \cachename places the request in a location other than its own. \cachename looks for a line belonging to a CPU to replace within the same row in the next consecutive 3 locations. A set is defined as belonging to a core that last requested the line resident there. We refer to this inserted location as the chained set and the actual set the request mapped to as the original set. The location of the chained set is then represented as a 2-bit offset. This type of set chaining is done until the occupancy of the CPU lines in the row reaches a low threshold \textit{$l_{cpu}$}. Once this low threshold occupancy is reached, GPU lines are not allowed to evict a CPU line. In such a scenario, a GPU request contending to evict a CPU line in a set, is forced to chain to another set belonging to a GPU and evicting that instead, thus maintaining the \textit{$l_{cpu}$} occupancy for CPU. In the rare case that a GPU set is not found within the \textit{c} consecutive locations the request is not inserted into the cache.
 
@@ -47,11 +53,3 @@ Lastly, this scheme is dynamic and allows to adaptively set CPU occupancy thresh
 \caption{GPU Fill request insertion policy \\ Threshold reached is calculated as $O_{gpu}>=(1-l_{cpu})$ \\ where $O_{gpu}$ - current GPU ocupancy in DRAMCache}
 \label{chaining-replacement}
 \end{table}
-
-
-\begin{figure*}[!htb]
-    \centering
-    \chainaccess
-    \caption{\cachename (a)Row organization (2KB) (b) Access path}
-    \label{fig:chain-access}
-\end{figure*}

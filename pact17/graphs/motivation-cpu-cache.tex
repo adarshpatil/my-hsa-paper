@@ -50,8 +50,8 @@
         \addplot [bar1] table[x=X,y=onlyCPUD] {\datatable};\label{onlycpumemacc}
         \addplot [bar2] table[x=X,y=CPU+GPUD] {\datatable};\label{cpu+gpumemacc}
 
-        \addlegendentry{\footnotesize{onlyCPU D$\$$}}
-        \addlegendentry{\footnotesize{CPU+GPU D$\$$}}
+        \addlegendentry{\footnotesize{CPU alone}}
+        \addlegendentry{\footnotesize{co-run}}
 
     \end{axis}
     
@@ -86,8 +86,8 @@
    
 %        \addlegendentry{\footnotesize{Hit Rate CPU}}
 %        \addlegendentry{\footnotesize{Hit Rate CPU\+GPU}}
-   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate onlyCPU D$\$$}}
-   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate CPU+GPU D$\$$}}
+   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate CPU alone}}
+   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate co-run}}
   
    \end{axis}
    

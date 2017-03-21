@@ -37,7 +37,7 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.3, -0.2)},
+             at={(0.2, -0.2)},
              font=\tiny,
              anchor=north west,
              legend columns=4,
@@ -55,10 +55,10 @@
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
         \addplot [bar4] table[x=X,y=onlyCPUD] {\datatable};
 
-        \addlegendentry{\footnotesize{onlyCPU}}
-        \addlegendentry{\footnotesize{CPU+GPU}}
-        \addlegendentry{\footnotesize{CPU+GPU D$\$$}}
-        \addlegendentry{\footnotesize{onlyCPU D$\$$}}
+        \addlegendentry{\footnotesize{CPU alone w/o D$\$$}}
+        \addlegendentry{\footnotesize{co-run w/o D$\$$}}
+        \addlegendentry{\footnotesize{co-run w/ D$\$$}}
+        \addlegendentry{\footnotesize{CPU alone w/ D$\$$}}
 
     \end{axis}
 \end{tikzpicture}
