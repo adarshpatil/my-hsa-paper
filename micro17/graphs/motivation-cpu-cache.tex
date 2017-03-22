@@ -1,0 +1,95 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\input{barcolors}
+
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\pgfplotsset{width=7cm,compat=newest}
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.5]
+    \pgfplotstableread[col sep = comma]{data/motivation-cpu-cache.csv}\datatable
+
+    \begin{axis}[
+        ybar=1pt,
+        bar width=8pt,
+        xlabel=Workloads,
+        xticklabels from table={\datatable}{X},
+        xtick=data,
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
+        x=28pt,
+        axis x line*=left,
+        axis y line*=left,
+        ylabel = Cycles,
+        legend image code/.code={%
+                    \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
+        },  
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.1, -0.27)},
+             font=\tiny,
+             anchor=north west,
+             legend columns=4,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=1pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+       ]
+
+
+
+        \addplot [bar1] table[x=X,y=onlyCPUD] {\datatable};\label{onlycpumemacc}
+        \addplot [bar2] table[x=X,y=CPU+GPUD] {\datatable};\label{cpu+gpumemacc}
+
+        \addlegendentry{\footnotesize{CPU alone}}
+        \addlegendentry{\footnotesize{co-run}}
+
+    \end{axis}
+    
+    
+    \begin{axis}[
+        ybar=1pt,
+        bar width=8pt,
+        x=28pt,
+		ymin=0,
+		ymax=1,
+        axis x line=none,
+        axis y line*=right,
+       	ylabel = Hit rate,
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.5, -0.25)},
+             font=\tiny,
+             anchor=north west,
+             legend columns=4,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=1pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+    ]
+
+   \addplot+[mark=square*, mark size=3.5pt, color=blue, forget plot, only marks,  xshift=-2] table[x=X,y=HitRateCPU] {\datatable}; \label{onlycpuhitrate}
+   \addplot+[mark=triangle*, mark size=3.5pt, color=cyan, forget plot, only marks,  xshift=2] table[x=X,y=HitRateCPU+GPU] {\datatable};\label{cpu+gpuhitrate}
+   
+%        \addlegendentry{\footnotesize{Hit Rate CPU}}
+%        \addlegendentry{\footnotesize{Hit Rate CPU\+GPU}}
+   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate CPU alone}}
+   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate co-run}}
+  
+   \end{axis}
+   
+\end{tikzpicture}
+\end{document}

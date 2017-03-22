@@ -1,0 +1,71 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\input{barcolors}
+
+\pgfplotsset{width=11cm, height=8cm, compat=newest} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.8]
+    \pgfplotstableread{
+X Class  opt0 opt1 opt2 opt3
+1 W 3.29588015	4.962406015	1.900647948	7.57894737
+2 A 3.85149314	5.441277081	1.39186233	7.42994012
+3 B 4.18488628	5.503135552	1.191311612	3.273457676
+4 C 4.097525473	5.348013817	1.249041991	2.190661479
+    }\datatable
+
+    \begin{axis}[
+        ylabel style={align=center}, ylabel = Speedup,
+        ybar=1pt,
+        bar width=5.5pt,
+        xlabel=Problem Class,
+        xticklabels from table={\datatable}{X},
+        xtick=data,
+        x tick label style={},
+        xticklabels={W, A, B, C},
+        x=45pt,
+        ymin=0,
+        ymax=9,
+        axis x line*=left,
+        axis y line*=left,
+        enlarge x limits=0.2,
+        after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
+        after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
+        legend image code/.code={%
+                    \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.2cm,0.1cm);
+        },  
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.13,0.98)},
+             font=\tiny,
+             anchor=north east,
+             legend columns=2,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=5pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+       ]
+
+        \addplot [bar1] table[x=X,y=opt0] {\datatable};
+        \addplot [bar2] table[x=X,y=opt1] {\datatable};
+        \addplot [bar3] table[x=X,y=opt2] {\datatable};
+        \addplot [bar4] table[x=X,y=opt3] {\datatable};
+
+        \addlegendentry{Opt}
+        \addlegendentry{Opt1}
+        \addlegendentry{Opt2}
+        \addlegendentry{Opt3}
+
+    \end{axis}
+\end{tikzpicture}
+\end{document}
