@@ -12,18 +12,18 @@
 \begin{document}
 
 \begin{tikzpicture}[scale=0.5]
-    \pgfplotstableread[col sep = comma]{data/results-cpu-paper.csv}\datatable
+    \pgfplotstableread[col sep = comma]{data/results-gpu-antt.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = ANTT Imrpovement,
+        ylabel style={}, ylabel = ANTT Improvement,
         ybar=1pt,
-        bar width=4pt,
+        bar width=3.5pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
-        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
-        x=40pt,
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
+        x=30pt,
         %ymin=0.4,
         %ymax=4,
         axis x line*=left,
