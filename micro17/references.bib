@@ -162,6 +162,24 @@ keywords={DRAM chips;SRAM chips;cache storage;power aware computing;3D through-s
 doi={10.1109/HPCA.2016.7446068}, 
 month={March},}
 
+@inproceedings{unison-cache,
+ author = {Jevdjic, Djordje and Loh, Gabriel H. and Kaynak, Cansu and Falsafi, Babak},
+ title = {Unison Cache: A Scalable and Effective Die-Stacked DRAM Cache},
+ booktitle = {Proceedings of the 47th Annual IEEE/ACM International Symposium on Microarchitecture},
+ series = {MICRO-47},
+ year = {2014},
+ isbn = {978-1-4799-6998-2},
+ location = {Cambridge, United Kingdom},
+ pages = {25--37},
+ numpages = {13},
+ url = {http://dx.doi.org/10.1109/MICRO.2014.51},
+ doi = {10.1109/MICRO.2014.51},
+ acmid = {2742159},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+ keywords = {3D die stacking, DRAM, caches, memory, servers},
+} 
+
 @inproceedings{bimodal, 
 author="N. Gulur and M. Mehendale and R. Manikantan and R. Govindarajan", 
 booktitle="2014 47th Annual IEEE/ACM International Symposium on Microarchitecture", 
@@ -231,6 +249,43 @@ doi={10.1109/MICRO.2014.56},
 ISSN={1072-4451}, 
 month={Dec},}
 
+@inproceedings{gpu-concurrency,
+ author = {Kayiran, Onur and Nachiappan, Nachiappan Chidambaram and Jog, Adwait and Ausavarungnirun, Rachata and Kandemir, Mahmut T. and Loh, Gabriel H. and Mutlu, Onur and Das, Chita R.},
+ title = {Managing GPU Concurrency in Heterogeneous Architectures},
+ booktitle = {Proceedings of the 47th Annual IEEE/ACM International Symposium on Microarchitecture},
+ series = {MICRO-47},
+ year = {2014},
+ isbn = {978-1-4799-6998-2},
+ location = {Cambridge, United Kingdom},
+ pages = {114--126},
+ numpages = {13},
+ url = {http://dx.doi.org/10.1109/MICRO.2014.62},
+ doi = {10.1109/MICRO.2014.62},
+ acmid = {2742167},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+} 
+
+@article{interconnect,
+ author = {Lee, Jaekyu and Li, Si and Kim, Hyesoon and Yalamanchili, Sudhakar},
+ title = {Design Space Exploration of On-chip Ring Interconnection for a CPU-GPU Heterogeneous Architecture},
+ journal = {J. Parallel Distrib. Comput.},
+ issue_date = {December, 2013},
+ volume = {73},
+ number = {12},
+ month = dec,
+ year = {2013},
+ issn = {0743-7315},
+ pages = {1525--1538},
+ numpages = {14},
+ url = {http://dx.doi.org/10.1016/j.jpdc.2013.07.014},
+ doi = {10.1016/j.jpdc.2013.07.014},
+ acmid = {2537489},
+ publisher = {Academic Press, Inc.},
+ address = {Orlando, FL, USA},
+ keywords = {Design space exploration, Heterogeneous architecture, On-chip interconnection network},
+} 
+
 @article{memory-wall,
  author = "Wulf, Wm. A. and McKee, Sally A.",
  title = "Hitting the Memory Wall: Implications of the Obvious",
@@ -249,6 +304,24 @@ month={Dec},}
  publisher = "ACM",
  address = "New York, NY, USA",
 } 
+
+
+@inproceedings{software-dram,
+ author = {Oskin, Mark and Loh, Gabriel H.},
+ title = {A Software-Managed Approach to Die-Stacked DRAM},
+ booktitle = {Proceedings of the 2015 International Conference on Parallel Architecture and Compilation (PACT)},
+ series = {PACT '15},
+ year = {2015},
+ isbn = {978-1-4673-9524-3},
+ pages = {188--200},
+ numpages = {13},
+ url = {https://doi.org/10.1109/PACT.2015.30},
+ doi = {10.1109/PACT.2015.30},
+ acmid = {2923789},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+} 
+
 
 @inproceedings{bandwidth-wall,
  author = "Rogers, Brian M. and Krishna, Anil and Bell, Gordon B. and Vu, Ken and Jiang, Xiaowei and Solihin, Yan",
@@ -269,7 +342,8 @@ month={Dec},}
 }
 
 @ARTICLE{apu-exascale, 
-author = "M. J. Schulte and M. Ignatowski and G. H. Loh and B. M. Beckmann and W. C. Brantley and S. Gurumurthi and N. Jayasena and I. Paul and S. K. Reinhardt and G. Rodgers", 
+author = "Thiruvengadam Vijayaraghavan, Yasuko Eckert, Gabriel H. Loh, Michael J. Schulte, Mike Ignatowski,
+Bradford M. Beckmann, William C. Brantley, Joseph L. Greathouse, Wei Huang, Arun Karunanithi, Onur Kayiran", 
 journal="IEEE Micro", 
 title="Achieving Exascale Capabilities through Heterogeneous Computing", 
 year="2015", 
@@ -326,6 +400,44 @@ month="Oct"
  publisher = {IEEE Press},
  address = {Piscataway, NJ, USA},
  keywords = {cache management policy, heterogeneous multicores, shared last-level cache},
+} 
+
+@INPROCEEDINGS{tap, 
+author={J. Lee and H. Kim}, 
+booktitle={IEEE International Symposium on High-Performance Comp Architecture}, 
+title={TAP: A TLP-aware cache management policy for a CPU-GPU heterogeneous architecture}, 
+year={2012}, 
+pages={1-12}, 
+keywords={cache storage;graphics processing units;CPU-GPU heterogeneous architecture;TAP;TAP-RRIP;TAP-UCP;TLP-aware cache management policy;core-sampling mechanism;dynamic cache partitioning;last-level cache management;promotion-based cache management;rereference interval prediction;several shared cache management mechanisms;shared resource management;thread-level parallelism;utility-based cache partitioning;Benchmark testing;Computer architecture;Graphics processing unit;Instruction sets;Measurement;Radiation detectors;System-on-a-chip}, 
+doi={10.1109/HPCA.2012.6168947}, 
+ISSN={1530-0897}, 
+month={Feb},}
+
+@INPROCEEDINGS{mostly-clean, 
+author={J. Sim and G. H. Loh and H. Kim and M. OConnor and M. Thottethodi}, 
+booktitle={2012 45th Annual IEEE/ACM International Symposium on Microarchitecture}, 
+title={A Mostly-Clean DRAM Cache for Effective Hit Speculation and Self-Balancing Dispatch}, 
+year={2012}, 
+pages={247-257}, 
+keywords={DRAM chips;cache storage;HMP predictions;SBD mechanism;auxiliary structures;cache hits;die-stacked DRAM cache;die-stacking technology;dirty data;effective hit speculation;hardware costs;hardware overhead elimination;hybrid write policy;low-cost hit-miss predictor;multimegabyte MissMap structure;off-chip bandwidth;off-chip memory;performance benefits;self-balancing dispatch;verification process;write-back policies;write-through policies}, 
+doi={10.1109/MICRO.2012.31}, 
+ISSN={1072-4451}, 
+month={Dec},}
+
+@inproceedings{sms,
+ author = {Ausavarungnirun, Rachata and Chang, Kevin Kai-Wei and Subramanian, Lavanya and Loh, Gabriel H. and Mutlu, Onur},
+ title = {Staged Memory Scheduling: Achieving High Performance and Scalability in Heterogeneous Systems},
+ booktitle = {Proceedings of the 39th Annual International Symposium on Computer Architecture},
+ series = {ISCA '12},
+ year = {2012},
+ isbn = {978-1-4503-1642-2},
+ location = {Portland, Oregon},
+ pages = {416--427},
+ numpages = {12},
+ url = {http://dl.acm.org/citation.cfm?id=2337159.2337207},
+ acmid = {2337207},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
 } 
 
 @proceedings{dramctrl,
