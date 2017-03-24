@@ -17,15 +17,15 @@ Additional details relating the experimental methodology and workloads are descr
    \caption{DRAMCache Access time and Hit rate for CPU}
    \label{fig:motivation-cpu-cache}
 \end{figure}
-First we evaluate the benefits of having a large DRAM cache in IHS architecture. Figure \ref{motivation}(a) presents the performance
+First, we evaluate the benefits of having a large DRAMCache in IHS architecture. Figure \ref{motivation}(a) presents the performance
 improvement (in terms of speedup over harmonic mean of IPCs) with and without
-the stacked DRAMCache, as well as when they are running with and without the GPU application. As can be seen from the figure,
+the stacked DRAMCache, as well as when they are co-run with and without the GPU application. As can be seen from the figure,
 the performance of CPU applications experiences improvement by almost 16\%, with the introduction 
-of the DRAMCache when they are run alone, without the GPU application. Co-running with GPU application, however results in a severe performance degradation of 320\% for the CPU. 
+of the DRAMCache when they are run alone. Co-running with GPU application, however results in a severe performance degradation of 320\% for the CPU. 
 %Clearly this loss in performance is due to co-running GPU application, which hampers 
 %the performance of latency-sensitive CPU application heavily.
 Adding a stacked DRAMCache over an IHS architecture, the CPU is able to recover just 42\% of its performance when running alone without a DRAMCache. 
-We further investigate the cause of this immense disparity in the performance of CPU workloads despite adding a stacked DRAM. Figures \ref{fig:motivation-cpu-cache} presents the DRAMCache access latency experienced by a CPU request in cycles on the primary y-axis and the CPU hit rates on the secondary y-axis, with and without the GPU application co-running. We find that the presence of GPU applications increases the average access time of the DRAMCache by 213\% while hit rates of the CPU are marginally impacted (only by about 4\%) when co-running.
+We further investigate the cause of this immense disparity in the performance of CPU workloads despite adding a stacked DRAM. Figures \ref{fig:motivation-cpu-cache} presents the DRAMCache access latency experienced by a CPU request in cycles on the primary y-axis and the CPU hit rates on the secondary y-axis, while running alone and co-run with the GPU application co-running. We find that the presence of GPU applications increases the average access time of the DRAMCache by 213\% while hit rates of the CPU are marginally impacted (only by about 4\%) when co-running.
 This increase in average access time is primarily attributed to the large
 number of GPU requests flooding the DRAMCache controller when the GPU kernels are co-running with the CPU applications.
 
@@ -34,7 +34,7 @@ paper we report CPU ANTT/speedups and GPU ANTT/speedups (and the improvement in 
 and GPU applications on each other, as well as to understand the impact of the proposed modifications on each of the application
 type} 
 for our workloads. 
-We observe the that the introduction of DRAMCache improves the performance of GPU application by 27\% and 15\% with and without co-running CPU applications with respect to its performance when running alone
+We observe the that the introduction of DRAMCache improves the performance of GPU application by 27\% and 15\% when co-run with and without CPU applications with respect to its performance when running alone.
 Thus,  co-running with CPU applications has only a minor impact on the GPU performance (with or without the DRAM Cache). 
 Some Cache sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads that do not significantly reuse cached data show no performance benefits.
 \begin{figure}[htbp]
@@ -42,7 +42,7 @@ Some Cache sensitive GPU workloads show benefits from the addition of the DRAMCa
    \caption{GPU Hit Rate 2-way associativity}
    \label{fig:motivation-gpu-cache}
 \end{figure}
-Providing associativity can help improve performance of the GPU applications by allowing the GPU requests to better utilize the large  DRAMCache bandwidth and hence avoiding access the relatively constricted off-chip DRAM bus. Figure \ref{fig:motivation-gpu-cache} plots the DRAMCache hit rates for our direct mapped DRAMCache and along with the hit rates for a 2-way associative cache with half the number of sets and a 2-way associative with the same number of sets. The hit rate improves by about 1\% for the former and by 3.5\% for the latter cache configuration. As also noted by other works \cite{oscar}, our observations corroborate that the number of requests from the GPU are orders of magnitude higher than CPU even though in our simulations the GPU runs intermittently. Hence, even modest improvements in hit rates lead to large reduction in number of GPU requests going through narrower off-chip DRAM. Thus, providing some pseudo-associativity can improve DRAMCache bandwidth utilization.
+Providing associativity in caches can help improve performance of the GPU applications by allowing the GPU requests to better utilize the large  DRAMCache bandwidth and hence avoiding access the relatively constricted off-chip DRAM bus. Figure \ref{fig:motivation-gpu-cache} plots the DRAMCache hit rates for our direct mapped DRAMCache and along with the hit rates for a 2-way associative cache with half the number of sets and a 2-way associative with the same number of sets. The hit rate improves by about 1\% for the former and by 3.5\% for the latter cache configuration. As also noted by other works \cite{oscar}, our observations corroborate that the number of requests from the GPU are orders of magnitude higher than CPU even though in our simulations the GPU runs intermittently. Hence, even modest improvements in hit rates lead to large reduction in number of GPU requests going through narrower off-chip DRAM. Thus, providing some associativity can improve DRAMCache bandwidth utilization.
 %% one sentence on why in some of the workloads there is no improvement in ANTT. 
 %% If required you can present the GPU hit rate and average hit time in DRAM Cache for GPU appln. 
 
