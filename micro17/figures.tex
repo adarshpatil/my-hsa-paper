@@ -71,7 +71,7 @@
         % We start by placing the blocks
         \node [textblock, thick, minimum width=6em] (act){\begin{varwidth}{4cm} \centering{\footnotesize{DRAM $\$$ \\Row Act.}} \end{varwidth}};
         \node [textblock, thick, right = 0.5cm of act, minimum width=4em] (burst) {\begin{varwidth}{4cm} \centering{\footnotesize{TAD \\Burst}} \end{varwidth}};
-        \node [decisionblock, thick, right = 0.5cm of burst] (tagmatch) {\begin{varwidth}{4cm} \centering{\scriptsize{TAG\\Match}} \end{varwidth}};
+        \node [decisionblock, thick, right = 0.5cm of burst] (tagmatch) {\begin{varwidth}{4cm} \centering{\scriptsize{Tag\\Match}} \end{varwidth}};
         \node [textblock, thick, below = 0.5cm of tagmatch] (chaintable) {\begin{varwidth}{4cm} \centering{\footnotesize{Chain\\Offset}} \end{varwidth}};
         \node [decisionblock, thick, right = 1.8cm of tagmatch.south] (clean) {\begin{varwidth}{4cm} \centering{\scriptsize{Clean?}} \end{varwidth}};
         \node [decisionblock, thick, right = 2.1cm of tagmatch, yshift=1.5em] (pamreturn) {\begin{varwidth}{4cm} \centering{\scriptsize{PAM \\return?}} \end{varwidth}};
@@ -93,8 +93,8 @@
         \draw [->,very thick] (chainmatch.east) to [out=0,in=180] ++(0.6,0);
         \draw [->,very thick] (chaintad.east) -- (chainmatch);
         \draw [->,very thick] (chainmatch.north) to [out=90,in=-90] ++(0,1);
-        \draw [->,very thick] (chaintable.east) to [out=0,in=180] ++(5.6,0) to (chaintad.south);
-        \draw [->,very thick] (chaintable.east) to [out=0,in=180] ++(0.3,-0.4) to [out=0,in=180] ++(9.35,0) to (mem.south);
+        \draw [->,very thick] (chaintable.east) to [out=0,in=180] ++(5.65,0) to (chaintad.south);
+        \draw [->,very thick] (chaintable.east) to [out=0,in=180] ++(0.3,-0.4) to [out=0,in=180] ++(9.6,0) to (mem.south);
 
         % Groups
         \node [blocksmall, draw=white, above = 1cm of clean, minimum height=1em, minimum width=0.2em, xshift=-0.7em, yshift=0.4em] (lblcpu){\textbf{CPU}};
@@ -104,15 +104,15 @@
         \node [plain, right=0.01em of tagmatch, minimum height=1em, minimum width=1em, yshift=1em] (lbl1) {\scriptsize{\emph{Hit}}};
         \node [plain, below=0.01em of tagmatch, minimum height=1em, minimum width=1em, xshift=-1em] (lbl2) {\scriptsize{\emph{Miss}}};
         \node [plain, below=0.52cm of tagmatch, minimum height=1em, minimum width=1em, xshift=4em] (lbl3) {\scriptsize{\emph{Yes}}};
-        \node [plain, below=0.1cm of lbl3, minimum height=1em, minimum width=1em] (lbl4) {\scriptsize{\emph{No}}};
+        \node [plain, below=0.1cm of lbl3, minimum height=1em, minimum width=1em, yshift=0.2em] (lbl4) {\scriptsize{\emph{No}}};
         \node [plain, above=0.01cm of lbl3, minimum height=1em, minimum width=1em, red] (lb15) {\scriptsize{\emph{Yes}}};
-        \node [plain, right=0.01em of chainmatch, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-0.41em] (lbl5) {\scriptsize{\emph{Miss}}};
+        \node [plain, right=0.01em of chainmatch, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-0.65em] (lbl5) {\scriptsize{\emph{Miss}}};
         \node [plain, above=3em of lbl5, minimum height=1em, minimum width=1em, yshift=-0.5em, xshift=-2em] (lbl8) {\scriptsize{\emph{Hit}}};
         \node [plain, right=0.01em of clean, minimum height=1em, minimum width=1em, yshift=-0.5em, red] (lbl6) {\scriptsize{\emph{No}}};
-        \node [plain, right=2.5em of lbl6, minimum height=1em, minimum width=1em, yshift=1.5em, red] (lbl7) {\scriptsize{\emph{No}}};
+        \node [plain, right=2.5em of lbl6, minimum height=1em, minimum width=1em, yshift=1.5em, xshift=-1.5em, red] (lbl7) {\scriptsize{\emph{No}}};
         \node [plain, above=1.8em of clean, minimum height=1em, minimum width=1em, xshift=-0.1em, red] (lbl9) {\scriptsize{\emph{Yes}}};
         \node [plain, above=1.8em of chaintad, minimum height=1em, minimum width=1em, yshift=0.5em, xshift=-1.5em, red] (lbl10) {\scriptsize{\emph{Yes}}};
-        \node [plain, above=0.3em of lbl10, minimum height=1em, minimum width=1em] (lbl11) {\scriptsize{\emph{Return Data}}};
+        \node [plain, above=0.3em of lbl10, minimum height=1em, minimum width=1em, xshift=0.5em] (lbl11) {\scriptsize{\emph{Return Data}}};
         \node [plain, left=9.7em of lbl11, minimum height=1em, minimum width=1em] (lbl12) {\scriptsize{\emph{Return Data}}};
         \node [plain,right =2.5em of lbl11, minimum height=1em, minimum width=1em] (lbl13) {\scriptsize{\emph{Return Data}}};
 
@@ -316,7 +316,7 @@
         yshift=0em, rotate=0, minimum height=3em, minimum width=1.3em, line width=0.5mm, fill=white](arrow2){};
         
         % Labels
-        \node [blocksmall, draw=white, minimum height=1em, minimum width=1.2em] at (0.4,4.0)
+        \node [blocksmall, opacity=0,text opacity=1, draw=white, minimum height=1em, minimum width=1.2em] at (0.4,4.0)
         (lbl4){\begin{varwidth}{4cm} \centering{\scriptsize{Through Silicon\\Vias}}\end{varwidth}};
         \node [blocksmall, draw=white, right=1.2cm of lbl4, minimum height=1em, minimum width=1.2em] (lbl5) {\begin{varwidth}{4cm} \centering{\scriptsize{Silicon\\Interposer}}\end{varwidth}};
         \node [blocksmall, draw=white, right=0.1cm of lbl5, minimum height=1em, minimum width=1.2em, yshift=0.4em, inner sep=2pt] (lbl6) {\begin{varwidth}{4cm} \centering{\scriptsize{External Memory \\Interface (e.g.DDR)}} \end{varwidth}};

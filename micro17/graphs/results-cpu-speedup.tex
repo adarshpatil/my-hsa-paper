@@ -25,12 +25,14 @@
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
         x=30pt,
         %ymin=0.4,
-        ymax=5,
-        axis x line*=left,
-        axis y line*=left,
-        %enlarge x limits=false,
-        %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
-        after end axis/.code={\draw [black, very thick, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
+        ymax=4.7,
+        axis lines*=left,
+        restrict y to domain*=0:4.7,
+        visualization depends on=rawy\as\rawy,
+        after end axis/.code={ % Draw line indicating break
+        	\draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0.05,0.93) -- (rel axis cs:1,0.93);
+        	},
+        clip=false,
         legend image code/.code={%
                     \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
         },  
@@ -54,7 +56,10 @@
         \addplot [bar2] table[x=X,y=naiveD] {\datatable};
         \addplot [bar3] table[x=X,y=chaining] {\datatable};
         \addplot [bar4] table[x=X,y=bypass] {\datatable};
-        \addplot [bar5] table[x=X,y=CPUalone] {\datatable};
+        \addplot [fill= black!30!kellygreen,fill=kellygreen, 
+                  every node near coord/.append style={font=\small, rotate=90, anchor=west},
+                  nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
+                 ] table[x=X,y=CPUalone] {\datatable};
 
         \addlegendentry{\footnotesize{no D$\$$}}
         \addlegendentry{\footnotesize{naive D$\$$}}
