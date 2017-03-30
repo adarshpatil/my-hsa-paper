@@ -18,7 +18,7 @@
 
     \begin{axis}[
         ylabel style={}, 
-        ylabel = Speedup,
+        ylabel = Normalized Harmonic Mean of IPC,
         ybar=1pt,
         bar width=5.5pt,
         xlabel=Workloads,
@@ -34,6 +34,7 @@
         visualization depends on=rawy\as\rawy,
         after end axis/.code={ % Draw line indicating break
         	\draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0.05,0.93) -- (rel axis cs:1,0.93);
+        	\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});
         	},
         clip=false,
         legend image code/.code={%
@@ -56,17 +57,17 @@
        ]
 
         \addplot [bar1] table[x=X,y=onlyCPU] {\datatable};
-        \addplot [bar2] table[x=X,y=CPU+GPU] {\datatable};
-        \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
         \addplot [fill= black!30!kellygreen,fill=kellygreen, 
                   every node near coord/.append style={font=\small, rotate=90, anchor=west},
                   nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
-               	 ] table[x=X,y=onlyCPUD] {\datatable};
+               	 ] table[x=X,y=onlyCPUD] {\datatable};        
+        \addplot [bar2] table[x=X,y=CPU+GPU] {\datatable};
+        \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU alone w/o D$\$$}}
-        \addlegendentry{\footnotesize{co-run w/o D$\$$}}
-        \addlegendentry{\footnotesize{co-run w/ D$\$$}}
-        \addlegendentry{\footnotesize{CPU alone w/ D$\$$}}
+        \addlegendentry{\footnotesize{HoA CPU w/o D$\$$}}
+        \addlegendentry{\footnotesize{HoA CPU w/ D$\$$}}
+        \addlegendentry{\footnotesize{HeA w/o D$\$$}}
+        \addlegendentry{\footnotesize{HeA w/ D$\$$}}
 
     \end{axis}
 \end{tikzpicture}

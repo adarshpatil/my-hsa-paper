@@ -15,7 +15,7 @@
     \pgfplotstableread[col sep = comma]{data/results-gpu-speedup.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Speedup,
+        ylabel style={}, ylabel = Normalized Harmonic Mean of IPC,
         ybar=1pt,
         bar width=3.5pt,
         xlabel=Workloads,
@@ -50,14 +50,14 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=noD] {\datatable};
-        \addplot [bar2] table[x=X,y=naiveD] {\datatable};
+        \addplot [bar1] table[x=X,y=naiveD] {\datatable};
+        \addplot [bar2] table[x=X,y=pris] {\datatable};
         \addplot [bar3] table[x=X,y=chaining] {\datatable};
         \addplot [bar4] table[x=X,y=bypass] {\datatable};
         \addplot [bar5] table[x=X,y=GPUalone] {\datatable};
 
-        \addlegendentry{\footnotesize{no D$\$$}}
         \addlegendentry{\footnotesize{naive D$\$$}}
+        \addlegendentry{\footnotesize{PrIS}}
         \addlegendentry{\footnotesize{chaining+PrIS D$\$$}}
         \addlegendentry{\footnotesize{ByE+PrIS D$\$$}}
         \addlegendentry{\footnotesize{GPU alone D$\$$}}

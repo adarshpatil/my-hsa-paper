@@ -3,6 +3,7 @@
 \usepackage{siunitx}
 \usepackage{tikz} % To generate the plot from csv
 \usepackage{pgfplots}
+\usetikzlibrary{patterns} % for the stripes on the bar
 
 \input{barcolors}
 
@@ -13,7 +14,7 @@
 \begin{document}
 
 \begin{tikzpicture}[scale=0.5]
-    \pgfplotstableread[col sep = comma]{data/motivation-cpu-cache.csv}\datatable
+    \pgfplotstableread[col sep = comma]{data/results-bypass.csv}\datatable
 
     \begin{axis}[
         ybar=1pt,
@@ -25,14 +26,15 @@
         x=28pt,
         axis x line*=left,
         axis y line*=left,
-        ylabel = CPU Cycles,
+        ylabel = Reduction in MemAccLat (\%),
+        ymin=0,
         legend image code/.code={%
                     \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
         },  
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.1, -0.27)},
+             at={(0.27, -0.25)},
              font=\tiny,
              anchor=north west,
              legend columns=4,
@@ -47,11 +49,8 @@
 
 
 
-        \addplot [bar1] table[x=X,y=onlyCPUD] {\datatable};\label{onlycpumemacc}
-        \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};\label{cpu+gpumemacc}
-
-        \addlegendentry{\footnotesize{CPU alone}}
-        \addlegendentry{\footnotesize{co-run}}
+        \addplot [bar1] table[x=X,y=reduction] {\datatable};\label{reduction}
+        \addlegendentry{\footnotesize{CPU MemAccLat}}
 
     \end{axis}
     
@@ -60,11 +59,11 @@
         ybar=1pt,
         bar width=8pt,
         x=28pt,
-		ymin=0,
-		ymax=1,
+		%ymin=0,
+		%ymax=1,
         axis x line=none,
         axis y line*=right,
-       	ylabel = Hit rate,
+       	ylabel = Read requests Bypassed(\%),
         legend style={
              text depth=0pt,
              legend cell align=left,
@@ -81,13 +80,11 @@
         }
     ]
 
-   \addplot+[mark=*, mark size=2.5pt, color=blue, forget plot, only marks,  xshift=-2] table[x=X,y=HitRateCPU] {\datatable}; \label{onlycpuhitrate}
-   \addplot+[mark=triangle*, mark size=3.5pt, color=forestgreen(web), forget plot, only marks,  xshift=2] table[x=X,y=HitRateCPU+GPU] {\datatable};\label{cpu+gpuhitrate}
-   
-%        \addlegendentry{\footnotesize{Hit Rate CPU}}
-%        \addlegendentry{\footnotesize{Hit Rate CPU\+GPU}}
-   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate CPU alone}}
-   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate co-run}}
+   \addplot [bar3, 
+             xshift=1*\pgfplotbarwidth,
+             postaction={pattern=north east lines}
+            ] table[x=X,y=bypassed] {\datatable};\label{bypassed}
+   \addlegendimage{/pgfplots/refstyle=bypassed}\addlegendentry{\footnotesize{Bypassed Req}}
   
    \end{axis}
    

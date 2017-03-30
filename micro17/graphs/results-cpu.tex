@@ -15,17 +15,17 @@
     \pgfplotstableread[col sep = comma]{data/results-cpu.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Speedup,
+        ylabel style={}, ylabel = Normalized Harmonic Mean of IPC,
         ybar=1pt,
-        bar width=4pt,
+        bar width=6pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
-        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
-        x=30pt,
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
+        x=60pt,
         %ymin=0.4,
-        %ymax=4,
+        ymax=4.5,
         axis x line*=left,
         axis y line*=left,
         %enlarge x limits=false,
@@ -40,7 +40,7 @@
              at={(0.3, -0.2)},
              font=\tiny,
              anchor=north west,
-             legend columns=5,
+             legend columns=6,
              % default spacing:
              column sep=0.1cm,
              % The text "Legend:"
@@ -55,13 +55,16 @@
         \addplot [bar3] table[x=X,y=ByE] {\datatable};
         \addplot [bar4] table[x=X,y=ByE+PrIS] {\datatable};
         \addplot [bar5] table[x=X,y=Chaining+PrIS] {\datatable};
+        \addplot [bar6] table[x=X,y=CPUalone] {\datatable};
 
         \addlegendentry{\footnotesize{Naive}}
         \addlegendentry{\footnotesize{PrIS}}
         \addlegendentry{\footnotesize{ByE}}
         \addlegendentry{\footnotesize{ByE+PrIS}}
         \addlegendentry{\footnotesize{Chaining+PrIS}}
+        \addlegendentry{\footnotesize{HoA CPU}}
 
     \end{axis}
 \end{tikzpicture}
+
 \end{document}

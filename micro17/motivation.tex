@@ -6,58 +6,46 @@ As seen in section \ref{introduction}, the large capacity provided by the stacke
    \caption{Performance comparison of (a) CPU (b) GPU when running alone, co-run, with and without DRAMCache}
    \label{fig:motivation}
 \end{figure}
-\par In this paper, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in designing the DRAM cache for IHS architectures. We justify this design decisions in the following section. 
+\par In this paper, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in designing the DRAM cache for IHS architectures. We justify the design decisions in the following section. 
 Each CPU core has a private L1 cache and a shared split L2 cache across the CPU cores. The GPU cores have private L1 and shared L2 cache among themselves.  
-The stacked DRAMCache (of size 64MB) is the first level shared cache across CPU cores and GPU cores. In our experiments, we consider a multi-programmed workload on the CPU cores and a GPGPU application on a single CPU core and multiple SMs. It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the SMs (kernel execution), and our study on the interference due to co-running CPU and GPU application, reports performance numbers of the GPU application when the GPU kernel is running on the SMs.  
+The stacked DRAMCache (of size 64MB) is the first level shared cache across CPU cores and GPU cores. In our experiments, we consider a multi-programmed workload on the CPU cores and a GPGPU application on a single CPU core and multiple SMs. It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the SMs (kernel execution). We refer to this workload as Heterogeneous Application (HeA) as CPU and GPU applications are co-run. We use the terms Homogeneous Application (HoA-CPU and HoA-GPU) to refer to the cases when (multiple) CPU applications are run alone and only GPU application is run alone.  Our study on the interference due to co-running CPU and GPU application, reports performance numbers of the GPU application when the GPU kernel is running on the SMs.  
 Additional details relating the experimental methodology and workloads are described in Section \ref{methodology}
 
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
    \includegraphics[scale=1.0]{graphs/motivation-cpu-cache}
-   \caption{DRAMCache Access time and Hit rate for CPU}
+   \caption{DRAMCache Access Latency and Hit rate for CPU}
    \label{fig:motivation-cpu-cache}
 \end{figure}
 First, we evaluate the benefits of having a large DRAMCache in IHS architecture. Figure \ref{motivation}(a) presents the performance
-improvement (in terms of speedup over harmonic mean of IPCs) with and without
+(in terms of harmonic mean of IPCs, normalized to HeA without DRAMCache) of CPU with and without
 the stacked DRAMCache, as well as when they are co-run with and without the GPU application. As can be seen from the figure,
-the performance of CPU applications experiences improvement by almost 16\%, with the introduction 
-of the DRAMCache when they are run alone. Co-running with GPU application, however results in a severe performance degradation of 320\% for the CPU. 
-%Clearly this loss in performance is due to co-running GPU application, which hampers 
-%the performance of latency-sensitive CPU application heavily.
-Adding a stacked DRAMCache over an IHS architecture, the CPU is able to recover just 42\% of its performance when running alone without a DRAMCache. 
-We further investigate the cause of this immense disparity in the performance of CPU workloads despite adding a stacked DRAM. Figures \ref{fig:motivation-cpu-cache} presents the DRAMCache access latency experienced by a CPU request in cycles on the primary y-axis and the CPU hit rates on the secondary y-axis, while running alone and co-run with the GPU application co-running. We find that the presence of GPU applications increases the average access time of the DRAMCache by 213\% while hit rates of the CPU are marginally impacted (only by about 4\%) when co-running.
+the performance of CPU applications improves on an average from 3.2x to 3.7x (16\% increase), with the introduction 
+of the DRAMCache when they are run alone. Co-running with GPU application, however results in a severe performance degradation by a factor of 3.2x for the CPU. 
+Adding a stacked DRAMCache over an IHS architecture, the CPU is able to improve by just 42\%.
+\par We further investigate the cause of this immense degradation in the performance of CPU workloads despite adding a stacked DRAM. Figures \ref{fig:motivation-cpu-cache} presents the DRAMCache access latency experienced by a CPU request (in terms of CPU cycles) on the primary y-axis and the CPU hit rates on the secondary y-axis, while running alone and co-run with the GPU application. We find that the presence of GPU applications increases the average access latency of the DRAMCache by 213\% while hit rates of the CPU are marginally impacted (only by about 4\%) when co-running.
 This increase in average access time is primarily attributed to the large
 number of GPU requests flooding the DRAMCache controller when the GPU kernels are co-running with the CPU applications.
-
-\par Next, we us study the impact of co-running on the GPU applications.  Figure \ref{fig:motivation}(b) again presents GPU speedup \footnote{In this 
-paper we report CPU ANTT/speedups and GPU ANTT/speedups (and the improvement in them) independently. This is done to identify the impact of CPU 
-and GPU applications on each other, as well as to understand the impact of the proposed modifications on each of the application
-type} 
+It should be noted here that, even though we use the terms CPU and GPU requests separately, they may refer to the same data. This terminology only indicates to the source of the requests. We also note that the GPGPU application allows some amount of sharing of data within the DRAMCache between the CPU and GPU processors (i.e. constructive interference - blocks brought in by the CPU and then used by the GPU and vice versa).
+\par Next, we us study the impact of co-running on the GPU applications.  Figure \ref{fig:motivation}(b) again presents GPU speedup 
 for our workloads. 
-We observe the that the introduction of DRAMCache improves the performance of GPU application by 27\% and 15\% when co-run with and without CPU applications with respect to its performance when running alone.
+We observe the that with the introduction of DRAMCache, the GPU application performance improves from 7\% to 36\% (27\% increase) when run alone and a 24\% improvement when co-run with CPU applications.
 Thus,  co-running with CPU applications has only a minor impact on the GPU performance (with or without the DRAM Cache). 
-Some Cache sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads that do not significantly reuse cached data show no performance benefits.
-\begin{figure}[htbp]
+Some cache-sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads, that do not significantly reuse cached data, show no performance benefits.
+\begin{figure}[htb]
    \includegraphics[scale=1.0]{graphs/motivation-gpu-cache}
    \caption{GPU Hit Rate 2-way associativity}
    \label{fig:motivation-gpu-cache}
 \end{figure}
-Providing associativity in caches can help improve performance of the GPU applications by allowing the GPU requests to better utilize the large  DRAMCache bandwidth and hence avoiding access the relatively constricted off-chip DRAM bus. Figure \ref{fig:motivation-gpu-cache} plots the DRAMCache hit rates for our direct mapped DRAMCache and along with the hit rates for a 2-way associative cache with half the number of sets and a 2-way associative with the same number of sets. The hit rate improves by about 1\% for the former and by 3.5\% for the latter cache configuration. As also noted by other works \cite{oscar}, our observations corroborate that the number of requests from the GPU are orders of magnitude higher than CPU even though in our simulations the GPU runs intermittently. Hence, even modest improvements in hit rates lead to large reduction in number of GPU requests going through narrower off-chip DRAM. Thus, providing some associativity can improve DRAMCache bandwidth utilization.
-%% one sentence on why in some of the workloads there is no improvement in ANTT. 
-%% If required you can present the GPU hit rate and average hit time in DRAM Cache for GPU appln. 
-
-%% Do you want to present the data to establish that the GPU application only occupies certain part of the DRAM cache 
-%% and is unable to use beyond this due to cache contention, making a case of pseudo associativity?
-%% you shd. do this without getting into chaining, etc. 
-
-Based on the above motivation study we conclude that there are significant performance benefits that could be obtained 
+\par Additionally, we observe that providing associativity in caches can help improve performance of the GPU applications by allowing the GPU requests to better utilize the large  DRAMCache bandwidth and hence avoiding access to the relatively constricted off-chip DRAM bus. Figure \ref{fig:motivation-gpu-cache} plots in log scale, the reduction in number of GPU misses by introducing 2-way associativity over our direct mapped DRAMCache. The GPU misses reduce by an average of $10^5$ and $10^6$ for 2-way associative cache with half the number of sets  and a 2-way associative cache with the same number of sets respectively. As also noted by other works \cite{oscar}, our observations corroborate that the number of requests from the GPU are orders of magnitude higher than CPU even though in our simulations the kernel code runs in the GPU intermittently. Hence, even modest improvements in hit rates lead to large reduction in number of GPU requests going through narrower off-chip DRAM. Thus, providing some associativity can improve DRAMCache bandwidth utilization.
+\par Based on the above motivation study we conclude that there are significant performance benefits that could be obtained 
 with the introduction of the stacked DRAMCache for the latency-sensitive CPU applications. However, in a naive implementation
 of the DRAM cache, these benefits can be undone by the co-running GPU application.  Hence it is important to carefully 
 architect the DRAMCache design to ensure CPU applications are not hampered due to interference of co-running GPU application.
 This requires the design to be aware of the heterogeneity of the applications (CPU vs GPU) and their demands on the 
 memory hierarchy.  Hard partitioning of DRAMCache would not be an effective design as it leads to under-utilization of the large capacity 
-stacked DRAM, as the effects of interference due to GPU application primarily happens when the kernel is running on the SMs sporadically. 
-Further, effectively utilizing the under-utilized main memory bandwidth \cite{micro-refresh, mainak-hpca}
-is also important to achieve higher performance.  The design should ensure that the CPU applications and the 
+stacked DRAM, as the effects of interference due to co-running GPU application is felt only kernel is run on the GPU sporadically. 
+Further, effectively utilizing the under-utilized main memory bandwidth \cite{micro-refresh, mainak-hpca, bear}
+is also important to achieve higher performance.  Lastly, the design should ensure that the CPU applications and the 
 GPU application are able to utilize the large capacity of the stacked DRAM effectively to meet the working set 
-requirements of the respective applications in the best possible way.
+requirements of the respective applications in the best possible way. In the next section we present our Heterogeneity-aware Shared DRAMCache ( \cachename) design with addresses these issues.

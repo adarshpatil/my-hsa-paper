@@ -15,7 +15,7 @@
     \pgfplotstableread[col sep = comma]{data/results-cpu-speedup.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Speedup,
+        ylabel style={}, ylabel = Normalized Harmonic Mean of IPC,
         ybar=1pt,
         bar width=3.5pt,
         xlabel=Workloads,
@@ -31,6 +31,7 @@
         visualization depends on=rawy\as\rawy,
         after end axis/.code={ % Draw line indicating break
         	\draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0.05,0.93) -- (rel axis cs:1,0.93);
+        	\draw [black, very thick, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});
         	},
         clip=false,
         legend image code/.code={%
@@ -52,8 +53,8 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=noD] {\datatable};
-        \addplot [bar2] table[x=X,y=naiveD] {\datatable};
+        \addplot [bar1] table[x=X,y=naiveD] {\datatable};
+        \addplot [bar2] table[x=X,y=pris] {\datatable};
         \addplot [bar3] table[x=X,y=chaining] {\datatable};
         \addplot [bar4] table[x=X,y=bypass] {\datatable};
         \addplot [fill= black!30!darkmagenta,fill=darkmagenta, 
@@ -61,8 +62,8 @@
                   nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
                  ] table[x=X,y=CPUalone] {\datatable};
 
-        \addlegendentry{\footnotesize{no D$\$$}}
         \addlegendentry{\footnotesize{naive D$\$$}}
+        \addlegendentry{\footnotesize{PrIS}}
         \addlegendentry{\footnotesize{chaining+PrIS D$\$$}}
         \addlegendentry{\footnotesize{ByE+PrIS D$\$$}}
         \addlegendentry{\footnotesize{CPU alone D$\$$}}

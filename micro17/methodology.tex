@@ -1,4 +1,4 @@
-\section{Experimental Setup \& Methodology} \label{methodology}
+\section{Experimental Setup and Methodology} \label{methodology}
 In this section we describe the experimental methodology used in our evaluation. 
 
 
@@ -88,7 +88,8 @@ Our simulator also respects all significant timing and functional parameters for
 The Rodinia application uses an extra CPU core and offloads to the integrated GPU. These applications are modified to execute in a \textit{conditioned loop} such that there is no corruption of data structures in the program. The \textit{conditioned loop} is run infinitely and represents the region of interest (ROI) of the Rodinia benchmark. This region includes sections of CPU activity and GPU offloads in the execution, as is typical of a HSA program which will exhibit an interleave of offloaded regions and serial CPU sections. However, only the performance statistics for the first execution of the \textit{conditioned loop} in the program are considered. 
 This is done as the first loop represents the true run of the GPU kernel. The number of \textit{conditioned loops} executed depends on the length of the simulation and the IPC achieved by the GPU. Also, Subsequent loops can achieve better hit rates in cache due to the data fetched by the earlier loops thus hiding the true performance achieved.
 In cases where the ROI is longer than the complete run of the CPU workloads, the statistics for the last completed kernel are used. 
-\par \textbf{Performance Metric} We report system performance by adapting the ANTT \cite{antt} metric for Integrated Heterogeneous Systems and define it as follows
+
+\par \textbf{Performance Metric:} We report system performance by adapting the ANTT \cite{antt} metric for Integrated Heterogeneous Systems and define it as follows
 {\small
 \begin{equation}
 ANTT_{IHS_{CPU}} = \frac{1}{n_{cpu}} \sum_{i=1}^{n_{cpu}} \frac{CPI_i^{CPU_{IHS}}}{CPI_i^{SP}},
@@ -104,3 +105,7 @@ where ${CPI_i^{CPU_{IHS}}}$ and $CPI^{GPU_{IHS}}$ denote the cycles per instruct
 H\textnormal{-}MEAN_{xPU} = \frac{n}{\sum_{i=1}^{n} \frac{1}{IPC_{i}^{IHS}}} 
 \end{equation}
 }
+In this 
+paper, we report CPU ANTT/speedups and GPU ANTT/speedups (and the improvement in them) independently. This is done to identify the impact of CPU 
+and GPU applications on each other, as well as to understand the impact of the proposed modifications on each of the application
+type
