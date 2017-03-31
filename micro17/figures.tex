@@ -126,30 +126,31 @@
         \node [plain,right =2.5em of lbl11, minimum height=1em, minimum width=1em] (lbl13) {\scriptsize{\emph{Return Data}}};
 
         % Row Buffer
-        \node [rectblock, thick, above = 2.2cm of act, minimum width=6em] (data) {\begin{varwidth}{4cm} \centering{\scriptsize{Data}} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of data, minimum width=3em] (tag) {\begin{varwidth}{4cm} \centering{\scriptsize{Tag}} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of tag] (chain) {\begin{varwidth}{4cm} \centering{\scriptsize{}} \end{varwidth}};
+        \node [rectblock, thick, above = 2.2cm of act, minimum width=6.5em] (data) {\begin{varwidth}{4cm} \centering{\scriptsize{Data}} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of data, minimum width=4em] (tag) {\begin{varwidth}{4cm} \centering{\scriptsize{Tag}} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of tag, minimum width=1pt] (isgpu) {\begin{varwidth}{4cm} \centering{\scriptsize{}} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of isgpu] (chain) {\begin{varwidth}{4cm} \centering{\scriptsize{}} \end{varwidth}};
         \node [rectblock, thick, right = 0cm of chain] (reversechain) {\begin{varwidth}{4cm} \centering{\scriptsize{}} \end{varwidth}};
         \node [rectblock, thick, right = 0cm of reversechain, minimum width=1pt] (chaindirty) {\begin{varwidth}{4cm} \centering{\scriptsize{}} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of chaindirty, minimum width=8em] (tad2) {\begin{varwidth}{4cm} \centering{\scriptsize{\textbf{TAD 2}}} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of tad2, minimum width=6em] (row) {\begin{varwidth}{4cm} \centering{\textbf{...}} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of row, minimum width=8em] (tad15) {\begin{varwidth}{4cm} \centering{\scriptsize{\textbf{TAD 15}}} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of tad15, minimum width=1.5em] (cg) {\begin{varwidth}{4cm} \centering{} \end{varwidth}};
-        \node [rectblock, thick, right = 0cm of cg, minimum width=1.5em] (dc) {\begin{varwidth}{4cm} \centering{} \end{varwidth}};
-        \draw [decorate,decoration={brace,amplitude=5pt},yshift=8.2em, xshift=-2.8em] (0,0.3) -- (3.9,0.3) node [black,midway,yshift=0.5em] {\scriptsize \textbf{TAD 1} ($128B + 8B$)};
-        \draw [decorate,decoration={brace,amplitude=5pt},yshift=8.2em, xshift=-2.8em] (11.75,0.3) -- (12.8,0.3) node [black,midway,yshift=0.5em] {\scriptsize $8B$ unused};
+        \node [rectblock, thick, right = 0cm of chaindirty, minimum width=9em] (tad2) {\begin{varwidth}{4cm} \centering{\scriptsize{\textbf{TAD 2}}} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of tad2, minimum width=8em] (row) {\begin{varwidth}{4cm} \centering{\textbf{...}} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of row, minimum width=9em] (tad15) {\begin{varwidth}{4cm} \centering{\scriptsize{\textbf{TAD 15}}} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of tad15, minimum width=1.2em] (cg) {\begin{varwidth}{4cm} \centering{} \end{varwidth}};
+        \node [rectblock, thick, right = 0cm of cg, minimum width=2em, pattern=north west lines] (dc) {\begin{varwidth}{4cm} \centering{} \end{varwidth}};
+        \draw [decorate,decoration={brace,amplitude=5pt},yshift=8.2em, xshift=-2.8em] (0,0.3) -- (4.6,0.3) node [black,midway,yshift=0.5em] {\scriptsize \textbf{TAD 1} ($128B + 8B$)};
+        \draw [decorate,decoration={brace,amplitude=5pt},yshift=8.2em, xshift=3.2em] (11.75,0.3) -- (12.9,0.3) node [black,midway,yshift=0.5em] {\scriptsize $8B$ unused};
 
-        \node [plain, below=0.1cm of chain, minimum height=1em, minimum width=1em, xshift=-1em] (lbl31){\begin{varwidth}{4cm} \centering{\scriptsize{2bit Chain}} \end{varwidth}};
-        \node [plain, below=0.35cm of reversechain, minimum height=1em, minimum width=1em, xshift=1em] (lbl32) {\begin{varwidth}{4cm} \centering{\scriptsize{2bit Reverse Chain}} \end{varwidth}};
+        \node [plain, below=0.35cm of chain, minimum height=1em, minimum width=1em, xshift=-1.4em] (lbl31){\begin{varwidth}{4cm} \centering{\scriptsize{2bit Chain}} \end{varwidth}};
+        \node [plain, below=0.6cm of reversechain, minimum height=1em, minimum width=1em, xshift=1em] (lbl32) {\begin{varwidth}{4cm} \centering{\scriptsize{2bit Reverse Chain}} \end{varwidth}};
         \node [plain, below=0.1cm of chaindirty, minimum height=1em, minimum width=1em, xshift=2em] (lbl33) {\begin{varwidth}{4cm} \centering{\scriptsize{1bit Chain Dirty}} \end{varwidth}};
-        \node [plain, below=0.1cm of cg, minimum height=1em, minimum width=1em, xshift=1em] (lbl34) {\begin{varwidth}{4cm} \centering{\scriptsize{CPU/GPU bitvector}} \end{varwidth}};
-        \node [plain, right=0.1cm of dc, minimum height=1em, minimum width=1em] (lbl35) {\begin{varwidth}{4cm} \centering{\scriptsize{Dirty/Clean bitvector}} \end{varwidth}};
+        \node [plain, below=0.1cm of cg, minimum height=1em, minimum width=1em, xshift=1em] (lbl34) {\begin{varwidth}{4cm} \centering{\scriptsize{CPU/GPU bitvector(15 bits)}} \end{varwidth}};
+        \node [plain, below=0.1cm of isgpu, minimum height=1em, minimum width=1em, xshift=-1.3em] (lbl35) {\begin{varwidth}{4cm} \centering{\scriptsize{CPU/GPU}} \end{varwidth}};
 
-        \draw [<-] (chain.south) to [out=-90,in=90] ++(0,-0.2);
-        \draw [<-] (reversechain.south) to [out=-90,in=90] ++(0,-0.4);
+        \draw [<-] (chain.south) to [out=-90,in=90] ++(0,-0.4);
+        \draw [<-] (reversechain.south) to [out=-90,in=90] ++(0,-0.6);
         \draw [<-] (chaindirty.south) to [out=-90,in=90] ++(0,-0.2);
         \draw [<-] (cg.south) to [out=-90,in=90] ++(0,-0.2);
-        \draw [<-] (dc.east) to [out=0,in=180] ++(0.2,0);
+        \draw [<-] (isgpu.south) to [out=-90,in=90] ++(0,-0.2);
 
     \end{tikzpicture}
 }
