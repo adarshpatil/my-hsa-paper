@@ -12,20 +12,20 @@
 \begin{document}
 
 \begin{tikzpicture}[scale=0.5]
-    \pgfplotstableread[col sep = comma]{data/results-cpu.csv}\datatable
+    \pgfplotstableread[col sep = comma]{data/results-weighted-speedup.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Normalized H-Mean of CPU IPC,
+        ylabel style={}, ylabel = Weighted Speedup for IHS,
         ybar=1pt,
-        bar width=6pt,
+        bar width=4pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=60pt,
+        x=30pt,
         %ymin=0.4,
-        ymax=4.5,
+        %ymax=4,
         axis x line*=left,
         axis y line*=left,
         %enlarge x limits=false,
@@ -37,9 +37,9 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.58, 0.85)},
+             at={(0.3, -0.2)},
              font=\tiny,
-             anchor=west,
+             anchor=north west,
              legend columns=6,
              % default spacing:
              column sep=0.1cm,
@@ -50,19 +50,17 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=naive] {\datatable};
-        \addplot [bar2] table[x=X,y=PrIS] {\datatable};
-        \addplot [bar3] table[x=X,y=ByE] {\datatable};
-        \addplot [bar4] table[x=X,y=ByE+PrIS] {\datatable};
-        \addplot [bar5] table[x=X,y=Chaining+PrIS] {\datatable};
-        \addplot [bar6] table[x=X,y=CPUalone] {\datatable};
+		\addplot [bar1] table[x=X,y=naive] {\datatable};
+        \addplot [bar2] table[x=X,y=prio] {\datatable};
+        \addplot [bar3] table[x=X,y=bloom] {\datatable};        
+        \addplot [bar4] table[x=X,y=bloom+prio] {\datatable};
+        \addplot [bar5] table[x=X,y=chain+prio] {\datatable};
 
-        \addlegendentry{\footnotesize{Naive}}
+        \addlegendentry{\footnotesize{naive DRAM$\$$}}
         \addlegendentry{\footnotesize{PrIS}}
         \addlegendentry{\footnotesize{ByE}}
         \addlegendentry{\footnotesize{ByE+PrIS}}
         \addlegendentry{\footnotesize{Chaining+PrIS}}
-        \addlegendentry{\footnotesize{HoA CPU}}
 
     \end{axis}
 \end{tikzpicture}

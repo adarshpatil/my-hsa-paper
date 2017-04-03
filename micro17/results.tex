@@ -7,13 +7,15 @@
     \label{results-speedup}
 \end{figure*}
 
-In this section, we evaluate the results of the proposed \cachename mechanism discussed in Section \ref{design+mechanism}. Figure \ref{results-speedup} (a) and (b) presents the performance improvement (in terms of Harmonic Mean of IPC) for CPU and GPU respectively normalized to the baseline without a DRAMCache. Further, Figure \ref{results-antt-graph} (a) and (b) also presents the ANTT improvement for the CPU and GPU over a naive DRAMCache. We now discuss the performance of the \cachename mechanisms in the following section and analyze the improvement obtained by each.
+In this section, we evaluate the results of the proposed \cachename mechanism and the optimizations discussed in Section \ref{design+mechanism}. Figure \ref{results-speedup} (a) and (b) presents the performance improvement in terms of Harmonic Mean of IPC, for CPU and GPU respectively, normalized to the baseline without a DRAMCache. We report the performance improvement due to the introduction of DRAMCache (Naive),  and the different HASHCache mechanisms (\prioname, \bypassname, and Chaining and some combinations of them) in this section. 
 
 \subsection{PrIS DRAMCache scheduling}
-Prioritizing CPU requests with our \prioname scheduler at the DRAMCache controller leads to considerable performance benefits for the CPU. The reduction in waiting and queuing time at the DRAMCache allow CPU requests to retrieve data from DRAMCache much more rapidly. As expected the performance of the CPU improves by an average of 35\% over a naive DRAMCache (22.2\% ANTT Improvement). However, on the flip side giving aggressive priority to all CPU requests reduces the performance of GPU by 10\% (9.2\% ANTT reduction) despite the GPU being able to tolerate larger memory access latencies. For some of the benchmarks like Qg1, Qg2, Qg3 and Qg11 the high priority given to CPU requests by \prioname impacts the GPU, causing the GPU performance to reduce below the baseline IHS architecture without a DRAMCache. Our mechanisms further aim to reduce this performance drop for the GPU by ensuring (a) there are fewer CPU requests in the DRAMCache queues (b) GPU requests, despite being deprioritized at DRAMCache, have a better hit rate in the DRAMCache and avoid accessing the off-chip DRAM.
+Prioritizing CPU requests with our \prioname scheduler at the DRAMCache controller leads to considerable performance benefits for the CPU. By using \prioname, the average access latency of the DRAMCache for CPU requests reduces by an average of 15.3\% and upto 48.9\% over a naive DRAMCache. Hence, \prioname is able to improve the performance of the CPU by an average of 35\% over a naive DRAMCache. However, on the flip side giving aggressive priority to all CPU requests reduces the performance of GPU by 10\% despite the GPU being able to tolerate larger memory access latencies. For some of the benchmarks like Qg3, Qg10, Qg11 and Qg12 the high priority given to CPU requests by \prioname impacts the GPU, causing the GPU performance to reduce below the baseline IHS architecture without a DRAMCache 
+\footnote{Note however that, in these workloads, the introduction of DRAM cache (naive) itself improves performance only marginally}. Our mechanisms (\bypassname and chaining) further aim to reduce this performance drop for the GPU by ensuring (a) there are fewer CPU requests in the DRAMCache queues (b) GPU requests, despite being deprioritized at DRAMCache, have a better hit rate in the DRAMCache and avoid accessing the off-chip DRAM.
 \subsection{ByE for Temporal bypass}
-\bypassname attempts to achieves improved performance by directing some requests to be served from the off-chip DRAM, thus achieving improved resource utilization and bandwidth balance in the process. \bypassname alone achieves 12\% improvement (10\% in ANTT) in CPU performance and a 3\% (3\% in ANTT) improvement in GPU performance. 
-\par The CPU performance improvements are primarily due to bypassed requests facing reduced queuing delays at DRAM. Figure \ref{results-bloom} shows the percent reduction in total memory access latency for CPU read requests achieved by \bypassname over an already aggressive naive DRAMCache which employs a hit/miss predictor for CPU requests (primary y-axis). The total memory access latency for CPU read requests reduces by an average of 28\%. The already high hit rates for GPU in the DRAMCache coupled with the no-fill policy for CPU requests ensures fewer GPU requests at the off-chip DRAM which leads to lesser congestion. Figure \ref{results-bloom} also shows the percentage of incoming read requests bypassed by \bypassname, on the secondary y axis. \bypassname is able to bypass on an average about 37\% of incoming read requests with an average false positive rate of 40\%. The rest of the 23\% read requests are to dirty lines in the cache which cannot be bypassed. Further, the reduced set contention and lesser number CPU requests in DRAMCache queues reduce deprioritization for GPU, which in turn leads to small performance benefits for the GPU as well.
+\bypassname attempts to achieve improved performance by directing some requests to be served from the off-chip DRAM, thus achieving improved resource utilization and bandwidth balance in the process. \bypassname alone achieves 12\% improvement in CPU performance and a 3\% improvement in GPU performance. 
+\par The CPU performance improvements are primarily due to bypassed requests facing reduced queuing delays at DRAM. Figure \ref{results-bloom} shows the percent reduction in total memory access latency for CPU read requests achieved by \bypassname over an already aggressive naive DRAMCache which employs a hit/miss predictor for CPU requests (primary y-axis). The total memory access latency for CPU read requests reduces by an average of 28\%. The already high hit rates for GPU in the DRAMCache coupled with the no-fill policy for bypassed CPU requests ensures fewer GPU requests at the off-chip DRAM which leads to lesser congestion. Figure \ref{results-bloom} also shows the percentage of incoming read requests bypassed by \bypassname, on the secondary y axis. 
+\bypassname is able to bypass on an average about 37\% of incoming read requests. On an average 23\% read requests are to dirty lines in the cache which cannot be bypassed.  The remaining 40\% are false positives in our Bloom filter implementation which could have bypassed the DRAMCache. We discuss more on a sensitive study of Bloom filter later in this section. Further, the reduced set contention and lesser number of CPU requests in DRAMCache queues reduces congestion for GPU, which in turn leads to small performance benefits for the GPU as well improving the Harmonic Mean of GPU IPC by 3\% over naive DRAMCache.
 
 \begin{figure}[!htb]
     \centering
@@ -22,37 +24,45 @@ Prioritizing CPU requests with our \prioname scheduler at the DRAMCache controll
     \label{results-bloom}
 \end{figure}
 
-\par Combining \bypassname with \prioname allows for the non-bypassed CPU requests at the DRAMCache to be served without further queuing delays. \bypassname + \prioname performs better than just \prioname by 10\% for CPU and 7\% for GPU. Overall \bypassname + \prioname achieves 48.5\% improvement in CPU performance while degrading just 3\% GPU performance over a naive DRAMCache. On the same lines, the CPU shows a 28\% improvement in ANTT and a small degradation of 3\% in GPU ANTT. 
-% % % %Thus improving the overall system throughput by as much as 45.5\% over a un-optimized DRAMCache.
-\par We also experimented with 3 hash-functions while also optimally increasing the array capacity to 312KB (20\% larger) to reduce aliasing and increase the efficacy of bypass. As shown in Figure \ref{large-bloom} the CPU performance improves about 2.1\% while the GPU remains largely unaffected.
+\par Combining \prioname with \bypassname allows for the non-bypassed CPU requests at the DRAMCache to be served with a higher priority and hence reducing the queuing delays. \bypassname + \prioname performs better than just \prioname by 10\% for CPU and 7\% for GPU. Overall \bypassname + \prioname achieves 48.5\% improvement in CPU performance over a naive DRAMCache while degrading GPU performance by just 3%.
+\par The somewhat high false positive ratio in our bypass mechanism is due to the large number of dirty blocks in the DRAMCache and the relatively small size of the Bloom filter.  We also experimented with 3 hash-functions while also optimally increasing the array capacity to 312KB (20\% larger) to reduce aliasing and increase the efficacy of bypass. However, the CPU performance improves only by 2.1\% while the GPU remains largely unaffected.
 
-\begin{figure}[!htb]
-    \centering
-    \includegraphics[scale=1]{graphs/results-large-bloom}
-    \caption{Performance with a larger bloom filter}
-    \label{large-bloom}
-\end{figure}
+%\begin{figure}[!htb]
+%    \centering
+%    \includegraphics[scale=1]{graphs/results-large-bloom}
+%    \caption{Performance with a larger bloom filter}
+%    \label{large-bloom}
+%\end{figure}
 
 \subsection{Chaining for Spatial Occupancy Control}
-Occupancy control is achieved by our chaining mechanism which improves hit rates for GPU while guaranteeing some occupancy for the CPU in the DRAMCache. We empirically determine the low occupancy threshold of the CPU (\textit{$l_{cpu}$}) in the cache to be 25\% for all our workloads. Occupancy control merely confines the cache sharing limits for each processor. Chaining alone performs no better than a naive cache as the queuing latencies overwhelm any improvements in hit rates. However, when this mechanism is coupled with \prioname the increased hit rates reduces the performance drop caused by \prioname for the GPU from 10\% to 5.2\% (i.e 4.8\% performance improvement over \prioname). For the CPU, guaranteed occupancy in the DRAMCache and the secondary effect of lower congestion at off-chip DRAM allows CPU requests to be serviced with lower delays. This improves performance of CPU by 7\%, over only \prioname.
-\par Overall set chaining + \prioname improves CPU performance by 44.7\% while degrading GPU performance by merely 7\% over a naive DRAMCache. A similar trend is show by the ANTT improvement metric where the CPU improves 27.5\% over a naive DRAMCache while the GPU ANTT decreases by a mere 7.6\%. 
+As discussed in \ref{mechanism-chaining}, chaining mechanism improves hit rates for GPU while guaranteeing some occupancy for the CPU in the DRAMCache. We empirically determine a suitable low occupancy threshold of the CPU (\textit{$l_{cpu}$}) to be 20\% for all our workloads. Chaining alone performs no better than a naive cache as the queuing latencies overwhelm any improvements in hit rates. However, when chaining is coupled with \prioname, the increased hit rates reduces the performance drop caused by \prioname for the GPU from 10\% to 5.2\% (i.e 4.8\% performance improvement over \prioname). For the CPU, guaranteed occupancy in the DRAMCache and the secondary effect of lower congestion at off-chip DRAM allows CPU requests to be serviced with lower delays. This improves performance of CPU by 7\%, over only \prioname.
+\par Overall set chaining + \prioname improves CPU performance by 44.7\% while degrading GPU performance by merely 7\% over a naive DRAMCache.
 % %This improves overall system throughput by a significant 37.7\% over a un-optimized DRAMCache.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[scale=1]{graphs/results-cpu-antt}
-    \includegraphics[scale=1]{graphs/results-gpu-antt}
-    \caption{ANTT Improvement of \cachename over a IHS system with no DRAMCache for (a) CPU (b) GPU}
-    \label{results-antt-graph}
+    \includegraphics[scale=1]{graphs/results-system}
+    \caption{System Harmonic Mean with \cachename}
+    \label{results-system}
 \end{figure}
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[scale=1]{graphs/results-system}
-    \caption{System Harmonic Mean Improvement over no DRAMCache}
-    \label{results-system}
+    \includegraphics[scale=1]{graphs/results-weighted-speedup}
+    \caption{Weighted Speedup of the IHS with \cachename}
+    \label{results-ws}
 \end{figure}
 
-\subsection{System Performance with Stacked DRAMCache}
-We now holistically examine the benefits obtained by adding a stacked DRAM over a IHS processor and using this as a hardware managed cache. From Figure \ref{results-speedup} we observe that, where adding a naive DRAMCache can achieve only an average of (42\%,24\%) improvement in (CPU,GPU) performance, our \cachename achieves significant speedups of (205\%,17.5\%) and (211\%,20.4\%) for (CPU,GPU) using Heterogeneity aware temporal bypass and spatial occupancy control schemes. This comes within 16\% and 13\% of the ideal no interference performance for the GPU and within 81\% and 76\% of the ideal no interference performance for the CPU for each of the schemes. Further, for memory intensive combination of CPU and GPU workloads like Qg7 and Qg8 which see significant degradation in performance of both processors due to interference, adding a DRAMCache can improve performance upto 430\% for CPU and 47\% for GPU over a baseline system with no stacked DRAMCache.
-\par Further, as a comprehensive system metric Figure \ref{results-system} plots the performance improvement as a Harmonic mean of IPCs of all CPU cores and GPU CUs, normalized to our baseline IHS architecture without a DRAMCache. Overall with simple heterogeneity aware management stacked DRAMCache IHS systems can achieve upto 2X performance improvement.
+\subsection{System Performance with \cachename}
+We now holistically examine the performance improvements due to the introduction of our \cachename mechanisms, in  CPU and GPU cores together. From Figure \ref{results-speedup} we observe that, adding a naive DRAMCache can achieve an average of 42\% and 24\% improvement in CPU and GPU cores respectively. Whereas, \cachename achieves significant speedups of (205\%,17.5\%) and (211\%,20.4\%) for (CPU,GPU) using Heterogeneity-aware mechanisms of \bypassname and chaining respectively. This comes within 16\% and 13\% of the ideal no interference performance for the GPU and within 81\% and 76\% of the ideal no interference performance for the CPU for each of the schemes. Further, for memory intensive combination of CPU and GPU workloads like Qg7 and Qg8 which see significant degradation in performance of both processors due to interference, adding a DRAMCache can improve performance upto 430\% for CPU and 48\% for GPU over a baseline system with no stacked DRAMCache. In comparison, the naive DRAMCache implementation only brings 55\% and 56\% improvement in the CPU performance. 
+\par Figure \ref{results-system} plots the performance improvement as a Harmonic mean of IPCs of IHS IPC (combined CPU cores and GPU CUs), normalized to our baseline IHS architecture without a DRAMCache. Overall with simple heterogeneity aware management of the stacked DRAMCache, IHS systems can achieve on an average 200\% (upto 400\%) performance improvement while a naive DRAMCache is able to achieve just 41.8\% improvement.
+\par As a comprehensive system metric Figure \ref{results-ws} plots the weighted speedup normalized to the baseline of IHS without DRAMCache. Adding a DRAMCache to IHS processors naively achieves an improvement of merely 3\%. In fact for some workloads like Qg3 and Qg11 adding a DRAMCache without careful considerations can lead to negative performance impact. However, our heterogeneity-aware mechanisms are able to achieve on an average of 16\% and 15\%  improvement in performance over a IHS architecture without a DRAMCache. This improvement corresponds to a 12.9\% and 11.5\% improvement for each of the schemes over a carefully designed but heterogeneity unaware DRAMCache for the IHS processors.
+
+\subsection{Sensitivity Study}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[scale=1]{graphs/results-128M-cpu}
+    \includegraphics[scale=1]{graphs/results-128M-gpu}
+    \caption{Sensitivity Study with 128MB DRAMCache}
+    \label{results-128m}
+\end{figure}

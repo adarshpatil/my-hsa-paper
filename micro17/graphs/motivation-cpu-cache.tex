@@ -25,7 +25,7 @@
         x=28pt,
         axis x line*=left,
         axis y line*=left,
-        ylabel = CPU Cycles,
+        ylabel = {\scriptsize Avg D\$ Access Lat (in CPU cycles)},
         legend image code/.code={%
                     \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
         },  
@@ -81,8 +81,8 @@
         }
     ]
 
-   \addplot+[mark=*, mark size=2.5pt, color=blue, forget plot, only marks,  xshift=-2] table[x=X,y=HitRateCPU] {\datatable}; \label{onlycpuhitrate}
-   \addplot+[mark=triangle*, mark size=3.5pt, color=forestgreen(web), forget plot, only marks,  xshift=2] table[x=X,y=HitRateCPU+GPU] {\datatable};\label{cpu+gpuhitrate}
+   \addplot+[mark=*, mark size=3pt, color=blue, forget plot, only marks,  xshift=-2] table[x=X,y=HitRateCPU] {\datatable}; \label{onlycpuhitrate}
+   \addplot+[mark=triangle*, mark size=4pt, color=forestgreen(web), forget plot, only marks,  xshift=2] table[x=X,y=HitRateCPU+GPU] {\datatable};\label{cpu+gpuhitrate}
    
 %        \addlegendentry{\footnotesize{Hit Rate CPU}}
 %        \addlegendentry{\footnotesize{Hit Rate CPU\+GPU}}

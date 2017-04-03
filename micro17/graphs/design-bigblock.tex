@@ -16,7 +16,7 @@
     \pgfplotstableread[col sep = comma]{data/design-bigblock.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Normalized Harmonic Mean of IPC,
+        ylabel style={}, ylabel = Normalized H-Mean of IPC,
         ybar=1pt,
         bar width=8pt,
         xlabel=Workloads,
@@ -24,7 +24,7 @@
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=28pt,
+        x=27pt,
         %ymin=0,
         %ymax=4,
         axis x line*=left,
@@ -62,7 +62,7 @@
         \begin{axis}[
             ybar=1pt,
             bar width=5pt,
-            x=28pt,
+            x=27pt,
     		%ymin=0,
     		%ymax=1,
     		xtick align = inside,
@@ -85,10 +85,12 @@
             }
         ]
     
-       \addplot [bar4,
-       			xshift=2.2*\pgfplotbarwidth,
-       			postaction={pattern=north east lines}
-       			] table[x=X,y=inc] {\datatable};\label{memacc}
+       %\addplot [bar4,
+       %			xshift=2.2*\pgfplotbarwidth,
+       %			postaction={pattern=north east lines}
+       %			] table[x=X,y=inc] {\datatable};
+       \addplot+[mark=triangle*, mark size=4.5pt, color=green, forget plot, only marks,  xshift=-2] table[x=X,y=inc] {\datatable};
+       \label{memacc}
        \addlegendimage{/pgfplots/refstyle=memacc}\addlegendentry{\footnotesize{Inc Mem Acc}}
        
        

@@ -80,10 +80,13 @@
         }
     ]
 
-   \addplot [bar3, 
-             xshift=1*\pgfplotbarwidth,
-             postaction={pattern=north east lines}
-            ] table[x=X,y=bypassed] {\datatable};\label{bypassed}
+   %\addplot [bar3, 
+   %          xshift=1*\pgfplotbarwidth,
+   %          postaction={pattern=north east lines}
+   %         ] table[x=X,y=bypassed] {\datatable};
+            
+   \addplot+[mark=triangle*, mark size=4.5pt, color=green, forget plot, only marks] table[x=X,y=bypassed] {\datatable};
+   \label{bypassed}
    \addlegendimage{/pgfplots/refstyle=bypassed}\addlegendentry{\footnotesize{Bypassed Req}}
   
    \end{axis}

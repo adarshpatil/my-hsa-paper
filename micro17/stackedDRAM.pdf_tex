@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{401.24919434bp}%
+    \setlength{\unitlength}{411.47802734bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.33140208)%
+  \begin{picture}(1,0.3062147)%
     \put(0,0){\includegraphics[width=\unitlength]{stackedDRAM.pdf}}%
   \end{picture}%
 \endgroup%

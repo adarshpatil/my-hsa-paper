@@ -18,7 +18,7 @@
    inkscape:version="0.48.4 r9939"
    width="100%"
    height="100%"
-   sodipodi:docname="arch.svg">
+   sodipodi:docname="Diagram.svg">
   <metadata
      id="metadata844">
     <rdf:RDF>
@@ -34,25 +34,13 @@
      id="defs842">
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath3823">
+       id="clipPath3843">
       <rect
          style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         id="rect3825"
-         width="455.64795"
-         height="232.47346"
-         x="214.45677"
-         y="276.72379"
-         ry="1.1623673" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath3829">
-      <rect
-         style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         id="rect3831"
-         width="450.9985"
-         height="223.75571"
-         x="214.45677"
+         id="rect3845"
+         width="475.98941"
+         height="226.08044"
+         x="212.13203"
          y="277.30499"
          ry="1.1623673" />
     </clipPath>
@@ -71,24 +59,25 @@
      id="namedview840"
      showgrid="false"
      inkscape:zoom="1.7206265"
-     inkscape:cx="458.25157"
-     inkscape:cy="162.70163"
+     inkscape:cx="417.03111"
+     inkscape:cy="166.41165"
      inkscape:window-x="53"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <clipPath
-     id="g202a7d6f0d_0_0.0">
+     id="g2035e05907_3_0.0">
     <path
        d="m0 0l960.0 0l0 540.0l-960.0 0l0 -540.0z"
        clip-rule="nonzero"
        id="path5" />
   </clipPath>
   <g
-     clip-path="url(#clipPath3829)"
+     clip-path="url(#clipPath3843)"
      id="g7">
     <path
-       fill="#ffffff"
+       fill="#000000"
+       fill-opacity="0.0"
        d="m0 0l960.0 0l0 540.0l-960.0 0z"
        fill-rule="evenodd"
        id="path9" />
@@ -182,7 +171,7 @@
     <defs
        id="defs41">
       <linearGradient
-         id="g202a7d6f0d_0_0.1"
+         id="g2035e05907_3_0.1"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(3.739601725191101 0.0 0.0 3.739601725191101 0.0 0.0)"
          spreadMethod="pad"
@@ -201,14 +190,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.1)"
+       fill="url(#g2035e05907_3_0.1)"
        d="m453.56693 399.97998l85.82144 0l0 0.4041443l-85.82144 0z"
        fill-rule="evenodd"
        id="path48" />
     <defs
        id="defs50">
       <linearGradient
-         id="g202a7d6f0d_0_0.2"
+         id="g2035e05907_3_0.2"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(3.739601725191101 0.0 0.0 3.739601725191101 0.0 0.0)"
          spreadMethod="pad"
@@ -227,14 +216,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.2)"
+       fill="url(#g2035e05907_3_0.2)"
        d="m539.38837 399.97998l13.580139 -13.580109l0 0.4041443l-13.580139 13.580109z"
        fill-rule="evenodd"
        id="path57" />
     <defs
        id="defs59">
       <linearGradient
-         id="g202a7d6f0d_0_0.3"
+         id="g2035e05907_3_0.3"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(3.739601725191101 0.0 0.0 3.739601725191101 0.0 0.0)"
          spreadMethod="pad"
@@ -253,7 +242,7 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.3)"
+       fill="url(#g2035e05907_3_0.3)"
        d="m453.56693 399.97998l13.580109 -13.580109l85.82147 0l-13.580139 13.580109z"
        fill-rule="evenodd"
        id="path66" />
@@ -286,7 +275,7 @@
     <defs
        id="defs76">
       <linearGradient
-         id="g202a7d6f0d_0_0.4"
+         id="g2035e05907_3_0.4"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(9.071927511117963 0.0 0.0 9.071927511117963 0.0 0.0)"
          spreadMethod="pad"
@@ -305,14 +294,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.4)"
+       fill="url(#g2035e05907_3_0.4)"
        d="m256.99628 382.21408l93.464355 0l0 0.77523804l-93.464355 0z"
        fill-rule="evenodd"
        id="path83" />
     <defs
        id="defs85">
       <linearGradient
-         id="g202a7d6f0d_0_0.5"
+         id="g2035e05907_3_0.5"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(9.071927511117963 0.0 0.0 9.071927511117963 0.0 0.0)"
          spreadMethod="pad"
@@ -331,14 +320,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.5)"
+       fill="url(#g2035e05907_3_0.5)"
        d="m350.46063 382.21408l81.52396 -81.52396l0 0.77523804l-81.52396 81.52396z"
        fill-rule="evenodd"
        id="path92" />
     <defs
        id="defs94">
       <linearGradient
-         id="g202a7d6f0d_0_0.6"
+         id="g2035e05907_3_0.6"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(9.071927511117963 0.0 0.0 9.071927511117963 0.0 0.0)"
          spreadMethod="pad"
@@ -357,7 +346,7 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.6)"
+       fill="url(#g2035e05907_3_0.6)"
        d="m256.99628 382.21408l81.52396 -81.52396l93.464355 0l-81.52396 81.52396z"
        fill-rule="evenodd"
        id="path101" />
@@ -1819,7 +1808,7 @@
     <defs
        id="defs537">
       <linearGradient
-         id="g202a7d6f0d_0_0.7"
+         id="g2035e05907_3_0.7"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899012970398186 0.0 0.0 4.899012970398186 0.0 0.0)"
          spreadMethod="pad"
@@ -1838,14 +1827,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.7)"
+       fill="url(#g2035e05907_3_0.7)"
        d="m558.49164 324.30188l65.68695 0l0 1.6869507l-65.68695 0z"
        fill-rule="evenodd"
        id="path544" />
     <defs
        id="defs546">
       <linearGradient
-         id="g202a7d6f0d_0_0.8"
+         id="g2035e05907_3_0.8"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899012970398186 0.0 0.0 4.899012970398186 0.0 0.0)"
          spreadMethod="pad"
@@ -1864,14 +1853,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.8)"
+       fill="url(#g2035e05907_3_0.8)"
        d="m624.1786 324.30188l22.31305 -22.31305l0 1.6869507l-22.31305 22.31305z"
        fill-rule="evenodd"
        id="path553" />
     <defs
        id="defs555">
       <linearGradient
-         id="g202a7d6f0d_0_0.9"
+         id="g2035e05907_3_0.9"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899012970398186 0.0 0.0 4.899012970398186 0.0 0.0)"
          spreadMethod="pad"
@@ -1890,7 +1879,7 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.9)"
+       fill="url(#g2035e05907_3_0.9)"
        d="m558.49164 324.30188l22.31305 -22.31305l65.68695 0l-22.31305 22.31305z"
        fill-rule="evenodd"
        id="path562" />
@@ -1923,7 +1912,7 @@
     <defs
        id="defs572">
       <linearGradient
-         id="g202a7d6f0d_0_0.10"
+         id="g2035e05907_3_0.10"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899008784826391 0.0 0.0 4.899008784826391 0.0 0.0)"
          spreadMethod="pad"
@@ -1942,14 +1931,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.10)"
+       fill="url(#g2035e05907_3_0.10)"
        d="m503.95532 378.3354l65.68695 0l0 1.6869507l-65.68695 0z"
        fill-rule="evenodd"
        id="path579" />
     <defs
        id="defs581">
       <linearGradient
-         id="g202a7d6f0d_0_0.11"
+         id="g2035e05907_3_0.11"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899008784826391 0.0 0.0 4.899008784826391 0.0 0.0)"
          spreadMethod="pad"
@@ -1968,14 +1957,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.11)"
+       fill="url(#g2035e05907_3_0.11)"
        d="m569.6423 378.3354l22.31305 -22.31305l0 1.6869812l-22.31305 22.313019z"
        fill-rule="evenodd"
        id="path588" />
     <defs
        id="defs590">
       <linearGradient
-         id="g202a7d6f0d_0_0.12"
+         id="g2035e05907_3_0.12"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899008784826391 0.0 0.0 4.899008784826391 0.0 0.0)"
          spreadMethod="pad"
@@ -1994,7 +1983,7 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.12)"
+       fill="url(#g2035e05907_3_0.12)"
        d="m503.95532 378.3354l22.31305 -22.31305l65.68695 0l-22.31305 22.31305z"
        fill-rule="evenodd"
        id="path597" />
@@ -2027,7 +2016,7 @@
     <defs
        id="defs607">
       <linearGradient
-         id="g202a7d6f0d_0_0.13"
+         id="g2035e05907_3_0.13"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899008784826391 0.0 0.0 4.899008784826391 0.0 0.0)"
          spreadMethod="pad"
@@ -2046,14 +2035,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.13)"
+       fill="url(#g2035e05907_3_0.13)"
        d="m424.9609 378.83817l65.68695 0l0 1.6869812l-65.68695 0z"
        fill-rule="evenodd"
        id="path614" />
     <defs
        id="defs616">
       <linearGradient
-         id="g202a7d6f0d_0_0.14"
+         id="g2035e05907_3_0.14"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899008784826391 0.0 0.0 4.899008784826391 0.0 0.0)"
          spreadMethod="pad"
@@ -2072,14 +2061,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.14)"
+       fill="url(#g2035e05907_3_0.14)"
        d="m490.64786 378.83817l22.313019 -22.313019l0 1.6869507l-22.313019 22.31305z"
        fill-rule="evenodd"
        id="path623" />
     <defs
        id="defs625">
       <linearGradient
-         id="g202a7d6f0d_0_0.15"
+         id="g2035e05907_3_0.15"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899008784826391 0.0 0.0 4.899008784826391 0.0 0.0)"
          spreadMethod="pad"
@@ -2098,7 +2087,7 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.15)"
+       fill="url(#g2035e05907_3_0.15)"
        d="m424.9609 378.83817l22.313019 -22.313019l65.68695 0l-22.313019 22.313019z"
        fill-rule="evenodd"
        id="path632" />
@@ -2131,7 +2120,7 @@
     <defs
        id="defs642">
       <radialGradient
-         id="g202a7d6f0d_0_0.16"
+         id="g2035e05907_3_0.16"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(8.99416436463723 0.0 0.0 8.99416436463723 0.0 0.0)"
          spreadMethod="pad"
@@ -2151,14 +2140,14 @@
       </radialGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.16)"
+       fill="url(#g2035e05907_3_0.16)"
        d="m453.98883 352.45935l137.04901 0l0 1.0490417l-137.04901 0z"
        fill-rule="evenodd"
        id="path649" />
     <defs
        id="defs651">
       <radialGradient
-         id="g202a7d6f0d_0_0.17"
+         id="g2035e05907_3_0.17"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(8.99416436463723 0.0 0.0 8.99416436463723 0.0 0.0)"
          spreadMethod="pad"
@@ -2178,14 +2167,14 @@
       </radialGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.17)"
+       fill="url(#g2035e05907_3_0.17)"
        d="m591.03784 352.45935l22.950989 -22.950958l0 1.0490417l-22.950989 22.950958z"
        fill-rule="evenodd"
        id="path658" />
     <defs
        id="defs660">
       <radialGradient
-         id="g202a7d6f0d_0_0.18"
+         id="g2035e05907_3_0.18"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(8.99416436463723 0.0 0.0 8.99416436463723 0.0 0.0)"
          spreadMethod="pad"
@@ -2205,7 +2194,7 @@
       </radialGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.18)"
+       fill="url(#g2035e05907_3_0.18)"
        d="m453.98883 352.45935l22.950958 -22.950958l137.04904 0l-22.950989 22.950958z"
        fill-rule="evenodd"
        id="path667" />
@@ -2238,7 +2227,7 @@
     <defs
        id="defs677">
       <linearGradient
-         id="g202a7d6f0d_0_0.19"
+         id="g2035e05907_3_0.19"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899010877603795 0.0 0.0 4.899010877603795 0.0 0.0)"
          spreadMethod="pad"
@@ -2257,14 +2246,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.19)"
+       fill="url(#g2035e05907_3_0.19)"
        d="m480.0 324.30188l65.68695 0l0 1.6869507l-65.68695 0z"
        fill-rule="evenodd"
        id="path684" />
     <defs
        id="defs686">
       <linearGradient
-         id="g202a7d6f0d_0_0.20"
+         id="g2035e05907_3_0.20"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899010877603795 0.0 0.0 4.899010877603795 0.0 0.0)"
          spreadMethod="pad"
@@ -2283,14 +2272,14 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.20)"
+       fill="url(#g2035e05907_3_0.20)"
        d="m545.68695 324.30188l22.31305 -22.31305l0 1.6869507l-22.31305 22.31305z"
        fill-rule="evenodd"
        id="path693" />
     <defs
        id="defs695">
       <linearGradient
-         id="g202a7d6f0d_0_0.21"
+         id="g2035e05907_3_0.21"
          gradientUnits="userSpaceOnUse"
          gradientTransform="matrix(4.899010877603795 0.0 0.0 4.899010877603795 0.0 0.0)"
          spreadMethod="pad"
@@ -2309,7 +2298,7 @@
       </linearGradient>
     </defs>
     <path
-       fill="url(#g202a7d6f0d_0_0.21)"
+       fill="url(#g2035e05907_3_0.21)"
        d="m480.0 324.30188l22.31305 -22.31305l65.68695 0l-22.31305 22.31305z"
        fill-rule="evenodd"
        id="path702" />
@@ -2542,14 +2531,14 @@
        transform="matrix(0.2237196850393701 0.0 0.0 0.2050905511811024 222.23551049868766 455.2800944881889)"
        id="g782">
       <clipPath
-         id="g202a7d6f0d_0_0.22">
+         id="g2035e05907_3_0.22">
         <path
            d="m1.1368684E-13 -4.5474735E-13l662.0 0l0 172.0l-662.0 0z"
            clip-rule="evenodd"
            id="path785" />
       </clipPath>
       <image
-         clip-path="url(#g202a7d6f0d_0_0.22)"
+         clip-path="url(#g2035e05907_3_0.22)"
          fill="#000"
          width="662.0"
          height="172.0"
@@ -2569,14 +2558,14 @@
        transform="matrix(0.2237196850393701 0.0 0.0 0.2050905511811024 387.1069015748031 454.16884645669296)"
        id="g791">
       <clipPath
-         id="g202a7d6f0d_0_0.23">
+         id="g2035e05907_3_0.23">
         <path
            d="m0 -4.5474735E-13l662.0 0l0 172.0l-662.0 0z"
            clip-rule="evenodd"
            id="path794" />
       </clipPath>
       <image
-         clip-path="url(#g202a7d6f0d_0_0.23)"
+         clip-path="url(#g2035e05907_3_0.23)"
          fill="#000"
          width="662.0"
          height="172.0"

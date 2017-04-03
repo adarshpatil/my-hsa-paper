@@ -15,7 +15,7 @@
     \pgfplotstableread[col sep = comma]{data/results-gpu.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Normalized Harmonic Mean of IPC,
+        ylabel style={}, ylabel = Normalized H-Mean of GPU IPC,
         ybar=1pt,
         bar width=6pt,
         xlabel=Workloads,
@@ -37,9 +37,9 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.3, -0.2)},
+             at={(0.57, 0.85)},
              font=\tiny,
-             anchor=north west,
+             anchor=west,
              legend columns=6,
              % default spacing:
              column sep=0.1cm,
