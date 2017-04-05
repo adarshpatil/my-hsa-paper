@@ -17,18 +17,19 @@
     \begin{axis}[
         ylabel style={}, ylabel = Normalized H-Mean of GPU IPC,
         ybar=1pt,
-        bar width=5.5pt,
+        bar width=7pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=30pt,
+        x=40pt,
         %ymin=0,
-        ymax=2,
+        %ymax=2,
         axis x line*=left,
         axis y line*=left,
         %enlarge x limits=0.2,
+        enlarge x limits={abs=1cm},
         %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
         after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
         legend image code/.code={%
@@ -37,9 +38,9 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.2, -0.2)},
+             at={(0.57, 0.8)},
              font=\tiny,
-             anchor=north west,
+             anchor=west,
              legend columns=4,
              % default spacing:
              column sep=0.1cm,
@@ -50,15 +51,15 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=onlyGPU] {\datatable};
-        \addplot [bar4] table[x=X,y=onlyGPUD] {\datatable};
-        \addplot [bar2] table[x=X,y=CPU+GPU] {\datatable};
+        %\addplot [bar1] table[x=X,y=onlyGPU] {\datatable};
+        \addplot [bar1] table[x=X,y=CPU+GPU] {\datatable};
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
+        \addplot [fill= black!30!kellygreen,fill=kellygreen] table[x=X,y=onlyGPUD] {\datatable};
 
-        \addlegendentry{\footnotesize{HoA GPU w/o D$\$$}}
-        \addlegendentry{\footnotesize{HoA GPU w/ D$\$$}}
+        %\addlegendentry{\footnotesize{HoA GPU w/o D$\$$}}
         \addlegendentry{\footnotesize{HeA w/o D$\$$}}
         \addlegendentry{\footnotesize{HeA w/ D$\$$}}
+        \addlegendentry{\footnotesize{HoA GPU w/ D$\$$}}
 
     \end{axis}
 \end{tikzpicture}

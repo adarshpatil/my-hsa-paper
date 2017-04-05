@@ -22,9 +22,10 @@
         xticklabels from table={\datatable}{X},
         xtick=data,
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
-        x=28pt,
+        x=37pt,
         axis x line*=left,
         axis y line*=left,
+        enlarge x limits={abs=1cm},
         ylabel = {\scriptsize Avg D\$ Access Lat (in CPU cycles)},
         legend image code/.code={%
                     \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
@@ -50,8 +51,8 @@
         \addplot [bar1] table[x=X,y=onlyCPUD] {\datatable};\label{onlycpumemacc}
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};\label{cpu+gpumemacc}
 
-        \addlegendentry{\footnotesize{CPU alone}}
-        \addlegendentry{\footnotesize{co-run}}
+        \addlegendentry{\footnotesize{HoA CPU}}
+        \addlegendentry{\footnotesize{HeA}}
 
     \end{axis}
     
@@ -59,12 +60,13 @@
     \begin{axis}[
         ybar=1pt,
         bar width=8pt,
-        x=28pt,
+        x=37pt,
 		ymin=0,
 		ymax=1,
         axis x line=none,
         axis y line*=right,
        	ylabel = Hit rate,
+       	enlarge x limits={abs=1cm},
         legend style={
              text depth=0pt,
              legend cell align=left,
@@ -81,13 +83,13 @@
         }
     ]
 
-   \addplot+[mark=*, mark size=3pt, color=blue, forget plot, only marks,  xshift=-2] table[x=X,y=HitRateCPU] {\datatable}; \label{onlycpuhitrate}
-   \addplot+[mark=triangle*, mark size=4pt, color=forestgreen(web), forget plot, only marks,  xshift=2] table[x=X,y=HitRateCPU+GPU] {\datatable};\label{cpu+gpuhitrate}
+   \addplot+[mark=*, mark size=3pt, black!90!blue,fill=blue, forget plot, only marks,  xshift=-2] table[x=X,y=HitRateCPU] {\datatable}; \label{onlycpuhitrate}
+   \addplot+[mark=triangle*, mark size=4.5pt, black!100!green,fill=green, forget plot, only marks,  xshift=2] table[x=X,y=HitRateCPU+GPU] {\datatable};\label{cpu+gpuhitrate}
    
 %        \addlegendentry{\footnotesize{Hit Rate CPU}}
 %        \addlegendentry{\footnotesize{Hit Rate CPU\+GPU}}
-   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate CPU alone}}
-   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate co-run}}
+   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate HoA CPU}}
+   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate HeA}}
   
    \end{axis}
    

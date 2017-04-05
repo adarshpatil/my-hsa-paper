@@ -3,7 +3,6 @@
 \usepackage{siunitx}
 \usepackage{tikz} % To generate the plot from csv
 \usepackage{pgfplots}
-\usetikzlibrary{patterns} % for the stripes on the bar
 
 \input{barcolors}
 
@@ -13,32 +12,34 @@
 \begin{document}
 
 \begin{tikzpicture}[scale=0.5]
-    \pgfplotstableread[col sep = comma]{data/design-bigblock.csv}\datatable
+    \pgfplotstableread[col sep = comma]{data/motivation-gpu-cache1.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Normalized H-Mean of IPC,
+        ylabel style={}, ylabel = Number of requests to DRAM (Log),
         ybar=1pt,
-        bar width=8pt,
+		ymode=log,
+		ymin=1e0,
+        bar width=7pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
-        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=27pt,
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
+        x=40pt,
         %ymin=0,
         %ymax=4,
         axis x line*=left,
         axis y line*=left,
+        enlarge x limits={abs=1cm},
         %enlarge x limits=false,
         %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
-        after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
         legend image code/.code={%
                     \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
         },  
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.4, -0.2)},
+             at={(0.1, -0.2)},
              font=\tiny,
              anchor=north west,
              legend columns=4,
@@ -51,24 +52,25 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=cpu] {\datatable};
-        \addplot [bar3] table[x=X,y=gpu] {\datatable};
+        \addplot [bar1] table[x=X,y=cpuReq] {\datatable};
+        \addplot [bar3] table[x=X,y=gpuReq] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU}}
-        \addlegendentry{\footnotesize{GPU}}
+        \addlegendentry{\footnotesize{CPU Req at D$\$$}}
+        \addlegendentry{\footnotesize{GPU Req at D$\$$}}
 
     \end{axis}
     
         \begin{axis}[
             ybar=1pt,
             bar width=5pt,
-            x=27pt,
+            x=40pt,
     		%ymin=0,
     		%ymax=1,
     		xtick align = inside,
             axis x line=none,
             axis y line*=right,
-           	ylabel = Inc MemAcc Latency(\%),
+            enlarge x limits={abs=1cm},
+           	ylabel = Hit Rate,
             legend style={
                  text depth=0pt,
                  legend cell align=left,
@@ -89,11 +91,17 @@
        %			xshift=2.2*\pgfplotbarwidth,
        %			postaction={pattern=north east lines}
        %			] table[x=X,y=inc] {\datatable};
-       \addplot+[mark=triangle*, mark size=4.5pt, black!90!green,fill=green, forget plot, only marks,  xshift=-2] table[x=X,y=inc] {\datatable};
-       \label{memacc}
-       \addlegendimage{/pgfplots/refstyle=memacc}\addlegendentry{\footnotesize{Inc Mem Acc}}
+       %\addplot+[mark=triangle*, mark size=4.5pt, black!90!green,fill=green, forget plot, only marks] table[x=X,y=64M-direct] {\datatable};
+       %\label{64m-direct}
+       \addplot+[mark=*, mark size=4.5pt, black!90!red,fill=red, forget plot, only marks] table[x=X,y=64M-2way] {\datatable};
+       \label{64m-2way}
+       \addplot+[mark=square*, mark size=4.5pt, black!90!blue,fill=blue, forget plot, only marks] table[x=X,y=128M-2way] {\datatable};
+       \label{128m-2way}              
+       %\addlegendimage{/pgfplots/refstyle=64m-direct}\addlegendentry{\footnotesize{64M Direct}};
+       \addlegendimage{/pgfplots/refstyle=64m-2way}\addlegendentry{\footnotesize{64M 2-way}};
+       \addlegendimage{/pgfplots/refstyle=128m-2way}\addlegendentry{\footnotesize{128M 2-way}};
        
        
-       \end{axis}
+       \end{axis}    
 \end{tikzpicture}
 \end{document}

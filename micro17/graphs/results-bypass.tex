@@ -23,9 +23,10 @@
         xticklabels from table={\datatable}{X},
         xtick=data,
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
-        x=28pt,
+        x=36pt,
         axis x line*=left,
         axis y line*=left,
+        enlarge x limits={abs=1cm},
         ylabel = Reduction in MemAccLat (\%),
         ymin=0,
         legend image code/.code={%
@@ -58,11 +59,12 @@
     \begin{axis}[
         ybar=1pt,
         bar width=8pt,
-        x=28pt,
+        x=36pt,
 		%ymin=0,
 		%ymax=1,
         axis x line=none,
         axis y line*=right,
+        enlarge x limits={abs=1cm},
        	ylabel = Read requests Bypassed(\%),
         legend style={
              text depth=0pt,
@@ -85,7 +87,7 @@
    %          postaction={pattern=north east lines}
    %         ] table[x=X,y=bypassed] {\datatable};
             
-   \addplot+[mark=triangle*, mark size=4.5pt, color=green, forget plot, only marks] table[x=X,y=bypassed] {\datatable};
+   \addplot+[mark=triangle*, mark size=4.5pt, black!90!green,fill=green, forget plot, only marks] table[x=X,y=bypassed] {\datatable};
    \label{bypassed}
    \addlegendimage{/pgfplots/refstyle=bypassed}\addlegendentry{\footnotesize{Bypassed Req}}
   

@@ -15,18 +15,19 @@
     \pgfplotstableread[col sep = comma]{data/results-128M-gpu.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Normalized H-Mean of CPU IPC,
+        ylabel style={}, ylabel = Normalized H-Mean of GPU IPC,
         ybar=1pt,
-        bar width=5pt,
+        bar width=6.5pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=30pt,
+        x=40pt,
         %ymin=0.4,
-        %ymax=4.7,
+        %ymax=1.7,
         axis lines*=left,
+        enlarge x limits={abs=1cm},
         restrict y to domain*=0:4.7,
         visualization depends on=rawy\as\rawy,
         after end axis/.code={
@@ -39,9 +40,9 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.2, -0.2)},
+             at={(0.57, 0.9)},
              font=\tiny,
-             anchor=north west,
+             anchor=west,
              legend columns=5,
              % default spacing:
              column sep=0.1cm,
@@ -53,8 +54,8 @@
        ]
 
         \addplot [bar1] table[x=X,y=naive] {\datatable};
-        \addplot [bar2] table[x=X,y=bypass] {\datatable};
-        \addplot [bar3] table[x=X,y=chaining] {\datatable};
+        \addplot [bar3] table[x=X,y=bypass] {\datatable};
+        \addplot [bar4] table[x=X,y=chaining] {\datatable};
 
         \addlegendentry{\footnotesize{naive}}
         \addlegendentry{\footnotesize{ByE+PrIS}}       

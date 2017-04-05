@@ -15,21 +15,22 @@
     \pgfplotstableread[col sep = comma]{data/motivation-gpu-cache.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Reduction in GPU misses (Log),
+        ylabel style={}, ylabel = Number of requests to DRAM (Log),
         ybar=1pt,
 		ymode=log,
 		ymin=1e0,
-        bar width=8pt,
+        bar width=7pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, AVG},
-        x=30pt,
+        x=40pt,
         %ymin=0,
         %ymax=4,
         axis x line*=left,
         axis y line*=left,
+        enlarge x limits={abs=1cm},
         %enlarge x limits=false,
         %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
         legend image code/.code={%
@@ -38,7 +39,7 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.35, -0.2)},
+             at={(0.1, -0.2)},
              font=\tiny,
              anchor=north west,
              legend columns=4,
@@ -53,9 +54,11 @@
 
         \addplot [bar1] table[x=X,y=64M-2way] {\datatable};
         \addplot [bar3] table[x=X,y=128M-2way] {\datatable};
+        \addplot [bar4] table[x=X,y=cpu] {\datatable};
 
-        \addlegendentry{\footnotesize{64M 2way D$\$$}}
-        \addlegendentry{\footnotesize{128M 2way D$\$$}}
+        \addlegendentry{\footnotesize{Reduction in misses 64M 2way D$\$$}}
+        \addlegendentry{\footnotesize{Reduction in misses 128M 2way D$\$$}}
+        \addlegendentry{\footnotesize{Total Number of CPU Rd Reqs}}
 
     \end{axis}
 \end{tikzpicture}

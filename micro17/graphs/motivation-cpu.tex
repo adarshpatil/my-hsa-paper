@@ -18,17 +18,18 @@
 
     \begin{axis}[
         ylabel style={}, 
-        ylabel = Normalized H-Mean Mean of CPU IPC,
+        ylabel = Normalized H-Mean of CPU IPC,
         ybar=1pt,
-        bar width=5.5pt,
+        bar width=7pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=30pt,
+        x=40pt,
         %ymin=0,
         ymax=5.1,
+        enlarge x limits={abs=1cm},
         axis lines*=left,
         restrict y to domain*=0:5.1,
         visualization depends on=rawy\as\rawy,
@@ -43,9 +44,9 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.2, -0.2)},
+             at={(0.57, 0.88)},
              font=\tiny,
-             anchor=north west,
+             anchor=west,
              legend columns=4,
              % default spacing:
              column sep=0.1cm,
@@ -56,18 +57,18 @@
         }
        ]
 
-        \addplot [bar1] table[x=X,y=onlyCPU] {\datatable};
-        \addplot [fill= black!30!kellygreen,fill=kellygreen, 
-                  every node near coord/.append style={font=\small, rotate=90, anchor=west},
-                  nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
-               	 ] table[x=X,y=onlyCPUD] {\datatable};        
-        \addplot [bar2] table[x=X,y=CPU+GPU] {\datatable};
+        %\addplot [bar1] table[x=X,y=onlyCPU] {\datatable};
+        \addplot [bar1] table[x=X,y=CPU+GPU] {\datatable};
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
+		\addplot [fill= black!30!kellygreen,fill=kellygreen, 
+		          every node near coord/.append style={font=\small, rotate=90, anchor=west},
+		          nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
+		         ] table[x=X,y=onlyCPUD] {\datatable};                
 
-        \addlegendentry{\footnotesize{HoA CPU w/o D$\$$}}
-        \addlegendentry{\footnotesize{HoA CPU w/ D$\$$}}
+        %\addlegendentry{\footnotesize{HoA CPU w/o D$\$$}}        
         \addlegendentry{\footnotesize{HeA w/o D$\$$}}
         \addlegendentry{\footnotesize{HeA w/ D$\$$}}
+        \addlegendentry{\footnotesize{HoA CPU w/ D$\$$}}
 
     \end{axis}
 \end{tikzpicture}

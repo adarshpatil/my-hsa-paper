@@ -17,17 +17,18 @@
     \begin{axis}[
         ylabel style={}, ylabel = Normalized H-Mean of IHS IPC,
         ybar=1pt,
-        bar width=4pt,
+        bar width=4.5pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
         x tick label style={},
         xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
-        x=30pt,
+        x=39pt,
         %ymin=0.4,
         ymax=4,
         axis x line*=left,
         axis y line*=left,
+        enlarge x limits={abs=1cm},
         %enlarge x limits=false,
         %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
         after end axis/.code={\draw [black, very thick, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
@@ -37,9 +38,9 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.3, -0.2)},
+             at={(0.03, 0.85)},
              font=\tiny,
-             anchor=north west,
+             anchor=west,
              legend columns=6,
              % default spacing:
              column sep=0.1cm,
@@ -50,13 +51,17 @@
         }
        ]
 
-		\addplot [bar1] table[x=X,y=nodc] {\datatable};
-        \addplot [bar2] table[x=X,y=naive] {\datatable};
-        \addplot [bar3] table[x=X,y=bye+prio] {\datatable};
-        \addplot [bar4] table[x=X,y=chain+prio] {\datatable};
+		%\addplot [bar1] table[x=X,y=nodc] {\datatable};
+        \addplot [bar1] table[x=X,y=naive] {\datatable};
+        \addplot [bar2] table[x=X,y=prio] {\datatable};
+        \addplot [bar3] table[x=X,y=bye] {\datatable};
+        \addplot [bar4] table[x=X,y=bye+prio] {\datatable};
+        \addplot [bar5] table[x=X,y=chain+prio] {\datatable};
 
-        \addlegendentry{\footnotesize{w/o DRAM$\$$}}
-        \addlegendentry{\footnotesize{naive DRAM$\$$}}
+        %\addlegendentry{\footnotesize{w/o DRAM$\$$}}
+        \addlegendentry{\footnotesize{naive}}
+        \addlegendentry{\footnotesize{PrIS}}
+        \addlegendentry{\footnotesize{ByE}}
         \addlegendentry{\footnotesize{ByE+PrIS}}
         \addlegendentry{\footnotesize{Chaining+PrIS}}
 
