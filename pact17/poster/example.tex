@@ -28,8 +28,6 @@
 \input{../figures}
 
 \begin{frame}[t,fragile]{}
-\vspace{-1em}
-\begin{columns}[t]
 
 % gloablly set small font
 \small
@@ -37,139 +35,153 @@
 %-----------------------------------------------------------------------------
 %                                                                     COLUMN 1
 % ----------------------------------------------------------------------------
-\begin{column}{.47\linewidth}
 
-	% intro HSA
-    \begin{exampleblock}{Integrated Heterogenous Systems (IHS) Architecture}
-    \vspace{-0.2em}
-    \begin{itemize}
-    	\item \textit{Throughput-oriented} GPGPU SMs placed alongside \textit{Latency-oriented} CPU cores on-chip
-   		\item Shared Physical/Virtual Address Space and a Unified Memory Hierarchy 
-		\item Cache Coherent Interconnect
-    	\item Improved Programmability
-    	\begin{enumerate}[i]
-	    	\item Avoids explicit management of data (memcpy, cudamalloc etc.)
-	    	\item Allows pointer sharing
-	    	\item GPU application data set sizes need not be constrained by memory size
-	    	\item Enables HLLs to exploit fine grained parallelism synergistically with CPUs
-    	\end{enumerate}
-		\item AMD APUs, Intel Iris, NVIDIA Denver
-    \end{itemize}
-    \end{exampleblock}
-% ----------------------------------------------------------------------------    
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++    
+
     % intro D$
-    \begin{exampleblock}{Vertically Stacked DRAM}
-    \vspace{-0.2em}
-    \begin{itemize}
-        	\item DRAM Layers stacked using 2.5D interposer or 3D TSV
-       		\item Large capacity \textasciitilde order of GBs \\
-       				\qquad - can help contain the working sets of IHS workloads
-    		\item Very High Bandwidth \textasciitilde 500 GB/s (90GB/s DDR4)\\
-    				\qquad - can assist throughput-oriented GPU
-    		\item 20 \% reduction in access latency \\
-    				\qquad - can enhance CPU performance
-        	\item Samsung Wide IO, AMD/Hynix HBM, Intel/Micron HMC
-        \end{itemize}
-    \end{exampleblock}
+    \vspace{1.5em}
+    \begin{tcolorbox}[colback=red!5!white,
+                      colframe=red!75!black,
+                     ]
+        \begin{columns}[t]
+        \begin{column}{.48\linewidth}
+       
+            \begin{exampleblock}{Integrated Heterogenous Systems (IHS) Architecture}
+
+        	\begin{itemize}
+    	    	\item \textit{Throughput-oriented} GPGPU SMs + \textit{Latency-oriented} CPU cores on-chip
+       			\item Shared Physical/Virtual Address Space and a Unified Memory Hierarchy 
+    			%\item Cache Coherent Interconnect
+    	    	\item Improved Programmability
+    			\item AMD APUs, Intel Iris, NVIDIA Denver
+    	        \end{itemize}    
+    		\begin{figure}
+    			\centering
+    			\def\svgwidth{0.815\linewidth}
+    			\input{arch.pdf_tex} 
+    		\end{figure}
+            \end{exampleblock}
+     \end{column}
+     \begin{column}{.48\linewidth}
+        \begin{exampleblock}{Vertically Stacked DRAM}
+            	\centering DRAM Layers stacked using 2.5D interposer or 3D TSV
+\vspace{1.5em}
+\begin{table}[]
+\centering
+\setlength{\tabcolsep}{1em}
+\begin{tabular}{lll}
+             & \textbf{Stacked DRAM}                                                     & \textbf{Off-chip DRAM} \\
+             \hline
+Capacity     & $\sim$ 64MB - 4GB                                                         & $\sim$ 4GB - 128GB     \\
+Bandwidth    & $\sim$ 500GB/s                                                            & $\sim$ 90 GB/s         \\
+Latency      & $\sim$ 30ns - 35ns                                                        & $\sim$ 50ns            \\
+Interconnect & TSV (through-silicon-vias)                                                & Memory Channels        \\
+Standards    & $HBM_{(AMD/Hynix)}$, $HMC_{(Intel/Micron)}$ & DDR4. GDDR5           
+\end{tabular}
+\end{table}
+\vspace{0.9em}
+            		\begin{figure}
+            			\centering
+            			\def\svgwidth{0.8\linewidth}
+            			\input{stackedDRAM.pdf_tex} 
+            		\end{figure}
+        \end{exampleblock}
+      \end{column}
+      \end{columns}
+    \end{tcolorbox}
+
+    
 % ----------------------------------------------------------------------------        
+\begin{columns}[t]
+
+\begin{column}{.48\linewidth}
+\begin{tcolorbox}[colback=red!5!white,
+                  colframe=red!75!black,
+                 ]
     % motivation
-    \begin{exampleblock}{Motivation}
-    \vspace{-0.2em}
+    \begin{exampleblock}{Motivation and Design}
     \centering 
     \underline{Performance}
 
     \begin{itemize}
-       	\item When running alone CPU and GPU both gain from addition of DRAM\$
-      	\item Effect of Co-running \\
-      		\qquad - CPU performance severely degraded, drops 320\% from onlyCPU\\
-      		\qquad - GPU remain relatively unaffected, drops 7\% from onlyGPU
+      	%\item Effect of Co-running \\
+      	%	\qquad - CPU performance severely degraded, drops 320\% from homogeneous CPU\\
+      	%	\qquad - GPU remain relatively unaffected, drops 7\% from homogeneous GPU
       	\item Naive addition of DRAM\$ over IHS \\
-      		\qquad - CPU recovers only 42\% of the lost performance over onlyCPU \\
-      		\qquad - GPU still performs  15\% better than onlyGPU \\
+      		\qquad - CPU performs 42\% better while Homogeneous CPU achieves 372\% improvement  \\
+      		\qquad \qquad \emph{\color{red}2.6x performance gap}\\
+      		\qquad - GPU performs 24\% better while Homogeneous GPU achieves 26.4\% improvement \\ 
+      		\qquad \qquad \emph{10\% performance gap}\\
+      	\item Un-managed interference and Heterogeneity in the DRAM\$
     \end{itemize}
     \begin{figure}
-       \includegraphics[scale=2.1]{../graphs/motivation-cpu}
-       \includegraphics[scale=2.1]{../graphs/motivation-gpu}
-       \caption{Performance comparison of CPU \& GPU - alone, co-running, with and without DRAM\$}
+       \includegraphics[scale=2]{graphs/motivation-cpu}
+    \end{figure}
+    \begin{figure}
+       \includegraphics[scale=2]{graphs/motivation-gpu}
+       \caption{Performance comparison of CPU \& GPU in IHS with D\$ vs Homogeneous with D\$}
        \label{fig:motivation}
     \end{figure}
     
     \underline{Causes for sub-optimality of DRAM\$}
     \begin{itemize}
    		\item Increased DRAM\$ access times for CPU despite comparable hit rates
-        \item Set contention does not allow GPU to occupy enough cache to use the bandwidth benefit
+        \item Allow GPU to occupy enough cache to benefit from the large DRAM\$ bandwidth
     \end{itemize}
     
     \begin{figure}
-       \includegraphics[scale=2.05]{../graphs/motivation-cpu-cache}
-       \includegraphics[scale=2.05]{../graphs/motivation-gpu-cache}
-       \caption{(a)CPU D\$ Access Latency and Hit Rates (b)GPU Hit rate with 2-way assoc cache}
+       \includegraphics[scale=2.05]{graphs/motivation-cpu-cache}
+       \includegraphics[scale=2.05]{graphs/motivation-gpu-cache}
+       \caption{(a)CPU D\$ Access Latency and Hit Rates (b)GPU Misses with 2-way assoc cache}
        \label{fig:motivation-cpu-cache}
     \end{figure}  
 
+\vspace{1em}
+\begin{table}[]
+\centering
+\begin{tabular}{ll}
+\textbf{Design Point}                   & \textbf{Design Decision}          \\
+\hline
+Metadata Overhead & Tags in DRAM, 128 Byte TAD (Tag-and-Data) Units        \\
+Set Associativity                                           & Direct Mapped                                          \\
+Miss Penalty                                                & Miss Predictor for CPU requests                        \\
+Addressing Scheme                                           & Row-Rank-Bank-Column-Channel (RoRaBaCoCh)
+\end{tabular}
+\caption{HAShCache Design Decisions}
+\end{table}
     \end{exampleblock}
      
 
 %-----------------------------------------------------------------------------
 
-    % Design
-    \begin{exampleblock}{HAShCache Design for IHS Processors}
-    \vspace{-0.2em}
-        \quad Large Metadata overhead \\
-        	\quad \qquad- Tags-in-DRAM, 128 Byte TAD Units \\
-        \quad Set Associativity \\
-        	\quad \qquad- Direct Mapped to avoid multiple tag lookups \\
-        \quad Miss Penalty \\
-        	\quad \qquad- Initiate early access to memory for CPU using a miss predictor \\
-        \quad RBH vs BLP addressing scheme \\
-	        \quad \qquad- Despite higher BLP, DRAM\$ performs better using RBH addressing\\
-        \quad Effect of Interference \\
-        	\quad \qquad- DRAM\$ must be designed to try to regain CPU performance lost due to interference\\
-    \end{exampleblock}
-	
-%-----------------------------------------------------------------------------
-\iffalse
-    % experimental setup
-	\begin{exampleblock} {Experimental Setup}
-	{
-	\footnotesize
-	\begin{itemize}
-		\item Cycle accurate, modified gem5-gpu simulator
-		\item 5 OoO x86-64 cores @2.5GHz running multi-programmed SPEC 2006 workload
-		\item Private 32KB I/D L1, 1MB shared split L2 - all coherent
-		\item 8 Fermi-like SMs @700MHz running mem-copy elided Rodinia workload
-		\item 64KB private L1 non-coherent, 512KB Coherent L2 cache
-		\item Stacked DRAM (HMC\_2500\_x64) - 64MB, 2 vault, 8 layers/vault, peak B/W 40GB/s
-		\item off-chip DRAM (DDR3\_1600\_x64) - 8GB, 2 channel, 1 rank/channel, peak B/W 25GB/s
-	\end{itemize}
-	}
-	\end{exampleblock}	
-\fi	
-%-----------------------------------------------------------------------------
-	
-\begin{exampleblock}{Results}
-                \begin{figure}
-			    	\includegraphics[scale=2.7]{../graphs/results-cpu}
-			    \end{figure}
-			    \begin{figure}
-			    	\includegraphics[scale=2.7]{../graphs/results-gpu}
-			    \end{figure}        			
 
-\end{exampleblock}
 
+%-----------------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------------
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\end{tcolorbox}
 \end{column}
+
+
 %-----------------------------------------------------------------------------
 %                                                                     COLUMN 2
 % ----------------------------------------------------------------------------
-\begin{column}{.47\linewidth}
-% ----------------------------------------------------------------------------
+\begin{column}{.48\linewidth}
+\begin{tcolorbox}[
+                  title={\vspace{0.7em} \large \ HAShCache \ = \ \textit{PrIS} \ + \ \textit{ByE} \ + \ \textit{Chaining} \vspace{0.4em}
+                         },
+                  colback=red!5!white,
+                  colframe=red!75!black,
+                  coltitle=red!25!black,
+                  colbacktitle=yellow!50!red,	
+                  fonttitle=\bfseries,
+                 ]
 
-	% hsa arch
-	\begin{figure}
-		\centering
-    	\includegraphics[scale=3]{hsa-arch} \\
-    	\caption{Architecture of an Integrated Heterogeneous System with a stacked DRAM}
-    \end{figure}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 % ----------------------------------------------------------------------------   
 
     % Priority
@@ -180,45 +192,15 @@
     	\item GPU requests have good row buffer locality $\implies$ preferentially scheduled $\implies$ large queuing latency for CPU requests
     	\item \emph{Achieved} using \\
     	\qquad - Queue entry reservation for CPU requests when queues reach critical levels \\
-    	\qquad - CPU Prioritized FR-FCFS, IHS-aware scheduling algorithm
+    	\qquad - CPU Prioritized FR-FCFS with IHS-aware scheduling algorithm
     \end{itemize} 
 	\end{exampleblock}
 	    
+	\vspace{0.8em}
 % ----------------------------------------------------------------------------    
-    % chaining
-    \begin{exampleblock}{\circled{2} Spatial Occupany Control : \textit{Chaining}}
-    \begin{columns} [T]
-    \begin{column}{0.6\linewidth}    
-    	\begin{itemize}
-	    	\item \emph{OBJECTIVE:} Allow GPU to better use DRAM\$ bandwidth
-		    \item \emph{Achieved} by providing pseudo-associativity for GPU, thus improving GPU hit rate
-		    \item Provides guaranteed minimum occupancy for CPU lines in the cache
-	    	\item GPU set conflicts resolved by evicting an adjoining "\textit{chained}" set belonging to the CPU in same row
-		    \item Chaining done until minimum CPU occupancy threshold is reached
-		    \item Overhead: NIL, uses unused bits in DRAM\$ rows
-	    \end{itemize}
-	\end{column}
-	\begin{column}{0.4\linewidth}
-		\scriptsize
-		- CPU fill requests always inserted in original set\\
-		- GPU fill request inserted as per table below\\
-		\begin{table}[]
-		\centering
-			\input{../chaining-table}
-		\end{table}
-	\end{column}
-	\end{columns}
-	\vspace{\baselineskip}
-    \centering
-    \begin{figure}
-    	\includegraphics[scale=2.2]{chaining}
-    	\caption{HAShCache Row Organization and Access Path of a request}
-    \end{figure}
-    \end{exampleblock}
-    
-% ----------------------------------------------------------------------------        
+
     % bypass
-    \begin{exampleblock}{\circled{3} Temporal Selective Bypass Enabler : \textit{ByE}}
+    \begin{exampleblock}{\circled{2} Temporal Selective Bypass Enabler : \textit{ByE}}
     	\begin{columns} [T]
     		\begin{column}{0.6\linewidth}
     	    \begin{itemize}
@@ -226,55 +208,91 @@
     	    	\item Bypass CPU requests to clean cache lines and cache misses
     	    	\item \emph{Achieved} using a \textit{Counting Bloom Filter} that tracks dirty lines in cache
     	    	\item Overhead: 256KB (0.4\% of cache capacity)
-			    \item Adjoining Fig shows working of HAShCache + ByE
+			    %\item Fig shows working of HAShCache + ByE
     	    \end{itemize}     			
     		\end{column}
     		\begin{column}{0.4\linewidth}
     			\begin{figure}
 					\centering
-    			    \includegraphics[scale=1.9]{bloom}
+            		\def\svgwidth{0.9\linewidth}
+            		\input{bypass.pdf_tex}
     			\end{figure}
     	    \end{column}
     	\end{columns}
-	\end{exampleblock}       
+	\end{exampleblock} 
+    \vspace{0.8em}
+% ----------------------------------------------------------------------------        
+
+    % chaining
+    \begin{exampleblock}{\circled{3} Spatial Occupancy Control : \textit{Chaining}}
+    	\begin{itemize}
+	    	\item \emph{OBJECTIVE:} Allow GPU to better use DRAM\$ bandwidth
+		    \item \emph{Achieved} by providing pseudo-associativity for GPU, thus improving GPU hit rate
+		    \item Provides guaranteed minimum occupancy for CPU lines in the cache
+	    	\item GPU set conflicts resolved by evicting an adjoining "\textit{chained}" set belonging to the CPU
+		    %\item Chaining done until minimum CPU occupancy threshold is reached
+		    \item Overhead: NIL, uses unused bits in DRAM\$ rows
+	    \end{itemize}
+	\vspace{\baselineskip}
+    \centering
+    \begin{figure}
+    	\centering
+        \def\svgwidth{0.31\linewidth}
+        \input{chainings.pdf_tex}
+        \hspace{0.38em}	
+    	\includegraphics[scale=1.5]{chaining}
+    	\caption{HAShCache Row Organization and Access Path of a request}
+    \end{figure}
+    \end{exampleblock}
+          
 % ----------------------------------------------------------------------------    
-\begin{exampleblock}{Conclusion}
-\vspace{-0.1em}
-\begin{itemize}
-\item HAShCache is heterogeneity aware and improves system throughput and achieves better resource utilization
-\item Spatial Occupancy Control improves performance of CPU by 44\% by trading off just 6\% of GPU performance
-\item Temporal Bypass improves performance of CPU by 48\% while sacrificing just 3\% of GPU performance 
-\item Overall, addition of a stacked DRAM\$ improves CPU and GPU performance by 211\% and 20\% over a IHS baseline system with no stacked DRAM
-\end{itemize}
 
-\end{exampleblock}
+\end{tcolorbox}
 \end{column}
 
 \end{columns}
-\iffalse
-\begin{columns}[t]
-\begin{column}{.97\linewidth}
-\begin{exampleblock}{Results \& Conclusion}
-	\begin{columns}[t]
-		\begin{column}{.32\linewidth}
-		    \begin{figure}
-		    	\includegraphics[scale=3]{../graphs/results-cpu}
-		    \end{figure}
-		\end{column}
-		\begin{column}{.32\linewidth}
-		    \begin{figure}
-		    	\includegraphics[scale=3]{../graphs/results-gpu}
-		    \end{figure}
-		\end{column}		
-		\begin{column}{.32\linewidth}
-			asfjasdkjf
-		\end{column}				
-	\end{columns}
 
-\end{exampleblock}
-\end{column}
-\end{columns}
-\fi
+    \vspace{1.5em}
+        \begin{tcolorbox}[colback=red!5!white,
+                          colframe=red!75!black,
+                         ]
+        \begin{columns}[t]
+        \begin{column}{.48\linewidth}
+       
+	
+		\begin{exampleblock}{Results}
+        	\begin{figure}
+				\includegraphics[scale=2]{graphs/results-cpu}
+			\end{figure}
+			\begin{figure}
+			   	\includegraphics[scale=2]{graphs/results-gpu}
+		  	    \caption{Speedup obtained by HAShCache mechanisms for (a)CPU (b)GPU}
+			\end{figure} 
+		\end{exampleblock}
+		
+     \end{column}
+     \begin{column}{.48\linewidth}
+	\begin{exampleblock}{Conclusion}
+	\begin{itemize}
+	\item HAShCache  \quad - Heterogeneity aware organization \quad \ \  - improves IHS performance  \\ 
+	  \qquad \qquad \qquad \ - achieves better resource utilization \quad- reduces energy consumed
+	\item Compared to a heterogeneity unaware DRAM\$ (naive) \\
+	\quad - \textit{Chaining} + \textit{PrIS} improves perf of CPU by 44\% by trading off just 6\% of GPU perf \\
+	\quad - \textit{ByE} + \textit{PrIS} improves perf of CPU by 48\% while sacrificing just 3\% of GPU perf
+	\item Overall, HAShCache improves system performance by \\ 
+	       \qquad - {\color{red}41\%} over a naive DRAM\$ \\ 
+	       \qquad - {\color{red}211\%} over the baseline system with no DRAM\$
+	\end{itemize}
+	
+	\end{exampleblock}
+	
+		\footnotesize{*This work has been submitted to the  50th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO-50) and is currently under review} \\
+		\vspace{2em}
+		\footnotesize{The authors can be contacted at adarsh.patil@csa.iisc.ernet.in / govind@csa.iisc.ernet.in}
+      \end{column}
+      \end{columns}
+    \end{tcolorbox}
+
 \end{frame}
 
 \end{document}

@@ -5,8 +5,14 @@
 \RequirePackage{amsmath,amssymb,bm,amsthm}
 \usefonttheme{default}
 
+\usepackage[skins]{tcolorbox}
+
 \setbeamertemplate{itemize items}[circle]
 \setbeamertemplate{navigation symbols}{}  % no navigation on a poster
+
+% for frame border
+%\tcbset{enhanced,colback=red!5!white,
+%colframe=red!75!black,fonttitle=\bfseries,bottomrule=0pt,leftrule=0pt,rightrule=0pt}
 
 % chameleon
 \definecolor{tangocolordarkchameleon}{HTML}{4E9A06}
@@ -127,15 +133,17 @@
 
 \setbeamertemplate{block example begin}{
   \vskip.75ex
+  %\begin{tcolorbox}[shadow={0mm}{-1mm}{0mm}{black!50!white}]
   \begin{beamercolorbox}[rounded=true,leftskip=1cm,colsep*=.75ex]{block title example}%
     \usebeamerfont*{block title example}\insertblocktitle
   \end{beamercolorbox}%
   {\ifbeamercolorempty[bg]{block example body}{}{\nointerlineskip\vskip-0.5pt}}%
   \usebeamerfont{block body example}%
-  \begin{beamercolorbox}[rounded=true,colsep*=.75ex,sep=.75ex,vmode]{block body example}%
+  \begin{beamercolorbox}[rounded=true,colsep*=.75ex,sep=.3ex,vmode]{block body example}%
     \ifbeamercolorempty[bg]{block body example}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
   }
 
 \setbeamertemplate{block example end}{
   \end{beamercolorbox}
+  %\end{tcolorbox}
 }

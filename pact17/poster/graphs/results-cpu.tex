@@ -4,10 +4,16 @@
 \usepackage{tikz} % To generate the plot from csv
 \usepackage{pgfplots}
 
+\usetikzlibrary{decorations.pathmorphing}
+
 \input{barcolors}
+
+\definecolor{lightgrey}{HTML}{D3D3D3}
 
 \pgfplotsset{compat=newest} % Allows to place the legend below plot
 \usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\definecolor{lightgrey}{HTML}{D3D3D3}
 
 \begin{document}
 
@@ -17,7 +23,7 @@
     \begin{axis}[
         ylabel style={}, ylabel = Normalized H-Mean of CPU IPC,
         ybar=1pt,
-        bar width=6pt,
+        bar width=10pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
@@ -35,7 +41,7 @@
         visualization depends on=rawy\as\rawy,        
         after end axis/.code={
         	\draw [black, very thick, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});
-        	\draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0.05,0.93) -- (rel axis cs:1,0.93);
+        	\draw [ultra thick, lightgrey, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0.05,0.93) -- (rel axis cs:1,0.93);
         					},
         clip=false,
         legend image code/.code={%
@@ -58,11 +64,11 @@
        ]
 
         \addplot [bar1] table[x=X,y=naive] {\datatable};
-        \addplot [bar2] table[x=X,y=PrIS] {\datatable};
-        \addplot [bar3] table[x=X,y=ByE] {\datatable};
-        \addplot [bar4] table[x=X,y=ByE+PrIS] {\datatable};
-        \addplot [bar5] table[x=X,y=Chaining+PrIS] {\datatable};
-		\addplot [black!30,fill=black!30, 
+        %\addplot [bar2] table[x=X,y=PrIS] {\datatable};
+        %\addplot [bar3] table[x=X,y=ByE] {\datatable};
+        \addplot [fill=black!30!orange, fill=orange] table[x=X,y=ByE+PrIS] {\datatable};
+        \addplot [bar2] table[x=X,y=Chaining+PrIS] {\datatable};
+		\addplot [fill=black!30!cyan,fill=black!30!cyan, 
 		          every node near coord/.append style={font=\small, xshift=0.3em, text=black, anchor=west},
 		          nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
 		         ] table[x=X,y=CPUalone] {\datatable};
@@ -71,8 +77,8 @@
         %\addplot [bar6] table[x=X,y=CPUalone] {\datatable};
 
         \addlegendentry{\footnotesize{Naive}}
-        \addlegendentry{\footnotesize{PrIS}}
-        \addlegendentry{\footnotesize{ByE}}
+        %\addlegendentry{\footnotesize{PrIS}}
+        %\addlegendentry{\footnotesize{ByE}}
         \addlegendentry{\footnotesize{ByE+PrIS}}
         \addlegendentry{\footnotesize{Chaining+PrIS}}
         \addlegendentry{\footnotesize{HoA CPU}}
