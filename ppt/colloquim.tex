@@ -1,0 +1,463 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+	\leavevmode%
+	\hbox{%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+			\usebeamerfont{author in head/foot}\insertshorttitle %\insertauthor
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+			\usebeamerfont{title in head/foot}\insertsection
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+			\usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+			\insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+		\end{beamercolorbox}}%
+		\vskip0pt%
+	}
+\makeatother
+	
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[HAShCache]{HAShCache : Heterogeneity Aware Shared DRAMCache
+	for Integrated Heterogeneous Systems} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Adarsh Patil} % Your name
+\institute[CSA, IISc] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+Department of Computer Science and Automation \\ Indian Institute of Science \\ % Your institution for the title page
+\medskip
+\textit{Advisor: Prof. R. Govindarajan} % Advisor
+}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\centering \tiny{This work has been submitted to 50th Internation Symposium on Microarchitecture (MICRO) 2017}
+\end{frame}
+
+\begin{frame}
+\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+%------------------------------------------------
+\section{Introduction}
+%------------------------------------------------
+\subsection{Intergrated Heterogenous Systems (IHS)} 
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Introduction}
+\begin{table}[]
+\small
+\centering
+\begin{tabular}{@{}lll@{}}
+	\toprule Criteria
+	& \textbf{CPU}                                                                                     & \textbf{GPU}                                                                                  \\ \midrule
+	\begin{tabular}[c]{@{}l@{}}number of \\ processing units\end{tabular} & 4-16 CPUs                                                                                        & 2048 processing units                                                                         \\ \midrule
+	ILP                                                                   & 128 entry Re-order Buffer                                                                        & \begin{tabular}[c]{@{}l@{}}max 64 warps resident\\ (each warp has 32 threads)\end{tabular}    \\ \midrule
+	\begin{tabular}[c]{@{}l@{}}Last Level SRAM\\ Cache\end{tabular}       & 1-4 MB                                                                                           & 700 KB - 1 MB                                                                                 \\ \midrule
+	Memory                                                                & \begin{tabular}[c]{@{}l@{}}Large Main Memory\\ $\sim$ 10s - 100s GB\\ Allows Paging\end{tabular} & \begin{tabular}[c]{@{}l@{}}Limited Memory\\ $\sim$ 8 - 16 GB\\ No Paging support\end{tabular} \\ \midrule
+	\begin{tabular}[c]{@{}l@{}}Programming\\ Paradigm\end{tabular}        & \begin{tabular}[c]{@{}l@{}}serial / multi-threaded /\\ SIMD\end{tabular}                         & SIMT, explicitly parallel                                                                     \\ \midrule
+	Programming                                                           & Easy - Medium                                                                                    & Difficult                                                                                     \\ \midrule
+	Power                                                                 & 1.5 GFLOPS/Watt                                                                                  & 5 GFLOPS / Watt                                                                               \\ \bottomrule
+\end{tabular}
+\label{cpu-vs-gpu}
+\end{table}
+\end{frame}
+
+\note[itemize]{
+	\item power 2012 K20 NVIDIA vs 2012 Sandybridge E5-2670
+	\item energy efficiency of GPUs comes from simpler cores (small out of orders, no Branch pred)
+	\item maybe add that GPU is streaming type of core
+}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Integrated Heterogenous Systems (IHS) Architecture}
+Latency-oriented CPU cores + Throughput-oriented GPGPU SMs \textbf{on-chip} \\
+\begin{itemize}
+	\item Simplifies Programming - Shared Virtual Memory, pointer sharing
+	\item Allows GPGPUs to operate on data sets larger memory size %using OS paging routines
+	\item Reduces overall energy consumption
+	\item Share resources - NoC, caches, memory controllers, DRAMs
+	\item e.g. AMD APUs, Intel Iris, NVIDIA Denver
+\end{itemize}
+\begin{figure}[!htb]
+	\centering
+	\def\svgwidth{0.6\columnwidth}
+	\input{arch.pdf_tex}
+	%\caption{Architecture of an Integrated Heterogeneous System}
+	\label{fig:hsa-arch}
+\end{figure}
+\end{frame}
+
+\note[itemize]{
+\item 99\% of Intel and 67\% of AMD non-server processors contain integrated graphics [APU 2013 summit]
+\item most smartphones and tablet processors ship with heterogenous processors.
+}
+%------------------------------------------------
+\subsection{3D Die-stacked DRAM} 
+
+\begin{frame}
+\frametitle{3D Die-stacked DRAM}
+\begin{itemize}
+\item DRAM layers placed closer to processing cores using 2.5D interposer and/or 3D TSV (through-silicon-vias)
+\item Large capacity DRAM chips of the order of 100s of MBs to GBs
+\item Large DRAM Bandwidth (beneficial for GPGPUs)
+\item Better interconnect slightly lowers access latency (beneficial for CPUs)
+\item Our proposal uses this capacity as a hardware managed cache
+\item e.g. HBM (AMD/Hynix), HMC (Intel/Micron)
+\end{itemize}
+\begin{figure}[!htb]
+	\centering
+	\def\svgwidth{0.7\columnwidth}
+	\input{stackedDRAM.pdf_tex}
+	%\caption{Architecture of an Integrated Heterogeneous System}
+	\label{fig:stacked-dram}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\section{Motivation}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Motivation}
+(a) CPU Performance in IHS with Naive DRAMCache
+    \begin{figure}
+    	\includegraphics[scale=1]{graphs/motivation-cpu}
+    \end{figure}
+\begin{itemize}
+\item CPU performance improves by 42\% over baseline IHS system without DRAMCache
+\item Homogenous CPU archieves 372\% improvement with a DRAMCache
+\item Performance gap of almost 260\%  compared to the ideal HoA CPU
+\end{itemize} 
+\end{frame} 
+  
+\begin{frame}
+\frametitle{Motivation}    
+(b) GPU Perfomance in IHS with Naive DRAMCache    
+    \begin{figure}    	
+    	\includegraphics[scale=1]{graphs/motivation-gpu}
+    \end{figure}
+\begin{itemize}
+	\item GPU performance improves by 24\% over baseline IHS system with without DRAMCache
+	\item Homogenous GPU archieves 35\% improvement with a DRAMCache
+	\item Performance gap within 10\%  of its ideal HoA GPU
+\end{itemize}    
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+Cause for CPU Performance gap
+	\begin{figure}
+		\includegraphics[scale=1]{graphs/motivation-cpu-cache}
+	\end{figure}
+\begin{itemize}
+	\item CPU Hit rates in DRAMCache marginally affected (about 4\%)
+	\item Co-running with GPU increases the avg mem access latency by 213\%
+\end{itemize}	
+\end{frame}
+
+%------------------------------------------------
+\section{HAShCache Design}
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{HAShCache Design}
+	\begin{block}{Metadata overhead}
+		\small
+		Caching at 128 byte granularity - Experimental results with 512 byte block under performs 128 bytes blocks by (12.2\%, 10.5\%) for (CPU,GPU)\\
+		Tags stored in DRAM alongside data and streamed out in multiple bursts (TADs)
+	\end{block}
+	\begin{block}{Set Associativity}
+		\small
+		Direct mapped cache organization
+	\end{block}
+	\begin{block}{Reducing Miss Penalty}
+		\small
+		Cache Hit/miss Predictor based on MAP-I prediction for CPU \\
+		No such mechanism for GPU
+	\end{block}
+	\begin{block}{Addressing Scheme}
+		\small
+		Addressed with RBH addressing scheme (Row-Rank-Bank-Column-Channel) \\ 
+		Experimental results show that BLP addressing scheme  (RoCoRaBaCh) performs worse by (3\%, 1\%) for (CPU,GPU)
+	\end{block}	
+\end{frame}
+
+\note[itemize]{
+	\item one needs to keep in mind several factors when designing a DRAM based cache as compared to a conventional cache
+	\item several organizations have been proposed with various trade offs for DRAMCache in the cache parameters
+	\item we re-examine these design decisions in the context of IHS architectures
+}
+
+
+%------------------------------------------------
+\section{HAShCache Mechanisms}
+%------------------------------------------------
+\subsection{Heterogeneity aware DRAMCache scheduler - PrIS}
+
+
+\begin{frame}
+\frametitle{Heterogeneity aware DRAMCache scheduler - PrIS}
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.45\textwidth} % Left column and width
+\textbf{Heading}
+\begin{enumerate}
+\item Statement
+\item Explanation
+\item Example
+\end{enumerate}
+
+\column{.5\textwidth} % Right column and width
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
+
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Heterogeneity aware Temporal bypass - ByE}
+\begin{frame}
+\frametitle{Heterogeneity aware Temporal bypass - ByE}
+
+\end{frame}
+%------------------------------------------------
+
+\subsection{}
+\begin{frame}
+\frametitle{Heterogeneity aware Spatial Occupancy Control - Chaining}
+	
+\end{frame}
+
+%------------------------------------------------
+\section{Evaluation Methodology}
+\begin{frame}
+	\frametitle{Experimental Setup}
+\begin{columns}[c]
+\column{.75\textwidth} % Right column and width
+	
+	\begin{table}[h]
+		\footnotesize
+		\centering
+		\begin{tabular}{{@{}ll@{}}}
+			\toprule
+			CPU Core 	& five 4-wide OoO x86 cores @2.5 GHz \\
+			\midrule
+			CPU Caches 	& 32KB 8-way split I/D private L1 Cache, \\ 
+			& 1MB 8-way shared split L2 Cache, 128B lines \\
+			\midrule
+			GPU Core 	& eight Fermi SMs@700MHz, 2x2 GTO warp sched\\
+			& 64K registers, 96KB scratch memory \\
+			\midrule
+			GPU Caches 	& 64KB 4-way private L1 cache,\\ 
+			& 512KB, 16-way assoc L2 Coherent Cache \\
+			\midrule
+			Stacked     & 2 vaults, HMC\_2500\_x64, 2KB Page \\
+			DRAM		& $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$=9.9ns-10.2ns-7.7ns-21.6ns\\
+			& 8 layers/vault, 4 banks/layer\\
+			& 64 byte burst size, Peak bandwidth 40GB/s \\
+			%& Refresh related: $t_{REFI}$=3.9us $t_{RFC}$=59us \\
+			\midrule
+			Off-chip 	& 2 channels, DDR3\_1600\_x64, 1KB page \\
+			DRAM		& $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$=13.75ns-13.75ns-13.75ns-35ns\\
+			& 1 rank/channel, 8 banks/rank\\
+			& 64 byte burst size, Peak bandwidth 25GB/s \\
+			%& Refresh related: $t_{REFI}$=7.8us $t_{RFC}$=260us \\
+			\bottomrule
+		\end{tabular}
+		\caption{Configuration of the simulated system}
+		\label{configuration}
+	\end{table}
+		
+	\column{.2\textwidth} % Left column and width
+	\textbf{Simulator}
+	\begin{itemize}
+		\item gem5-gpu
+		\item SE mode
+	\end{itemize}	
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Methodology}
+    Medium to high memory intensive \emph{Multi-programmed SPEC 2006} combinations on CPU coupled with a \emph{Rodinia no-copy} GPU benchmark
+	\begin{table}[h!]
+		\footnotesize
+		\centering
+		\begin{tabular}{{|l|l|l|}}
+			\hline
+			\textbf{Name} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia}\\
+			\hline
+			Qg1& cactusADM;gcc;bzip2;sphinx3 & needle\\
+			\hline
+			Qg2 & astar;mcf;gcc;bzip2 & needle\\
+			\hline
+			Qg3 & gcc;libquantum;leslie3d;bwaves & needle\\
+			\hline
+			Qg4 & astar;soplex;cactusADM;libquantum & k-means\\
+			\hline
+			Qg5 & milc;mcf;libquantum;bzip2 & k-means\\
+			\hline
+			Qg6 & bzip2;gobmk;hmmer;sphinx3 & k-means\\
+			\hline
+			Qg7 & soplex;milc;cactusADM;libquantum & gaussian\\
+			\hline
+			Qg8 & milc;libquantum;gobmk;leslie3d & gaussian\\
+			\hline
+			Qg9 & astar;milc;gcc;leslie3d & hotspot\\
+			\hline
+			Qg10 & gcc;gobmk;leslie3d;sphinx3 & hotspot\\
+			\hline
+			Qg11 & astar;cactusADM;libquantum;sphinx3 & srad\\
+			\hline
+			Qg12 & astar;mcf;gobmk;sphinx3 & streamcluster\\
+			\hline
+			Qg13 & astar;cactusADM;libquantum;sphinx3 & lud\\
+			\hline
+		\end{tabular}
+		\caption{Workloads}
+		\label{workloads}
+	\end{table}
+\end{frame}
+
+
+
+%------------------------------------------------
+
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Verbatim}
+\begin{example}[Theorem Slide Code]
+\begin{verbatim}
+\begin{frame}
+\frametitle{Theorem}
+\begin{theorem}[Mass--energy equivalence]
+$E = mc^2$
+\end{theorem}
+\end{frame}\end{verbatim}
+\end{example}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Figure}
+Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
+%\begin{figure}
+%\includegraphics[width=0.8\linewidth]{test}
+%\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Citation}
+An example of the \verb|\cite| command to cite within the presentation:\\~
+
+This statement requires citation \cite{p1}.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{References}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem[Smith, 2012]{p1} John Smith (2012)
+\newblock Title of the publication
+\newblock \emph{Journal Name} 12(3), 45 -- 678.
+\end{thebibliography}
+}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\Huge{\centerline{The End}}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
