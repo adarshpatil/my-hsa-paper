@@ -320,14 +320,23 @@ Cause for CPU Performance gap
 \subsection{Heterogeneity aware Temporal Bypass - ByE}
 \begin{frame}
 \frametitle{Heterogeneity aware Temporal Bypass - ByE}
-
+\emph{OBJECTIVE:} Utilize the idle off-chip DRAM Bandwidth
+\begin{itemize}
+	\item Large DRAMCache capacity $\implies$ high hit rates and long block residency time before being evicted $\implies$ under-utilized off-chip DRAM bandwidth
+	\item Baseline incorporates a hit/miss predictor for CPU requests and starts early off-chip access for a request that is predicted to be a miss
+	\item However, we observe that when GPU is running, CPU requests returning from off-chip access wait at DRAMCache for verification of hit/miss via a tag match
+	\item Bypass Enabler (ByE) bypasses CPU accesses to clean lines and cache misses when the GPU is running
+	\item Achieved using a Counting Bloom Filter that tracks dirty lines in the DRAMCache
+	\item Bypassed CPU requests are not filled into DRAMCache
+	\item Hardware Overhead: 256KB (0.4\% of cache capacity)
+\end{itemize}
 \end{frame}
 %------------------------------------------------
 
 \subsection{Heterogeneity aware Spatial Occupancy Control - Chaining}
 \begin{frame}
 \frametitle{Heterogeneity aware Spatial Occupancy Control - Chaining}
-	
+\emph{OBJECTIVE:} Allow GPU to better use DRAMCache Bandwidth
 \end{frame}
 
 %------------------------------------------------
