@@ -155,7 +155,7 @@ Department of Computer Science and Automation \\ Indian Institute of Science \\ 
 Latency-oriented CPU cores + Throughput-oriented GPGPU SMs \textbf{on-chip} \\
 \begin{itemize}
 	\item Simplifies Programming - Shared Virtual Memory, pointer sharing
-	\item Allows GPGPUs to operate on data sets larger memory size %using OS paging routines
+	\item Allows GPGPUs to operate on data sets larger than memory size %using OS paging routines
 	\item Reduces overall energy consumption
 	\item Share resources - NoC, caches, memory controllers, DRAMs
 	\item e.g. AMD APUs, Intel Iris, NVIDIA Denver
@@ -242,26 +242,35 @@ Cause for CPU Performance gap
 %------------------------------------------------
 
 \begin{frame}
+\setbeamercovered{transparent}
 	\frametitle{HAShCache Design}
+\onslide<1->{
 	\begin{block}{Metadata overhead}
 		\small
 		Caching at 128 byte granularity - Experimental results with 512 byte block under performs 128 bytes blocks by (12.2\%, 10.5\%) for (CPU,GPU)\\
 		Tags stored in DRAM alongside data and streamed out in multiple bursts (TADs)
 	\end{block}
+}
+\onslide<2->{
 	\begin{block}{Set Associativity}
 		\small
 		Direct mapped cache organization
 	\end{block}
+}
+\onslide<3->{
 	\begin{block}{Reducing Miss Penalty}
 		\small
 		Cache Hit/miss Predictor based on MAP-I prediction for CPU \\
 		No such mechanism for GPU
 	\end{block}
+}
+\onslide<4->{
 	\begin{block}{Addressing Scheme}
 		\small
 		Addressed with RBH addressing scheme (Row-Rank-Bank-Column-Channel) \\ 
 		Experimental results show that BLP addressing scheme  (RoCoRaBaCh) performs worse by (3\%, 1\%) for (CPU,GPU)
 	\end{block}	
+}
 \end{frame}
 
 \note[itemize]{
@@ -279,32 +288,43 @@ Cause for CPU Performance gap
 
 \begin{frame}
 \frametitle{Heterogeneity aware DRAMCache scheduler - PrIS}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
-
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-
-\end{columns}
+\emph{OBJECTIVE:} Reduce large access latencies for CPU req at DRAMCache
+\begin{itemize}
+	\onslide<2->{
+	\item DRAM devices operate at lower clock rate and require periodic refresh which results in queueing of requests
+	\item DRAM schedulers reorder requests to best suit DRAM characteristics (e.g. First Ready-FCFS)
+	}
+	\onslide<3->{
+	\item In IHS processors,
+	\begin{enumerate}
+		\item large number of GPU requests $\implies$ exhaust the queue positions $\implies$ DRAMCache blocked and CPU requests being rejected
+		\item GPU requests have good row buffer locality $\implies$ preferentially scheduled $\implies$ large queueing latency for CPU requests		
+	\end{enumerate}
+	}
+	\onslide<4->{
+	\item CPU \underline{Pr}ioritized \underline{I}HS aware \underline{S}cheduler 
+	\begin{enumerate}
+		\item Queue entry reservation for CPU req  when queues reach critical levels
+		\item CPU Requests Priorization when searching queues for next request to be serviced
+	\end{enumerate}
+	}
+	\onslide<5->{
+	\item Binary selection for scheduling which greatly simplifies the scheduling algorithm to a single stage 
+	\item No additional hardware overhead incurred
+	}
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
 
-\subsection{Heterogeneity aware Temporal bypass - ByE}
+\subsection{Heterogeneity aware Temporal Bypass - ByE}
 \begin{frame}
-\frametitle{Heterogeneity aware Temporal bypass - ByE}
+\frametitle{Heterogeneity aware Temporal Bypass - ByE}
 
 \end{frame}
 %------------------------------------------------
 
-\subsection{}
+\subsection{Heterogeneity aware Spatial Occupancy Control - Chaining}
 \begin{frame}
 \frametitle{Heterogeneity aware Spatial Occupancy Control - Chaining}
 	
@@ -403,7 +423,31 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ul
 	\end{table}
 \end{frame}
 
-
+%------------------------------------------------
+\begin{frame}
+\frametitle{Methodology}
+\begin{itemize}
+	\item Fast-forward init phase until just before launch of the first kernel of the GPU program
+	\item Each CPU forwarded by atleast 2B instructions (avg 20B per mix)
+	\item Warmup phase until the fastest core reaches 250M instructions
+	\item Detailed Timing simulations - atleast 250M instructions on each core
+	\item Rodinia benchmarks run in a \textit{conditioned loop} represents the ROI
+	\item CPU performance considered for first 250M instructions
+	\item GPU performance considered for the first execution of the \textit{conditioned loop} or the last completed kernel whichever is earlier
+	\item Performance Metric - Harmonic mean, Weighted Speedup
+	{\scriptsize
+		\begin{equation*}
+		H\textnormal{-}MEAN_{CPU} = \frac{n_{cpu}}{\sum_{i=1}^{n_{cpu}} \frac{1}{IPC_{i}^{CPU}}}, \hspace{0.2cm} H\textnormal{-}MEAN_{GPU} = \frac{n_{gpu}}{\sum_{i=1}^{n_{gpu}} \frac{1}{IPC_{i}^{GPU}}} 
+		\end{equation*}
+	}
+	{\scriptsize
+		\begin{equation*}
+		H\textnormal{-}MEAN_{IHS} = \frac{n_{cpu}+ n_{gpu}}{\sum_{i=1}^{n_{cpu}} \frac{1}{IPC_{i}^{CPU}} + \sum_{i=1}^{n_{gpu}} \frac{1}{IPC_{i}^{GPU}}}, 
+		WS = \sum_{i=1}^{n_{cpu}} \frac{IPC_i^{CPU_{IHS}}}{IPC_i^{SP}} + \sum_{i=1}^{n_{gpu}} \frac{IPC_i^{GPU_{IHS}}}{IPC_i^{GPU}}
+		\end{equation*}
+	}
+\end{itemize}
+\end{frame}
 
 %------------------------------------------------
 
@@ -421,33 +465,87 @@ $E = mc^2$
 \end{frame}
 
 %------------------------------------------------
+\section{Results}
+%------------------------------------------------
 
 \begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
+\frametitle{Results - Individual CPU and GPU performance}
+\begin{figure}
+\includegraphics[width=\linewidth]{graphs/results-cpu}
+\end{figure}
+\begin{figure}
+\includegraphics[width=\linewidth]{graphs/results-gpu}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Results - System Performance}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{graphs/results-system}
+	\end{figure}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{graphs/results-weighted-speedup}
+	\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Sensitivity Study with 128MB DRAMCache}
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{graphs/results-128M-cpu}
+\end{figure}
+\begin{figure}
+	\includegraphics[width=0.9\linewidth]{graphs/results-128M-gpu}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
-
-This statement requires citation \cite{p1}.
+\frametitle{Conclusion}
+\begin{itemize}
+	\item We present a case for performance improvement of IHS with a stacked DRAMCache device
+	\item Quantify the effects of co-running on each processor and show that heterogeneity adversely affects CPU performance 
+	\item We carefully design a DRAMCache organization for IHS processors
+	\item We propose 3 heterogeniety-aware optimizations for DRAMCache - a scheduler, a spatial bypass and a temporal occupancy control scheme that improves performance of the overall system by over 200\% over a systen with no DRAMCache and 41\% over a system with a naive DRAMCache
+	\item Significant benefits of using a stacked DRAMCache for IHS processors, far exceeding the usefulness of the such devices in homogeneous GPUs and multi-core CPU systems.
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
 \frametitle{References}
-\footnotesize{
+\scriptsize{
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678.
+\bibitem[alloycache]{p1} M. K. Qureshi and G. H. Loh
+\newblock Fundamental latency trade-off in architecting dram caches: Outperforming impractical sram-tags with a simple and practical design
+\newblock \emph{MICRO-45, 2012}
+
+
+\bibitem[sms]{p2} R. Ausavarungnirun, K.K.W. Chang, L. Subramanian, G. H. Loh, and O. Mutlu
+\newblock Staged memory scheduling: Achieving high performance and scalability in heterogeneous systems
+\newblock \emph{ISCA-39, 2012}
+
+\bibitem[warp]{p4} O. Kayiran, N. C. Nachiappan, A. Jog, R. Ausavarungnirun, M. T. Kandemir, G. H. Loh, O. Mutlu, and C. R. Das
+\newblock Managing gpu concurrency in heterogeneous architectures
+\newblock \emph{MICRO-47, 2014}
+
+\bibitem[oscar]{p3} J. Zhan, O. Kayiran, G. H. Loh, C. R. Das, and Y. Xie
+\newblock Oscar: Orchestrating stt-ram cache traffic for heterogeneous cpu-gpu architectures
+\newblock \emph{MICRO-49, 2016}
+
+\bibitem[tap]{p4} J. Lee and H. Kim
+\newblock Tap: A tlp-aware cache management policy for a cpu-gpu heterogeneous architecture
+\newblock \emph{HPCA-18, 2012}
+
+\bibitem[helm]{p4} V. Mekkat, A. Holey, P.C. Yew, and A. Zhai
+\newblock Managing shared last-level cache in a heterogeneous multicore processor
+\newblock \emph{PACT-22, 2013}
+
 \end{thebibliography}
 }
 \end{frame}
@@ -455,7 +553,8 @@ This statement requires citation \cite{p1}.
 %------------------------------------------------
 
 \begin{frame}
-\Huge{\centerline{The End}}
+\frametitle{Thank You}
+\Huge{\centerline{Questions? }}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
