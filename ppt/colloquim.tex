@@ -105,13 +105,21 @@ Department of Computer Science and Automation \\ Indian Institute of Science \\ 
 
 \begin{frame}
 \titlepage % Print the title page as the first slide
-\centering \tiny{This work has been submitted to 50th Internation Symposium on Microarchitecture (MICRO) 2017}
+\centering \scriptsize{Submitted to 50th International Symposium on Microarchitecture (MICRO 2017)}
 \end{frame}
 
 \begin{frame}
 \frametitle{Overview} % Table of contents slide, comment this block out to remove it
 \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
+
+\note[itemize]{
+	\item introduce IHS architecture, die stacking technology
+	\item look at some motivation numbers for the work
+	\item describe at the design decisions for hashcache and the heterogenity aware mechanisms of hashcache
+	\item go over evalution methodology
+	\item some results and the related work
+}
 
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
@@ -131,7 +139,7 @@ Department of Computer Science and Automation \\ Indian Institute of Science \\ 
 \begin{tabular}{@{}lll@{}}
 	\toprule Criteria
 	& \textbf{CPU}                                                                                     & \textbf{GPU}                                                                                  \\ \midrule
-	\begin{tabular}[c]{@{}l@{}}number of \\ processing units\end{tabular} & 4-16 CPUs                                                                                        & 2048 processing units                                                                         \\ \midrule
+	\begin{tabular}[c]{@{}l@{}}number of \\ processing units\end{tabular} & 4-24 CPUs                                                                                        & 2048 processing units                                                                         \\ \midrule
 	ILP                                                                   & 128 entry Re-order Buffer                                                                        & \begin{tabular}[c]{@{}l@{}}max 64 warps resident\\ (each warp has 32 threads)\end{tabular}    \\ \midrule
 	\begin{tabular}[c]{@{}l@{}}Last Level SRAM\\ Cache\end{tabular}       & 1-4 MB                                                                                           & 700 KB - 1 MB                                                                                 \\ \midrule
 	Memory                                                                & \begin{tabular}[c]{@{}l@{}}Large Main Memory\\ $\sim$ 10s - 100s GB\\ Allows Paging\end{tabular} & \begin{tabular}[c]{@{}l@{}}Limited Memory\\ $\sim$ 8 - 16 GB\\ No Paging support\end{tabular} \\ \midrule
@@ -144,6 +152,8 @@ Department of Computer Science and Automation \\ Indian Institute of Science \\ 
 \end{frame}
 
 \note[itemize]{
+	\item GPU have evolved from fixed function pipelines are being increasingly adopted for general purpose computing
+	\item briefly look at some interesting arch characterisitics of CPU and GPU processors
 	\item power 2012 K20 NVIDIA vs 2012 Sandybridge E5-2670
 	\item energy efficiency of GPUs comes from simpler cores (small out of orders, no Branch pred)
 	\item maybe add that GPU is streaming type of core
@@ -301,18 +311,16 @@ Cause for CPU Performance gap
 		\item GPU requests have good row buffer locality $\implies$ preferentially scheduled $\implies$ large queueing latency for CPU requests		
 	\end{enumerate}
 	}
+\end{itemize}	
 	\onslide<4->{
-	\item CPU \underline{Pr}ioritized \underline{I}HS aware \underline{S}cheduler 
-	\begin{enumerate}
-		\item Queue entry reservation for CPU req  when queues reach critical levels
-		\item CPU Requests Priorization when searching queues for next request to be serviced
-	\end{enumerate}
+		
+\begin{exampleblock}{CPU \underline{Pr}ioritized \underline{I}HS aware \underline{S}cheduler}
+Queue entry reservation for CPU req  when queues reach critical levels\\
+CPU Request Priorization when searching queues for next request to be serviced\\
+Binary selection for scheduling simplifies the scheduling algorithm to a single stage and incurs no additional hardware overhead
 	}
-	\onslide<5->{
-	\item Binary selection for scheduling which greatly simplifies the scheduling algorithm to a single stage 
-	\item No additional hardware overhead incurred
-	}
-\end{itemize}
+\end{exampleblock}	
+
 \end{frame}
 
 %------------------------------------------------
@@ -321,30 +329,109 @@ Cause for CPU Performance gap
 \begin{frame}
 \frametitle{Heterogeneity aware Temporal Bypass - ByE}
 \emph{OBJECTIVE:} Utilize the idle off-chip DRAM Bandwidth
-\begin{itemize}
+	\only<1>{
+\begin{itemize}		
 	\item Large DRAMCache capacity $\implies$ high hit rates and long block residency time before being evicted $\implies$ under-utilized off-chip DRAM bandwidth
-	\item Baseline incorporates a hit/miss predictor for CPU requests and starts early off-chip access for a request that is predicted to be a miss
+	\item Baseline incorporates a hit/miss predictor for CPU requests and starts early off-chip access for a request that is predicted to be a miss	
+	
+	\hspace{5em}
+	\def\svgwidth{0.5\linewidth}
+	\input{before-bye.pdf_tex}
+	
 	\item However, we observe that when GPU is running, CPU requests returning from off-chip access wait at DRAMCache for verification of hit/miss via a tag match
-	\item Bypass Enabler (ByE) bypasses CPU accesses to clean lines and cache misses when the GPU is running
-	\item Achieved using a Counting Bloom Filter that tracks dirty lines in the DRAMCache
+\end{itemize}
+	}
+	
+	\only<2>{
+		
+\begin{exampleblock}{\underline{By}pass \underline{E}nabler (ByE)}
+Bypasses CPU requests to clean lines and cache misses when the GPU is running \\
+Achieved using a Counting Bloom Filter that tracks dirty lines in the DRAMCache \\
+\end{exampleblock}
+	
+	\hspace{5em}
+	\def\svgwidth{0.5\linewidth}
+	\input{bye.pdf_tex}
+\begin{itemize}		
 	\item Bypassed CPU requests are not filled into DRAMCache
 	\item Hardware Overhead: 256KB (0.4\% of cache capacity)
-\end{itemize}
+\end{itemize}	
+	}
 \end{frame}
+
+\note[itemize]{
+	\item not filling CPU responses into D\$ allows to maintain bypass efficiency and reduce bandwidth bloat due to miss fill
+}
 %------------------------------------------------
 
 \subsection{Heterogeneity aware Spatial Occupancy Control - Chaining}
 \begin{frame}
 \frametitle{Heterogeneity aware Spatial Occupancy Control - Chaining}
 \emph{OBJECTIVE:} Allow GPU to better use DRAMCache Bandwidth
+Observations: 
+\begin{itemize}
+	\item GPU Hit rates in DRAMCache should be high enough that the GPU requests donot have to frequently use the relatively constricted off-chip DRAM bus
+	\item GPU can trade off access latency for higher hit rates
+	\item CPU applications have smaller working sets of a few MBs
+	\item Small size GPU L2 caches provide limited filtering of traffic as compared to the CPU L2 cache
+\end{itemize}
+\begin{exampleblock}{Chaining}
+Introduces pseudo associativity for GPU \\
+Ensures minimum occupancy of CPU lines in the DRAMCache
+\end{exampleblock}
+
 \end{frame}
 
+%------------------------------------------------
+\begin{frame}
+\frametitle{Heterogeneity aware Spatial Occupancy Control - Chaining}
+\begin{columns}[c]
+	
+\column{0.7\linewidth}
+\begin{itemize}
+	\item Linear probing like scheme to resolve conflicts
+	\item Maintains low-threshold value ($l_{cpu}$) occupancy for CPU lines in DRAMCache by ensuring GPU line does not replace CPU lines when this threshold is reached
+	\item For a GPU line evicting a GPU line, chaining tries to replace a CPU line in any of the consecutive 3 locations
+	\item For all CPU requests, data is always inserted into the original location
+	\item Chained set location is represented by a 2 bit offset (used for lookup) + 2 bit reverse chain bits for the chained set (used for eviction)
+	\item psuedo-associativity of atmost 1 and atmost 2 tag matches are needed
+\end{itemize}
+
+\column{0.3\linewidth}
+
+\def\svgwidth{\linewidth}
+\input{chainings.pdf_tex}
+
+\end{columns}
+\end{frame}
+
+\note[itemize]{
+	\item define original set and chained set
+	\item psuedo assoc of atmost 1
+}
+%------------------------------------------------
+\begin{frame}
+\frametitle{Heterogeneity aware Spatial Occupancy Control - Chaining}
+\begin{figure}
+\includegraphics[scale=0.7]{chaining}
+\end{figure}
+Chaining organization within the DRAMCache row and working
+\begin{itemize}
+	\item CPU/GPU share address space, hence require both sets to be checked
+	\item Chain dirty bits avoid second set lookup for CPU
+	\item Chain offset, Reverse chain offset, Chain dirty bits, set ownership information uses the unused bits in the DRAMCache row
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item no hardware overhead incurred
+}
 %------------------------------------------------
 \section{Evaluation Methodology}
 \begin{frame}
 	\frametitle{Experimental Setup}
 \begin{columns}[c]
-\column{.75\textwidth} % Right column and width
+\column{.75\textwidth}
 	
 	\begin{table}[h]
 		\footnotesize
@@ -379,12 +466,23 @@ Cause for CPU Performance gap
 		\label{configuration}
 	\end{table}
 		
-	\column{.2\textwidth} % Left column and width
+	\column{.3\textwidth}
+	\footnotesize
 	\textbf{Simulator}
 	\begin{itemize}
 		\item gem5-gpu
 		\item SE mode
-	\end{itemize}	
+		\item Heterogenous Cache Coherence
+	\end{itemize}
+	\textbf{DRAMCache}
+	\begin{itemize}
+		\item Memory-side cache 
+		%\item HMC-like
+		\item MSHR, WriteBuffers
+		\item Fill Queue
+		\item Non-inclusive
+	\end{itemize}
+	
 \end{columns}
 \end{frame}
 
@@ -460,19 +558,6 @@ Cause for CPU Performance gap
 
 %------------------------------------------------
 
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
-\end{frame}
-
 %------------------------------------------------
 \section{Results}
 %------------------------------------------------
@@ -511,6 +596,9 @@ $E = mc^2$
 \end{figure}
 \end{frame}
 
+
+%------------------------------------------------
+\section{Conclusion, Related Work}
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
@@ -527,7 +615,7 @@ $E = mc^2$
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{References}
+\frametitle{Related Work and References}
 \scriptsize{
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
 \bibitem[alloycache]{p1} M. K. Qureshi and G. H. Loh
