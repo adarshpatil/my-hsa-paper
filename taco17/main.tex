@@ -1,0 +1,110 @@
+\documentclass[format=acmsmall, review=false, screen=true]{acmart}
+\usepackage{booktabs} % For formal tables
+
+\usepackage[ruled]{algorithm2e} % For algorithms
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+
+
+% Metadata Information
+%\acmJournal{TWEB}
+%\acmVolume{9}
+%\acmNumber{4}
+%\acmArticle{39}
+%\acmYear{2010}
+%\acmMonth{3}
+%\copyrightyear{2009}
+%\acmArticleSeq{9}
+
+% Copyright
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+% DOI
+%\acmDOI{0000001.0000001}
+
+% Paper history
+%\received{February 2007}
+%\received[revised]{March 2009}
+%\received[accepted]{June 2009}
+
+% ADARSH packages
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{varwidth}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.9}
+%\usepackage[]{algorithm2e}
+\usepackage{multirow}
+
+\renewcommand{\baselinestretch}{0.98}
+
+
+\pagenumbering{arabic}
+
+%%%%%%%%%%%---SETME-----%%%%%%%%%%%%%
+\newcommand{\microsubmissionnumber}{336}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\cachename}{HAShCache}
+\newcommand{\bypassname}{\textit{ByE}}
+\newcommand{\prioname}{\textit{PrIS}}
+\newcommand{\chaining}{\textit{Chaining}}
+
+
+\begin{document}
+
+\title{\cachename: Heterogeneity Aware Shared DRAMCache for Integrated Heterogeneous Systems}
+\author{Adarsh Patil}
+\affiliation{%
+	\institution{Indian Institute of Science}
+}
+\author{R Govindarajan}
+\affiliation{%
+	\institution{Indian Institute of Science}
+}
+
+
+\input{abstract}
+
+\maketitle
+
+\input{figures}
+
+
+
+\input{introduction}
+
+
+\input{motivation}
+
+\input{design}
+\input{mechanism}
+
+\input{methodology}
+\input{results}
+\input{related-work}
+\input{conclusion}
+
+
+%%%%%%% -- PAPER CONTENT ENDS -- %%%%%%%%
+
+%%%%%%%%% -- BIB STYLE AND FILE -- %%%%%%%%
+\bibliographystyle{IEEEtranS}
+\bibliography{references}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}
+

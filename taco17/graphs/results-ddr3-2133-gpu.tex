@@ -1,0 +1,66 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\input{barcolors}
+
+\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.5]
+    \pgfplotstableread[col sep = comma]{data/results-ddr3-2133-gpu.csv}\datatable
+
+    \begin{axis}[
+        ylabel style={}, ylabel = Normalized H-Mean of GPU IPC,
+        ybar=1pt,
+        bar width=7pt,
+        xlabel=Workloads,
+        xticklabels from table={\datatable}{X},
+        xtick=data,
+        x tick label style={},
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
+        x=40pt,
+        %ymin=0,
+        %ymax=1.7,
+        axis lines*=left,
+        enlarge x limits={abs=1cm},
+        restrict y to domain*=0:4.7,
+        visualization depends on=rawy\as\rawy,
+        after end axis/.code={
+        	\draw [black, very thick, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});
+        	},
+        clip=false,
+        legend image code/.code={%
+                    \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
+        },  
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.57, 0.9)},
+             font=\tiny,
+             anchor=west,
+             legend columns=5,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=1pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+       ]
+
+        \addplot [bar1] table[x=X,y=naive] {\datatable};
+        \addplot [bar3] table[x=X,y=bypass] {\datatable};
+        \addplot [bar4] table[x=X,y=chaining] {\datatable};
+
+        \addlegendentry{\footnotesize{naive}}
+        \addlegendentry{\footnotesize{ByE+PrIS}}       
+        \addlegendentry{\footnotesize{Chaining+PrIS}}
+
+    \end{axis}
+\end{tikzpicture}
+\end{document}
