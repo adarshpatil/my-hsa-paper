@@ -2,15 +2,15 @@
 As mentioned in section \ref{introduction}, the large capacity provided by the stacked DRAM is in line with the working set requirements of IHS processors. Using this capacity as a hardware managed cache could provide performance gains without any application modifications. The bandwidth benefits and modestly improved latency provided by the DRAMCache help improve performance of IHS processors over on-chip SRAM caches of reasonable sizes \cite{amd-exascale1}. 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[scale=0.8]{graphs/motivation-cpu}
-   \includegraphics[scale=0.8]{graphs/motivation-gpu}
+   \includegraphics[scale=0.6]{graphs/motivation-cpu}
+   \includegraphics[scale=0.6]{graphs/motivation-gpu}
    \caption{Performance comparison of (a) CPU (b) GPU when running alone, co-run, with and w/o DRAMCache}
    \label{fig:motivation}
 \end{figure}
 \par In this paper, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in designing the DRAMCache for IHS architectures. We justify the design decisions in the following section. 
 Each CPU core has a private L1 cache and a shared split L2 cache across the CPU cores. The GPU cores have private L1 and shared L2 cache among themselves.  
 The stacked DRAMCache (of size 64MB) is the first level shared cache across CPU cores and GPU cores. In our experiments, we consider a multi-programmed workload on the CPU cores and a GPGPU application on a single CPU core and multiple CUs 
-\footnote{It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the CUs (kernel execution)}. 
+\footnote{It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the CUs (kernel execution).}. 
 We refer to this workload as Heterogeneous Application (HeA), as the CPU and GPU applications are co-run. We use the terms Homogeneous Application (HoA-CPU and HoA-GPU) to refer to the cases when (multiple) CPU applications are run alone and GPU application is run alone. 
 %Our study on the interference due to co-running CPU and GPU application reports performance numbers of the GPU application when the GPU kernel is running on the CUs.
 Additional details relating to the experimental methodology and workloads are described in Section \ref{methodology}

@@ -1,42 +1,37 @@
 \section{Evaluation Methodology} \label{methodology}
 In this section, we describe the experimental methodology used in our evaluation. 
 
-\par \textbf{\cachename\ Configuration:} The DRAMCache we evaluate here is a memory-side \footnote{Caches which are outside the coherence domain. They are logically just in front of the memory and serve to reduce the average latency of memory accesses and increase the memory's effective bandwidth}  \cite{skylake}, 
+\par \textbf{\cachename\ Configuration:} The DRAMCache we evaluate here is a memory-side \footnote{Caches which are outside the coherence domain. They are logically just in front of the memory and serve to reduce the average latency of memory accesses and increase the memory's effective bandwidth.}  \cite{skylake}, 
 first level shared cache between the 2 split cache hierarchies of CPUs and GPUs. Access to memory is interleaved across multiple memory controllers. To avoid a biased interleaving due to uniformly strided address patterns, a basic XOR-based address hashing mechanism is employed. Each memory controller manages a 4GB DDR3 memory device and a 32MB stacked DRAM vault. The stacked DRAM vault caches data from the corresponding 4GB memory device that the controller is responsible for. This setup ensures that there are no cross bus requests between controllers. Since our simulation setup has the limitations of having a 1-to-1 channel mapping between a stacked DRAM vault and a off-chip DRAM channel, our model does not provide sufficient channel level parallelism as is essential in a stacked DRAM device. To circumvent this limitation we increase the number of layers (ranks) to provide higher amount of parallelism in our stacked DRAM. However, the the bank capacity is retained as would be in a standard stacked DRAM. The DRAMCache is non-inclusive  \cite{coherence-dramcache} of the L2 caches above it and uses a write no-allocate policy.
 
 \begin{table}[h]
-  \small
+  \footnotesize
   \centering
+  
   \begin{tabular}{{@{}ll@{}}}
     \toprule
     CPU Core 	& five 4-wide OoO x86 cores @2.5 GHz \\
     \midrule
-    CPU Caches 	& 32KB 8-way split I/D private L1 Cache, \\ 
-    		   	& 1MB 8-way shared split L2 Cache, 128B lines \\
+    CPU Caches 	& 32KB 8-way split I/D private L1 Cache, 1MB 8-way shared split L2 Cache, 128B lines \\
     \midrule
-    GPU Core 	& eight Fermi SMs@700MHz, 2x2 GTO warp sched\\
-    			& upto 32 threadblocks, 64 warps of 32 threads, \\
-    			& 64K registers, 96KB scratch memory \\
+    GPU Core 	& eight Fermi SMs@700MHz, 2x2 GTO warp sched \\
+    			& upto 32 threadblocks, 64 warps of 32 threads, 64K registers, 96KB scratch memory \\
     \midrule
-    GPU Caches 	& 64KB 4-way private L1 cache,\\ 
-               	& 512KB, 16-way assoc L2 Coherent Cache \\
+    GPU Caches 	& 64KB 4-way private L1 cache, 512KB, 16-way assoc L2 Coherent Cache \\
     \midrule
-    Stacked     & 2 vaults, HMC\_2500\_x64, 2KB Page \\
-	DRAM		& $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$=9.9ns-10.2ns-7.7ns-21.6ns\\
-    			& 8 layers/vault, 4 banks/layer\\
-    			& 64 byte burst size, Peak bandwidth 40GB/s \\
+    Stacked     & 2 vaults, HMC\_2500\_x64, 2KB Page, \ $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$=9.9ns-10.2ns-7.7ns-21.6ns\\
+	DRAM		& 8 layers/vault, 4 banks/layer, 64 byte burst size, Peak bandwidth 40GB/s \\
 				& Refresh related: $t_{REFI}$=3.9us $t_{RFC}$=59us \\
     \midrule
-    Off-chip 	& 2 channels, DDR3\_1600\_x64, 1KB page \\
-    DRAM		& $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$=13.75ns-13.75ns-13.75ns-35ns\\
-    			& 1 rank/channel, 8 banks/rank\\
-    			& 64 byte burst size, Peak bandwidth 25GB/s \\
+    Off-chip 	& 2 channels, DDR3\_1600\_x64, 1KB page, \ $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$=13.75ns-13.75ns-13.75ns-35ns\\
+    DRAM		& 1 rank/channel, 8 banks/rank, 64 byte burst size, Peak bandwidth 25GB/s \\
     			& Refresh related: $t_{REFI}$=7.8us $t_{RFC}$=260us \\
     			  
     \bottomrule
   \end{tabular}
   \caption{Configuration of the simulated system}
   \label{configuration}
+  \vspace{-2em}
 \end{table}
 
 \par \textbf{Simulator:} We evaluate the performance of the DRAMCache over a IHS Processor using a modified version of the cycle accurate simulator gem5-gpu \cite{gem5-gpu} which is configured to simulate cache coherent unified CPUs and GPUs. 
@@ -48,7 +43,7 @@ Our simulator also respects all significant timing and functional parameters for
 
 
 \begin{table}[h!]
-  \small
+  \footnotesize
   \centering
   \begin{tabular}{{|l|l|l|}}
     \hline
@@ -83,6 +78,7 @@ Our simulator also respects all significant timing and functional parameters for
   \end{tabular}
   \caption{Workloads}
   \label{workloads}
+  \vspace{-2em}
 \end{table}
 
 \par \textbf{Simulation Methodology:} We fast-forward the initialization phase of each workloads up until just before the launch of the first kernel of the GPU program. We ensure that each core is fast-forwarded by atleast 2 Billion instructions and in total each quad-core workload runs 20 billion instructions on average in the fast-forward phase. This is accomplished by adding a pause phase to the Rodinia benchmarks for the duration until the initialization quota of the SPEC programs is complete. We then warm the cache until the fastest core completes 250 million instructions. During the warmup phase the GPU program is not executed. Timing simulations were then run for atleast 250 million instructions for each CPU core, resulting in a total of more than 1 Billion instructions across all the CPU cores. As is the norm, when a core finishes its quota of 250 million instructions, it continues to execute until all the cores have completed. \\

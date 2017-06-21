@@ -61,7 +61,7 @@
         \addplot [bar1] table[x=X,y=CPU+GPU] {\datatable};
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
 		\addplot [fill= black!30!kellygreen,fill=kellygreen, 
-		          every node near coord/.append style={font=\small, rotate=90, anchor=west},
+		          every node near coord/.append style={font=\large, xshift=-1.2em, yshift=0.7em, anchor=west},
 		          nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
 		         ] table[x=X,y=onlyCPUD] {\datatable};                
 

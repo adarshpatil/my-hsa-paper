@@ -1,5 +1,4 @@
 \documentclass[format=acmsmall, review=false, screen=true]{acmart}
-\usepackage{booktabs} % For formal tables
 
 \usepackage[ruled]{algorithm2e} % For algorithms
 \renewcommand{\algorithmcfname}{ALGORITHM}
@@ -11,14 +10,16 @@
 
 
 % Metadata Information
-%\acmJournal{TWEB}
-%\acmVolume{9}
-%\acmNumber{4}
-%\acmArticle{39}
-%\acmYear{2010}
-%\acmMonth{3}
-%\copyrightyear{2009}
-%\acmArticleSeq{9}
+\acmJournal{taco}
+\acmVolume{}
+\acmNumber{}
+\acmArticle{}
+\acmYear{YYYY}
+\acmMonth{1}
+\copyrightyear{2009}
+\acmArticleSeq{9}
+
+\pagestyle{plain}
 
 % Copyright
 %\setcopyright{acmcopyright}
@@ -44,10 +45,11 @@
 \usepackage{varwidth}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.9}
-%\usepackage[]{algorithm2e}
+\usepackage[]{algorithm2e}
 \usepackage{multirow}
+\usepackage{float}
 
-\renewcommand{\baselinestretch}{0.98}
+\renewcommand{\baselinestretch}{0.97}
 
 
 \pagenumbering{arabic}
@@ -70,10 +72,13 @@
 \affiliation{%
 	\institution{Indian Institute of Science}
 }
+\email{adarsh.patil@csa.iisc.ernet.in}
+
 \author{R Govindarajan}
 \affiliation{%
 	\institution{Indian Institute of Science}
 }
+\email{govind@serc.iisc.ernet.in}
 
 
 \input{abstract}
