@@ -14,8 +14,9 @@
 \usepackage[numbers]{natbib}
 \usepackage{cleveref}
 \usepackage{wrapfig}
-\usepackage{algorithm}
-\usepackage{algorithmic}
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algorithm2e}
 \usepackage{enumerate}
 \usepackage{cancel}
 \usepackage{mathrsfs}
@@ -29,7 +30,7 @@
 % \usepackage{biblatex}
 \usetikzlibrary{shapes,arrows, trees}
 \input{newcommands}
-
+\usepackage{multirow}
 % \newcommand{\nobibentry}[1]{{\let\nocite\ignore\bibentry{#1}}}
 
 \newcommand{\sn}[1]  {\noindent \textcolor{blue}{{\bf SN: }{``{\em #1}''}}}
@@ -69,6 +70,8 @@
 \newcommand{\prioname}{\textit{PrIS}}
 \newcommand{\chaining}{\textit{Chaining}}
 
+\renewcommand{\baselinestretch}{1.4}
+
 \begin{document}
 
 \title{Heteogenity aware DRAMCache for Intergrated Heterogenous Architectures} 
@@ -107,7 +110,7 @@ DEDICATED TO \\[2em]
 \vspace*{\fill}
 \thispagestyle{empty}
 
-%\blankpage
+\blankpage
 
 %\vspace*{\fill}
 %\begin{tabular}{p{0.4\columnwidth}p{0.5\columnwidth}}
@@ -138,23 +141,31 @@ DEDICATED TO \\[2em]
 \prefacesection{Acknowledgements}
 \input{acknowledgments}
 
-\prefacesection{Abstract}
-\input{abstract}
 
 \prefacesection{Publications from the Thesis}
 % \input{publications}
 
+\blankpage
+
+\prefacesection{Abstract}
+\input{abstract}
+
+
 \tableofcontents
-%\blankpagewithnumber
+\blankpagewithnumber
 \listoffigures
 \listoftables
 %\blankpagewithnumber
 % \printnomenclature  %% Print the nomenclature
 % \addcontentsline{toc}{chapter}{Nomenclature}
 
+\input{figures}
+
 \mainmatter % book mode only
 \setcounter{page}{1}
 \input{introduction}
+
+\input{hashcache}
 
 % \backmatter % book mode only
 % \appendix

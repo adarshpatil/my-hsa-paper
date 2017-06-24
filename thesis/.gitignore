@@ -14,8 +14,8 @@
 *.eps
 *.synctex.gz
 *.brf
-*.dvi
-*.lof
 *.lot
+*.lof
 *.nlo
+*.dvi
 *.ps

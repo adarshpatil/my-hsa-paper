@@ -1,0 +1,61 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\input{barcolors}
+
+\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.5]
+    \pgfplotstableread[col sep = comma]{data/design-rbhblp.csv}\datatable
+
+    \begin{axis}[
+        ylabel style={}, ylabel = Normalized H-Mean of IPC,
+        ybar=1pt,
+        bar width=12pt,
+        xlabel=Workloads,
+        xticklabels from table={\datatable}{X},
+        xtick=data,
+        x tick label style={},
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
+        x=45pt,
+        %ymin=0,
+        %ymax=4,
+        axis x line*=left,
+        axis y line*=left,
+        %enlarge x limits=false,
+        %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
+        after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
+        legend image code/.code={%
+                    \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
+        },  
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.4, -0.2)},
+             font=\tiny,
+             anchor=north west,
+             legend columns=4,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=1pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+       ]
+
+        \addplot [bar1] table[x=X,y=CPU] {\datatable};
+        \addplot [bar3] table[x=X,y=GPU] {\datatable};
+
+        \addlegendentry{\footnotesize{CPU}}
+        \addlegendentry{\footnotesize{GPU}}
+
+    \end{axis}
+\end{tikzpicture}
+\end{document}
