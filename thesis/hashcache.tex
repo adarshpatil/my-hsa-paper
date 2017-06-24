@@ -153,12 +153,12 @@ The schemes proposed in the previous two subsections, \prioname\ and \bypassname
 To ensure minimum occupancy for CPU requests, \chaining\ maintains a low-threshold value (\textit{$l_{cpu}$}) and when the occupancy of CPU lines
 \footnote{As mentioned earlier we classify a data as CPU data or GPU data based on whose request last accessed the data in the DRAMCache. An alternate equally feasible design point is to classify the data as CPU or GPU data based on which request brought the data into DRAMCache although the CPU and GPU may subsequently access it. In our setup only the CPU core executing the GPGPU application possibly shares data with the GPU and hence we do not expect to see significant difference in the results.} 
 reaches this threshold, \chaining\ ensures GPU data does not replace data brought in by CPU. 
-\begin{figure}[htb]
-	\centering
+%\begin{figure}[htb]
+	%\centering
 	%\scalebox{0.52}{\chainaccess}
-	\caption{\cachename\ (a)Row organization (2KB) (b) Access path in the \cachename}
-	\label{fig:chain-access}
-\end{figure}
+	%\caption{\cachename\ (a)Row organization (2KB) (b) Access path in the \cachename}
+	%\label{fig:chain-access}
+%\end{figure}
 In the other situations, HAShCache modifies the replacement policy in the DRAMCache depending on the requesting core type. For a GPU request that is evicting another GPU line, \cachename\ looks for a line belonging to a CPU to replace within the same row in the next three consecutive locations,
 i.e. if $B$ is the original cache block, then the blocks considered for insertions are $(B+1)\%N_s$,$(B+2)\%N_s$, and $(B+3)\%N_s$, where $N_s$ is number of blocks in a DRAMCache row (page). Hence, the inserted block always lies in the same row as the original cache block. Note that for every set, there could be at most 1 chained set, providing a pseudo-associativity of at most 1.  
 We refer to this inserted location as the \textit{chained block} and the actual cache block the request mapped to as the \textit{original block}. The location of the \textit{chained block} is then represented as a 2-bit offset and is stored along with the metadata for the original set (see Figure \ref{fig:chain-access}(a)). When a cache block is evicted, if it was a \textit{chained block}, to unchain it (from the \textit{original block}), the offset stored in the reverse chain bits field in the metadata for the \textit{chained block} is used.  
@@ -169,7 +169,6 @@ Additionally, each tag also stores 1 bit information about the owner of the bloc
 
 \begin{table}[htb]
 	\centering
-	\small
 	\input{chaining-table}
 	\caption{GPU Fill request insertion policy. Threshold reached : $O_{gpu}\le(1-l_{cpu})$ where $O_{gpu}$ is the current GPU occupancy in DRAMCache row}
 	\label{chaining-replacement}
