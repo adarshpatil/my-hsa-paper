@@ -1,0 +1,17 @@
+\chapter{Related Work} \label{related-work}
+\section{3D Stacked DRAM devices}
+Stacked DRAM devices have primarily been organized to improve the performance of multi-core architectures. Principally there have been 2 schools of thought for using the stacked DRAM devices 
+\begin{itemize}
+	\item as an addressable part-of-memory stacked DRAM 
+	\item as a hardware managed stacked DRAM Cache
+\end{itemize}
+\subsection{Part-of-memory}
+In \cite{pom,cameo} the stacked DRAMs are organized as part of memory to in lieu of the large capacities provided by these devices. The designs propose hardware management schemes for swapping hot pages into and out of the stacked DRAM devices. These designs can potentially suffer from large swapping overheads due to the large and disparate working sets of IHS workloads increasing the number of hot pages in the system.
+\subsection{Hardware Managed Cache}
+There are several works that propose various organizations for using stacked DRAMs as hardware managed cache. We look at some of the signigicant classes of work below.
+\begin{itemize}
+\item Cache Granularity: \cite{alloy,loh-hill,atcache,bimodal} propose caching at smaller granularities (<512B) and store the metadata in the rows (pages) of the stacked DRAM.
+	
+\end{itemize}
+\section{IHS architectures}
+\section{Benchmarks}

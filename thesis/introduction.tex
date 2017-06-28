@@ -115,10 +115,13 @@ requirements of the respective applications in the best possible way.
 \section{Contributions}
 This thesis makes the following contributions
 \begin{itemize}
-	\item Studies the impact of co-running in a IHS architecture on the CPU and GPU
-	\item Develops simulation methodology and simulator modules for studying DRAMCaches in IHS workloads
-	\item 
+	\item We quanitify the impact of interference due to co-running of CPU and GPU processors in IHS architectures.
+	\item We develop simulation methodology, simulator modules and IHS system performance metrics to study effect of DRAMCaches on IHS workloads.
+	\item We design an effective DRAMCache organization, \cachename, that is aware of this inherent heterogenity and performance  optimizations accordingly.
+	\item We demonstrate using detailed simulation of co-running CPU and GPU workloads that compared to a naive  (heterogenity unaware) DRAMCache, \cachename\ significantly improves the performance of CPU cores abliet with a small reduction in performance of GPU cores.
+	\item We show that \cachename\ ourperforms a naive DRAMCache on all IHS system performance metrics.
+	\item We compare \cachename\ against state-of-the-art DRAMCache proposals and demonstate that \cachename\ outperforms these schemes.
 \end{itemize}
 
 \section{Thesis Organization}
-
+The rest of the thesis is organized as follows.

@@ -1,9 +1,7 @@
-%input macros (i.e. write your own macros file called MacroFile1.tex)
-%\include{Macros/MacroFile1}
 \documentclass[oneside,12pt]{iiscmastersthesis}
 % \pagestyle{bfheadings}
 %\usepackage{psfig}
-% \usepackage{graphicx}
+\usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{latexsym}
@@ -28,7 +26,7 @@
 \usepackage{varwidth}
 \usepackage[vertfit]{breakurl}
 % \usepackage{biblatex}
-\usetikzlibrary{shapes,arrows, trees}
+%\usetikzlibrary{shapes,arrows, trees}
 \input{newcommands}
 \usepackage{multirow}
 % \newcommand{\nobibentry}[1]{{\let\nocite\ignore\bibentry{#1}}}
@@ -74,7 +72,7 @@
 
 \begin{document}
 
-\title{Heteogenity aware DRAMCache for Intergrated Heterogenous Architectures} 
+\title{Heteogenity aware shared DRAMCache for \\ Intergrated Heterogenous Architectures} 
 
 \submitdate{JULY 2017} 
 \degree{Master of Science} 
@@ -105,7 +103,7 @@
 \vspace*{\fill}
 \begin{center}
 DEDICATED TO \\[2em]
-\Large\it My Parents and Kumudha
+\Large\it My Parents \\ and Kumudha
 \end{center}
 \vspace*{\fill}
 \thispagestyle{empty}
@@ -143,7 +141,10 @@ DEDICATED TO \\[2em]
 
 
 \prefacesection{Publications from the Thesis}
-% \input{publications}
+\begin{enumerate}
+	\item A. Patil, R. Govindarajan. HAShCache: Heterogeneity Aware Shared DRAMCache for Integrated Heterogeneous Systems. Submitted to ACM \textit{Trasactions on Architecture and Code Optimization (TACO)}
+\end{enumerate}
+
 
 \blankpage
 
@@ -164,10 +165,13 @@ DEDICATED TO \\[2em]
 \mainmatter % book mode only
 \setcounter{page}{1}
 \input{introduction}
-
+\input {simulation}
 \input{hashcache}
 
 \input{results}
+
+\input{related-work}
+\input{conclusion}
 
 % \backmatter % book mode only
 % \appendix

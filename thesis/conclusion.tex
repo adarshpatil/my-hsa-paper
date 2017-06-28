@@ -1,0 +1,17 @@
+\chapter{Conclusion}
+We conclude by summarizing the \cachename\ solution and discuss potential avenues for future work.
+\section{Summary}
+Stacked DRAMCaches require careful design to be able to improve performance of workloads. There are several conflicting factors that require careful consideration and tradeoffs. This is compounded by the fact that in IHS architectures the processors are hetergenous and require different services from the DRAMCache i.e. latency for CPUs vs throughput for GPUs.
+\par In this work, we presented a case for performance improvement of an IHS processors by addition of a stacked DRAMCache. 
+We quantify the effects of interference due to co-running on each processor and show that the heterogeneity adversely effects CPU performance compared to the GPU. 
+We carefully design an effective DRAMCache organization for IHS processors and show that addition of such a cache can be a very good fit for each processor type to better the system performance.
+We improve IHS performance using three simple and effective heterogeneity aware techniques - a DRAMCache scheduler, a spatial bypass and a temporal occupancy control. 
+\par We develop the simulation infrastructure and accurate methodology for detailed simulation of \cachename. Using this experimental setup we show that 
+\cachename\ achieves significant improvement of 200\% in overall system performance on an average over a baseline system with no DRAMCache and 41\% over a heterogeneity unaware DRAMCache. 
+We also show that \cachename\ mechanisms scale very well with stacked DRAMs of larger capacity, higher bandwidth and even with access latencies of off-chip DRAMs.
+This work, thus shows that there are significant benefits of using a stacked DRAMCache for IHS processors, far exceeding the usefulness of such devices in homogeneous GPUs and multi-core CPU systems.
+
+\section{Future Work}
+An interesting direction for future work would be to explore differntial granularity caching for IHS architectures in the stacked DRAMCache since GPU benchmarks have good spatial locality. Larger blocks with critical word first and early restart consequently might prove beneficial as well. Prefetching GPU lines without overly polluting the cache would be another approach to serve GPU lines out of the DRAMCache thus better utilizing the large stacked DRAM bandwidth. However, such techniques need to be mindful that both the memory and cache are slower DRAM devices. 
+\par Exploring ways of combining \prioname, \chaining\ and \bypassname\ as a unified technique is likely to improve performance However, as the objectives of Chaining and ByE are somewhat conflicting, this requires careful consideration of replacement (fill) policies in the DRAMCache.
+\par It would also be interesting explore the performance of \cachename\ mechanisms in Collaborative Heterogeneous Applications benchmarks \cite{chai} where the CPU and GPU are used concurrently in the same application. DRAMCache mangement schemes using program hints about the collaboration patterns such as data partitioning, fine or course grain task partitioning would also be a compelling future work.
