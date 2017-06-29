@@ -1,13 +1,22 @@
-\chapter{Simulation Infrastructure} \label{methodology}
-In this chapter, we articulate the simulator setup and enhancements done to simulate the IHS architecture with the shared stacked DRAMCache. We then outline the experimental methodology and parameters used to report system performance in our evaluation. Further, we descibe the workloads and show some properties that make them heterogenous.
+\chapter{Simulation Infrastructure} \label{chap:simulator}
+In this chapter, we articulate the simulator setup and enhancements done to simulate the IHS architecture with the shared stacked DRAMCache. We then outline the experimental methodology, benchmarks, composite heterogenous workloads and the parameters used to report system performance in our evaluation.
 
-\section{The gem5-gpu simulator}
-The gem5-gpu \cite{gem5-gpu} is a heteregenous cycle accurate CPU-GPU simulator used to simulate a hybrid system with both CPU and GPU types of cores. It intergrates gem5 for the multi-core CPU simulation and gpgpu-sim for simulating the compute units of a general purpose GPU with a flexible and configurable memory hierarchy using Ruby. It can model a system with multi-core CPUs and a discrete GPU with a "split" memory hierarchy or an intergrated heterogenous system with tightly coupled CPU and GPU cores with a "shared" cache coherent interconnect. For our purposes we refer to the gem5-gpu from here on running an IHS architecture with a shared virtual and physical address spaces as described in chapter \ref{chap:introduction}. The gem5-gpu can run unmodified operating system and application binaries. The simulator is also performance validated against hardware and is completely open source.
+\section{The gem5-gpu simulator} \label{gem5-gpu-simulator}
+The gem5-gpu \cite{gem5-gpu} is a heteregenous cycle accurate CPU-GPU simulator used to simulate a hybrid system with both CPU and GPU types of cores. It intergrates gem5 for the multi-core CPU simulation and gpgpu-sim for simulating the compute units of a general purpose GPU with a flexible and configurable memory hierarchy using Ruby. It can model a system with multi-core CPUs and a discrete GPU with a "split" memory hierarchy or an intergrated heterogenous system with tightly coupled CPU and GPU cores with a "shared" cache coherent interconnect. For our purposes we refer to the gem5-gpu from here on running an IHS architecture with a shared virtual and physical address spaces as described in chapter \ref{chap:introduction}. The gem5-gpu can run unmodified operating system and application binaries. The simulator is also performance validated against hardware and is completely open source. For our evalution we run gem5-gpu in System call emulation mode with the base operating system performing the CUDA driver emulation.
 
 \subsection{Addition of shared 3D die-stacked DRAMCache}
-The Ruby memory hierarchy in gem5-gpu is authored using the SLICC (Specification Language for Implementing Cache Coherence) domain specific language. SLICC allows the definition of cache levels and behaviour of the coherence protocol. To study the iterference of CPU and GPU traffic we model the DRAMCache as the first shared level of cache between the hetereogenous CPUs and GPUs while the L2 SRAM caches are shared between homogenous CPU and GPU. Hence, we modified the existing VI\_Hammer protocol to simulate a shared split L2 cache between the multi-core CPUs instead of the default per CPU private L2 caches.
-\par The DRAMCache we evaluate here is a memory-side \cite{skylake} shared cache between the 2 split cache hierarchies of CPUs and GPUs. A memory-side cache is one which are outside the coherence domain. They are logically just in front of the memory and serve to reduce the average latency of memory accesses and increase the memory's effective bandwidth. Access to memory is interleaved across multiple memory controllers. To avoid a biased interleaving due to uniformly strided address patterns, a basic XOR-based address hashing mechanism is employed. Each memory controller manages a 4GB DDR3 memory device and a 32MB stacked DRAM vault. The stacked DRAM vault caches data from the corresponding 4GB memory device that the controller is responsible for. This setup ensures that there are no cross bus requests between controllers. Since our simulation setup has the limitations of having a 1-to-1 channel mapping between a stacked DRAM vault and a off-chip DRAM channel, our model does not provide sufficient channel level parallelism as is essential in a stacked DRAM device. To circumvent this limitation we increase the number of layers (ranks) to provide higher amount of parallelism in our stacked DRAM. However, the the bank capacity is retained as would be in a standard stacked DRAM. The DRAMCache is non-inclusive  \cite{coherence-dramcache} of the L2 caches above it and uses a write no-allocate policy.
-\par We also show here the number of cache lines shared through the large stacked DRAMCache between the CPU and GPU cores (i.e. constructive interference). 
+
+The Ruby cache and memory hierarchy in gem5-gpu is authored using the domain specific language SLICC (Specification Language for Implementing Cache Coherence). SLICC allows the definition of cache levels and behaviour of the coherence protocol. The directory controller is the memory side coherence engine and participates in the coherence protocol. These Directory Controllers have message queues to send and recieve memory requests from the DRAM Controllers. The DRAM Controllers are responsible for the operation of the DRAM devices. These DRAM controllers queue requests and orchestrate memory access scheduling to the DRAM according to the type of memory device (e.g DDR, LPDDR, GDDR, HMC etc). To study the iterference of CPU and GPU traffic we model the DRAMCache as the first shared level of cache between the hetereogenous CPUs and GPUs while the L2 SRAM caches are shared between homogenous CPU and GPU. We modified the existing VI\_Hammer coherence protocol to simulate a shared split L2 cache between the multi-core CPUs instead of the default per CPU private L2 caches.
+
+\begin{figure}[!htb]
+	\centering
+	\def\svgwidth{0.9\columnwidth}
+	\input{figures/simulator-memory.pdf_tex}
+	\caption{Simulator Memory}
+	\label{fig:simulator-memory}
+\end{figure}
+
+\par The DRAMCache we evaluate here is a memory-side \cite{skylake} shared cache between the 2 split cache hierarchies of CPUs and GPUs. A memory-side cache is one which are outside the coherence domain as show in Figure \ref{fig:simulator-memory}. They are logically just in front of the memory and serve to reduce the average latency of memory accesses and increase the memory's effective bandwidth. Access to memory is interleaved across multiple memory controllers. To avoid a biased interleaving due to uniformly strided address patterns, a basic XOR-based address hashing mechanism is employed. Each memory controller manages a 4GB DDR3 memory device and a 32MB stacked DRAM vault. The stacked DRAM vault caches data from the corresponding 4GB memory device that the controller is responsible for. This setup ensures that there are no cross bus requests between controllers. Since our simulation setup has the limitations of having a 1-to-1 channel mapping between a stacked DRAM vault and a off-chip DRAM channel, our model does not provide sufficient channel level parallelism as is essential in a stacked DRAM device. To circumvent this limitation we increase the number of layers (ranks) to provide higher amount of parallelism in our stacked DRAM. However, the the bank capacity is retained as would be in a standard stacked DRAM. The DRAMCache is non-inclusive  \cite{coherence-dramcache} of the L2 caches above it and uses a write no-allocate policy. Our stacked DRAMCache also faithfully models  a Fill Queue \cite{dca} for fill requests to insert data into the cache on the return path from main memory. We also model MSHR and WriteBuffers with their associated latencies to realize the precise working of caches. To simplify data management and ensure correctness we choose not implement a backing store for the DRAMCache and instead share the backing store instance of the off-chip DRAM itself.
 
 
 \subsection{Configuration} 
@@ -47,10 +56,40 @@ The Ruby memory hierarchy in gem5-gpu is authored using the SLICC (Specification
 \end{table}
 
 The gem5-gpu is configured to run 5 CPU cores (4-wide OoO cores, operating at 2.5GHz) with a 32KB private L1 Cache (split I/D), and a 1MB shared L2 Cache (shared across all CPU cores). The IHS also consists of 8 Fermi-like compute units, operating at 700MHz with a private 64KB L1 and 512KB shared L2 cache (shared across all CUs). The details of the IHS configuration are given in Table \ref{configuration}. The private L1 of CUs are non-inclusive of the shared GPU L2 cache and can hold stale data. However, GPU L2 cache is coherent with all levels of the CPU hierarchy. The CPU caches and GPU L2 cache are kept coherent in the simulator. Table \ref{configuration} provides the simulator setup details. 
-Our simulator also respects all significant timing and functional parameters for the stacked DRAMCache (including refresh, data bus, request queues, scheduling algorithms, command signaling and clock frequencies) using the DRAMCtrl \cite{dramctrl} model. We have also faithfully modelled  a Fill Queue \cite{dca} for fill requests to insert data into the cache on the return path from main memory. We also model MSHR and WriteBuffers with their associated latencies to realize the precise working of caches. 
-\par Further, our baseline setup with a naive DRAMCache is equivalent to the on-chip shared caches in \cite{oscar} without the NoC related improvements, which is orthogonal to the ideas presented in this work.
+Our simulator also respects all significant timing and functional parameters for the stacked DRAMCache (including refresh, data bus, request queues, scheduling algorithms, command signaling and clock frequencies) using the DRAMCtrl \cite{dramctrl} model.
 
-\section{Workloads} Applications having high and medium memory intensive behaviours from SPEC CPU2006 suite \cite{spec2006} were chosen to form a multi-programmed workload. We use the Rodinia benchmark suite \cite{rodinia} to represent GPU applications that offload kernel computation to a GPU CUs. These Rodinia applications are modified to elide the \textit{memcpy} api calls so as to run with unified virtual and physical address spaces. Combinations of quad-core multi-programmed workloads were coupled with a full Rodinia benchmark to create a representative mix of applications that would run in an IHS system. These composite workloads embody different levels of total memory intensity produced by the CPU and GPU cores. We also measure the footprint of these workloads in terms of number of unique 128B cache blocks accessed at the DRAMCache. The memory footprints range from 70MB to 650MB for quad-core CPU workloads and from 5.5MB to 135MB for the GPU application. The smaller footprints obligates us to use a smaller stacked DRAMCache capacity to make pertinent observations.
+\section{Workloads} 
+Our goal is to study the performance impact of the large last level shared DRAMCache in IHS architectures. Hence we run multiple applications in parallel on the multicores and the GPGPU. Applications having high and medium memory intensive behaviours from SPEC CPU2006 suite \cite{spec2006} were chosen to form a multi-programmed workload that run completely on the CPU. Table \ref{single-cpu-mpki} classifies the CPU benchmarks into low, medium and high memory intensity based on the observed MPKI values as seen at the L2 cache when running alone. We create a multi-programmed workload with 4 SPEC benchmarks each. We use the Rodinia benchmark suite \cite{rodinia} to represent GPU applications that offload kernel computation to a GPU CUs. These Rodinia applications are modified to elide the \textit{memcpy} api calls so as to run with unified virtual and physical address spaces (Rodinia-nocopy). 
+
+\begin{table}[htb]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Low (MPKI $\leq$ 10)          \hspace{5em}      & astar, cactusADM, gcc, gobmk, hmmer, sphinx3    \\ \hline
+		Medium (10 \textless MPKI $\leq$ 20) & bwaves, bzip2, leslie3d, libquantum, milc \\ \hline
+		High (MPKI \textgreater 20)            & mcf, soplex       \\ \hline
+	\end{tabular}
+	\caption{MPKI of CPU stand-alone benchmarks}
+	\label{single-cpu-mpki}
+\end{table}
+
+\begin{table}[htb]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Low (MPKI $\leq$ 10)                & hotspot, lud           \\ \hline
+		Medium (10 \textless CPI $\leq$ 20) &  kmeans, needle, srad   \\ \hline
+		High (CPI \textgreater 20)            & streamcluster, gaussian       \\ \hline
+	\end{tabular}
+	\caption{MPKI of GPU stand-alone benchmarks}
+	\label{single-gpu-mpki}
+\end{table}
+
+For the Rodinia-nocopy benchmarks we used \textit{needle}, \textit{k-means}, \textit{gaussian}, \textit{hotspot}, \textit{srad}, \textit{streamcluster} and \textit{lud}. The rest of the programs either could not be compiled or could not run without causing forward progress deadlock errors in the modified simulator. The Rodinia benchmarks use an extra fifth CPU to run the intialization section before offloading to GPU. Thus, our IHS simulates five CPU cores and a eight GPU SMs. Table \ref{single-gpu-mpki} categorizes the Rodinia-nocopy benchmarks into Low, Medium and High based on the observed MPKI values (Instructions here refer to thread instructions) at the L2 cache.
+
+
+\par Combinations of these SPEC quad-core multi-programmed workloads were coupled with a full Rodinia-nocopy benchmark to create a representative mix of applications that would run in an IHS system. These composite workloads embody different levels of total memory intensity produced by the CPU and GPU cores.
+\par We also measure the footprint of these workloads in terms of number of unique 128B cache blocks accessed at the DRAMCache. The memory footprints range from 70MB to 650MB for quad-core CPU workloads and from 5.5MB to 135MB for the GPU application. The smaller footprints obligates us to use a smaller stacked DRAMCache capacity to make pertinent observations.
 
 \begin{table}[h]
   \centering
@@ -85,17 +124,20 @@ Our simulator also respects all significant timing and functional parameters for
     Qg13 & astar;cactusADM;libquantum;sphinx3 & lud\\
     \hline
   \end{tabular}
-  \caption{Workloads}
+  \caption{Composite Heterogenous Workloads}
   \label{workloads}
 \end{table}
 
-\section{Simulation Methodology} We fast-forward the initialization phase of each workloads up until just before the launch of the first kernel of the GPU program. We ensure that each core is fast-forwarded by atleast 2 Billion instructions and in total each quad-core workload runs 20 billion instructions on average in the fast-forward phase. This is accomplished by adding a pause phase to the Rodinia benchmarks for the duration until the initialization quota of the SPEC programs is complete. We then warm the cache until the fastest core completes 250 million instructions. During the warmup phase the GPU program is not executed. Timing simulations were then run for atleast 250 million instructions for each CPU core, resulting in a total of more than 1 Billion instructions across all the CPU cores. As is the norm, when a core finishes its quota of 250 million instructions, it continues to execute until all the cores have completed. \\
-The Rodinia application uses an extra 5\textsuperscript{th} CPU core and offloads to the integrated GPU. These applications are modified to execute in a \textit{conditioned loop} such that there is no corruption of data structures in the program. The \textit{conditioned loop} is run infinitely and represents the region of interest (ROI) of the Rodinia benchmark. This region includes sections of CPU activity and GPU offloads in the execution, as is typical of a HSA program which will exhibit an interleave of offloaded regions and serial CPU sections. However, only the performance statistics for the first execution of the \textit{conditioned loop} in the program are considered. 
+\section{Simulation Methodology} 
+We fast-forward the initialization phase of each workloads up until just before the launch of the first kernel of the GPU program. We ensure that each core is fast-forwarded by atleast 2 Billion instructions and in total each quad-core workload runs 20 billion instructions on average in the fast-forward phase. This is accomplished by adding a pause phase to the Rodinia benchmarks for the duration until the initialization quota of the SPEC programs is complete. The benchmarks were then checkpoint after the above fast forward phase. Subsequent detailed simulations with different configurations were run from this checkpoint.
+We then warm the cache until the fastest core completes 250 million instructions. During the warmup phase the GPU program is not executed. Timing simulations were then run for atleast 250 million instructions for each CPU core, resulting in a total of more than 1 Billion instructions across all the CPU cores. As is the norm, when a core finishes its quota of 250 million instructions, it continues to execute until all the cores have completed. \\
+As stated earlier, the Rodinia application uses an extra 5\textsuperscript{th} CPU core and offloads to the integrated GPU. These applications are modified to execute in a \textit{conditioned loop} such that there is no corruption of data structures in the program. The \textit{conditioned loop} is run infinitely and represents the region of interest (ROI) of the Rodinia benchmark. This region includes sections of CPU activity and GPU offloads in the execution, as is typical of a HSA program which will exhibit an interleave of offloaded regions and serial CPU sections. However, only the performance statistics for the first execution of the \textit{conditioned loop} in the program are considered. 
 This is done as the first loop represents the true run of the GPU kernel. The number of \textit{conditioned loops} executed depends on the length of the simulation and the IPC achieved by the GPU. Also, Subsequent loops can achieve better hit rates in cache due to the data fetched by the earlier loops thus not corroborating with the true performance achieved.
 In cases where the ROI is longer than the complete run of the CPU workloads, the statistics for the last completed kernel are used. 
 
-\section{Performance Metric} 
-We report performance of each processor using the intuitive metric of harmonic mean of IPC for the CPU cores and GPU CUs which is defined as 
+\section{Performance Metrics} 
+Our study concerns the performance of the IHS architecture, in which multiple single threaded CPU programs and GPU program run in parallel and contend for the shared DRAMCache. When CPU and GPU programs are run simultaneously in parallel make different progress as compared to when running homogenously and the performance impact of the shared DRAMCache is not same on the each of the CPU benchmarks as well as the GPU benchmark. We require to define metrics that combine IPC meanfully without biasing the system performance to either CPU or GPU cores. Hence, we report a multitude of performance metrics to holistically determine the performance of the IHS processor with the DRAMCache and our optimizations. 
+\par We report performance of each processor using the intuitive metric of harmonic mean of IPC for the CPU cores and GPU CUs which is defined as 
 {
 \begin{equation*}
 H\textnormal{-}MEAN_{CPU} = \frac{n_{cpu}}{\sum_{i=1}^{n_{cpu}} \frac{1}{IPC_{i}^{CPU}}}, \hspace{0.2cm} H\textnormal{-}MEAN_{GPU} = \frac{n_{gpu}}{\sum_{i=1}^{n_{gpu}} \frac{1}{IPC_{i}^{GPU}}} 
@@ -118,9 +160,6 @@ Weighted Speedup = \sum_{i=1}^{n_{cpu}} \frac{IPC_i^{CPU_{IHS}}}{IPC_i^{SP}} + \
 }
 where ${IPC_i^{CPU_{IHS}}}$ and $IPC_i^{GPU_{IHS}}$ denote the IPC achieved by the $i^{th}$ CPU core and the $i^{th}$ GPU CU when running in a IHS setup respectively; whereas $IPC_i^{SP}$ and $IPC^{GPU}$ denote the same when $i^{th}$ CPU core and the $i^{th}$ GPU CU are running standalone respectively. 
 
+\section{Conclusion}
+In this section, we presented the simulator extentions done to simulate a DRAMCache for an IHS architecture. 
 
-\section{Results}
-In this section, we present some initial results about the simulation infrastructure setup.
-\subsection{Requests at the DRAMCache}
-\subsection{Interference at DRAMCache}
-As our DRAMCache is a first level shared cache in the memory hierarchy, we quantify the constructive interference between the CPU and GPU cores, i.e. data brought is by a CPU core and later requested by the GPU core and vice-versa, at the DRAMCache.

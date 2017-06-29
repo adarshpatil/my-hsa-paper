@@ -1,10 +1,6 @@
 \chapter{Introduction}
 \label{chap:introduction}
 
-%\begin{quote} \small
-
-
-
 \par The remarkable advances in computing power of the modern microprocessor over the last few decades can predominantly be attributed to shrinking of feature sizes. Miniaturization of transistors has allowed addition of specialized on-chip hardware circuitry for acceleration units. 
 A study in 2010 by Koomey et. al \cite{koomey} found that the amount of computation that could be done per unit of energy doubled about every 18 months. However, to reach exascale and beyond requires a thousand fold decrease in energy consumed per flop computed.
 Graphics processing units (GPUs) have evolved from being fixed-function pipelines and are being used to accelerate data parallel code for general purpose (GP) applications. Compared with multi-core CPUs, GPGPUs offer the potential for better performance of data parallel code at lower energy. 
@@ -15,18 +11,16 @@ Traditionally these discrete processors have had their own independent memory sy
 A typical DRAM device organization contains banks where each bank contains a 2D array of storage cells, row and column decoders, sense amplifiers and peripheral circuits. Banks are further organized into ranks which share command busses but have separate data busses. A chip select is used to select a bank to issue a command. Commercially DRAMs are available as DIMM (Dual in-line memory module) containing several DRAM devices with a standard connector. A memory controller controls the operation of the DRAM device while respecting timing constrains and bus conflicts.
 
 
-%\end{quote}
-
 \section{Intergrated Heterogenous Systems (IHS)} \label{ihs-intro}
+\par Modern processor chips have heterogeneous processors which integrate a lower capacity GPU on-die allowing for graphics rendering only. In view of the widespread use of the GPU for general purpose applications, processor manufacturers including AMD\cite{amd-apu}, Intel\cite{inteliris}, and NVIDIA\cite{denver} are beginning to allow general purpose OpenCL\cite{opencl}/CUDA\cite{cuda} programs to run on their Integrated Heterogeneous System (IHS) platform which were so far restricted only to graphics rendering. The HSA Foundation \cite{hsafoundation} was setup to develop and define cross-vendor hardware specifications and software development tools needed to allow application software to better use this IHS architecture. 
+
 \begin{figure}[!htb]
 	\centering
-	\def\svgwidth{0.7\columnwidth}
+	\def\svgwidth{0.9\columnwidth}
 	\input{figures/arch.pdf_tex}
 	\caption{Architecture of an Integrated Heterogeneous System}
 	\label{fig:hsa-arch}
 \end{figure}
-
-\par Modern processor chips have heterogeneous processors which integrate a lower capacity GPU on-die allowing for graphics rendering only. In view of the widespread use of the GPU for general purpose applications, processor manufacturers including AMD\cite{amd-apu}, Intel\cite{inteliris}, and NVIDIA\cite{denver} are beginning to allow general purpose OpenCL\cite{opencl}/CUDA\cite{cuda} programs to run on their Integrated Heterogeneous System (IHS) platform which were so far restricted only to graphics rendering. The HSA Foundation \cite{hsafoundation} was setup to develop and define cross-vendor hardware specifications and software development tools needed to allow application software to better use this IHS architecture. 
 
 \par The IHS architecture, as illustrated in Figure \ref{fig:hsa-arch}, consists of multiple CPU cores with private L1 and shared L2 caches along with multiple GPU cores or Compute Units (CUs) with private L1 and shared L2 cache. These caches (except GPU L1 caches) are kept coherent with a heterogeneous MOESI-like coherence protocol. The Network-on-chip (NoC) connects the cores with the caches and the memory controllers, while the memory itself is off-chip and connected via memory channels. 
 \par The IHS architecture supports a shared virtual address space making pointer sharing semantics possible between CPU and GPU which simplifies programming. Further, a shared physical address space and the cache coherent interconnect reduces GPU initialization time and enables several high level languages \cite{sumatra,julia} to also take advantage of the parallel processing synergistically with the CPU. Programmers can now write applications that seamlessly integrate CPUs with GPUs while benefiting from best attributes of each. Fine-grain parallel stream processing like face detection, compression, encryption-decryption etc. can now use the integrated GPGPU to deliver better performance. Recent works have proposed allowing GPUs to invoke traditional operating systems paging mechanisms and hardware MMUs to fault pages \cite{tlb-translation}. This provides the added benefit to be able to run GPU programs whose dataset sizes are not constrained by the memory size. As IHS platforms gain widespread adoption in HPC systems, improving the performance of these platforms will become of paramount importance in the near future. \cite{apu-exascale,amd-exascale1}
@@ -36,7 +30,7 @@ A typical DRAM device organization contains banks where each bank contains a 2D 
 
 \begin{figure}[!htb]
 	\centering
-	\def\svgwidth{0.7\columnwidth}
+	\def\svgwidth{0.9\columnwidth}
 	\input{figures/stackedDRAM.pdf_tex}
 	\caption{Proposed architecture of IHS with DRAM Stacking}
 	\label{fig:stackdram}
@@ -56,13 +50,13 @@ As mentioned in section \ref{ihs-intro}, the large capacity provided by the stac
 	\caption{Performance comparison of (a) CPU (b) GPU when running alone, co-run, with and w/o DRAMCache}
 	\label{fig:motivation}
 \end{figure}
-\par In this work, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in using the DRAMCache for IHS architectures. We justify the design decisions in the section \ref{section-hashcache}. 
+\par In this work, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in using the DRAMCache for IHS architectures. We justify these design decisions in the chapter \ref{chap:hashcache}. 
 Each CPU core has a private L1 cache and a shared split L2 cache across the CPU cores. The GPU cores have private L1 and shared L2 cache among themselves.  
 The stacked DRAMCache (of size 64MB) is the first level shared cache across CPU cores and GPU cores. In our experiments, we consider a multi-programmed workload on the CPU cores and a GPGPU application on a single CPU core and multiple CUs 
 \footnote{It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the CUs (kernel execution)}. 
 We refer to this workload as Heterogeneous Application (HeA), as the CPU and GPU applications are co-run. We use the terms Homogeneous Application (HoA-CPU and HoA-GPU) to refer to the cases when (multiple) CPU applications are run alone and GPU application is run alone. 
 %Our study on the interference due to co-running CPU and GPU application reports performance numbers of the GPU application when the GPU kernel is running on the CUs.
-Additional details relating to the experimental methodology and workloads are described in Section \ref{methodology}
+Additional details relating to the experimental methodology and workloads are described in chapter \ref{chap:simulator}
 
 
 \begin{figure}[htb]
@@ -82,7 +76,7 @@ This gap in performance can be attributed to the unmanaged heterogeneity and int
 This increase in average access latency is primarily attributed to the large
 number of GPU requests flooding the DRAMCache controller when the GPU kernels are co-running with the CPU applications.
 It should be noted here that, even though we use the terms CPU and GPU requests separately, they may refer to the same data. This terminology only indicates the source of the request. 
-%We also note that the GPGPU application allows some amount of sharing of data within the DRAMCache between the CPU and GPU processors (i.e. constructive interference - blocks brought in by the CPU and then used by the GPU and vice versa).
+%We also note that the GPGPU application has some amount of sharing of data within the DRAMCache between the CPU and GPU processors (i.e. constructive interference - blocks brought in by the CPU and then used by the GPU and vice versa).
 \par Next, we study the impact of co-running on the GPU applications. Figure \ref{fig:motivation}(b) presents GPU performance obtained by addition of a stacked DRAMCache when co-run with the CPU and when run alone.
 We observe that with the introduction of DRAMCache in an IHS, the GPU performance improves on an average by 24\%. This performance is within 10\% of its HoA GPU performance with DRAMCache. 
 Thus, co-running with CPU applications has only a minor impact on the GPU performance. 
@@ -112,8 +106,10 @@ is also important to achieve higher performance.  Lastly, the design should ensu
 GPU application are able to utilize the large capacity of the stacked DRAM effectively to meet the working set 
 requirements of the respective applications in the best possible way.
 
-\section{Contributions}
-This thesis makes the following contributions
+\section{Keywords and Definitions}
+
+\section{Contributions of this thesis}
+The primary contribution of this thesis is to improve the performance of IHS architectures using a 3D die stacked DRAMCache by proposing suitable organizations and mechanisms that are heterogeniety aware, improve resource utilization and are efficient and scalable. To summarize, the thesis makes the following contributions:
 \begin{itemize}
 	\item We quanitify the impact of interference due to co-running of CPU and GPU processors in IHS architectures.
 	\item We develop simulation methodology, simulator modules and IHS system performance metrics to study effect of DRAMCaches on IHS workloads.

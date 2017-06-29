@@ -1,6 +1,6 @@
 \chapter{\cachename\ Design and Mechanisms} \label{chap:hashcache}
 In this chapter, we describe the details of \cachename\ design and the working of the different \cachename\ mechanisms in detail.
-\section{\cachename\ Design}
+\section{\cachename\ Design} \label{design}
 In this section we describe the Organization of the DRAMCache for IHS architectures. \cachename\ adapts an aggressive direct mapped cache design with tags stored in DRAM as TAD units \cite{alloy} with a cache line size of 128 byte. We first state and rationalize these design decisions.
 
 \subsection{Metadata overhead} 
@@ -57,7 +57,7 @@ The scheduler is cognizant of the request heterogeneity and searches the short q
 The complete \prioname\ scheduling algorithm is stated in Algorithm \ref{algo-pris}
 
 \begin{algorithm}
-	\small
+	\normalsize
 	\KwIn{DRAMCache Queue}
 	\KwOut{selected\_req to be scheduled}
 	all bool variables are initialize to \textit{false}\\
@@ -126,7 +126,7 @@ by a tag match.
 
 \begin{figure}[htb]
 	\centering
-	\scalebox{0.78}{\bloom}
+   	\includegraphics[scale=1.5]{figures/bloom}	
 	\caption{Working of \cachename\ with \bypassname}
 	\label{fig:bye}
 \end{figure}
@@ -150,21 +150,32 @@ The schemes proposed in the previous two subsections, \prioname\ and \bypassname
 \par The above observations lead to the following conflicting requirements. It is important to ensure that the CPU requests have certain share (minimum occupancy) in the DRAMCache to ensure the benefits of lower latency while to effectively use the larger share of DRAMCache for GPU requests, it may be required to increase  associativity of the DRAMCache. However such an associativity should not unduly increase the hit latency for CPU requests. 
 \par To accomplish the above goals, \cachename\ uses the \chaining\ scheme which introduces (pseudo) associativity mainly for GPU requests, while ensuring a certain minimum occupancy for CPU lines. The \chaining\ scheme uses a linear probing like technique inspired by the collision resolution mechanism of a hash map. 
 To ensure minimum occupancy for CPU requests, \chaining\ maintains a low-threshold value (\textit{$l_{cpu}$}) and when the occupancy of CPU lines
+
+\begin{figure}
+	\centering
+	\def\svgwidth{0.45\linewidth}
+	\input{figures/chainings.pdf_tex}
+	\caption{Conceptual working of \chaining\ in \cachename}
+\end{figure}
+
 \footnote{As mentioned earlier we classify a data as CPU data or GPU data based on whose request last accessed the data in the DRAMCache. An alternate equally feasible design point is to classify the data as CPU or GPU data based on which request brought the data into DRAMCache although the CPU and GPU may subsequently access it. In our setup only the CPU core executing the GPGPU application possibly shares data with the GPU and hence we do not expect to see significant difference in the results.} 
 reaches this threshold, \chaining\ ensures GPU data does not replace data brought in by CPU. 
-
-%\begin{figure}[htb]
-%	\centering
-%	\chainaccess
-%	\caption{\cachename\ (a)Row organization (2KB) (b) Access path in the \cachename}
-%	\label{fig:chain-access}
-%\end{figure}
 
 In the other situations, HAShCache modifies the replacement policy in the DRAMCache depending on the requesting core type. For a GPU request that is evicting another GPU line, \cachename\ looks for a line belonging to a CPU to replace within the same row in the next three consecutive locations,
 i.e. if $B$ is the original cache block, then the blocks considered for insertions are $(B+1)\%N_s$,$(B+2)\%N_s$, and $(B+3)\%N_s$, where $N_s$ is number of blocks in a DRAMCache row (page). Hence, the inserted block always lies in the same row as the original cache block. Note that for every set, there could be at most 1 chained set, providing a pseudo-associativity of at most 1.  
 We refer to this inserted location as the \textit{chained block} and the actual cache block the request mapped to as the \textit{original block}. The location of the \textit{chained block} is then represented as a 2-bit offset and is stored along with the metadata for the original set (see Figure \ref{fig:chain-access}(a)). When a cache block is evicted, if it was a \textit{chained block}, to unchain it (from the \textit{original block}), the offset stored in the reverse chain bits field in the metadata for the \textit{chained block} is used.  
 The chain dirty bit field (Figure \ref{fig:chain-access}(a)) in the metadata indicates whether the chained location, if any, holds modified data. This is used to optimize the access path for CPU and reduce the adverse effect of a double set lookup for latency sensitive CPU requests as shown in Figure \ref{fig:chain-access}(b). \chaining\ relies on the hit/miss predictor to have started an early access to memory. This avoids the second set lookup for CPU if the parallel memory (PAM) access has returned and the chained block is clean. 
+
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=1]{figures/chaining}
+	\caption{HAShCache Row Organization and Access Path of a request}	
+	\label{fig:chain-access}
+\end{figure}
+
 Additionally, each tag also stores 1 bit information about the owner of the block (CPU or GPU). This bit is used to make quick replacement decisions locally. The additional metadata required for \chaining\ is only 6 bits which can easily be accommodated in the existing 8 byte metadata. Lastly, the unused 8 byte (at the end of each row(page)) is used to store ownership information of each block in the row (15 bits). This information is used to make the \chaining\ replacement decision.
+
 
 \par As explained earlier, when the \textit{$l_{cpu}$} threshold is reached, GPU lines are not allowed to evict CPU blocks and such GPU requests contending to evict a CPU line are forced to chain to another block belonging to a GPU and evicting that instead, thus maintaining the \textit{$l_{cpu}$} occupancy for CPU. In the very rare case that a GPU block is not found within the 3 consecutive locations the request is not inserted into the cache.
 

@@ -1,4 +1,4 @@
-\chapter{Results} \label{chap:results}
+\chapter{\cachename\ Results} \label{chap:results}
 In this chapter, we evaluate the results of the proposed \cachename\ mechanisms discussed in Section \ref{section-hashcache}. We also compare \cachename\ approach against some of the related works. Further, we show that \cachename\ solution is robust and scales well by performing sensitivity study for the various components.
 
 \section{\cachename\ Mechanisms}
@@ -54,7 +54,7 @@ We now holistically examine the performance improvements due to the introduction
 \par Figure \ref{results-system}(a) plots the performance improvement as a Harmonic mean of IPCs of IHS IPC (combined CPU cores and GPU CUs), normalized to our baseline IHS architecture without a DRAMCache. Overall with simple heterogeneity aware management of the stacked DRAMCache, IHS systems can achieve on an average 200\% (upto 400\%) performance improvement while a naive DRAMCache is able to achieve just 41.8\% improvement.
 \par As a comprehensive system metric Figure \ref{results-system}(b) plots the weighted speedup normalized to the baseline of IHS without DRAMCache. Adding a DRAMCache to IHS processors naively achieves an improvement of merely 3\%. In fact for some workloads like Qg3 and Qg11 adding a DRAMCache without careful considerations can lead to negative performance impact. However, our heterogeneity-aware mechanisms are able to achieve on an average of 16\% and 15\%  improvement in performance over a IHS architecture without a DRAMCache. This improvement corresponds to a 12.9\% and 11.5\% improvement for each of the schemes over a carefully designed but heterogeneity unaware DRAMCache for the IHS processors.
 
-\section{Comparison with related work}
+\section{Comparison with related work} \label{comparison}
 \begin{figure}[!htb]
 	\centering
 	\includegraphics{graphs/results-comparison-cpu}
