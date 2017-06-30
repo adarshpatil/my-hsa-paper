@@ -1,5 +1,8 @@
 \chapter{\cachename\ Results} \label{chap:results}
-In this chapter, we evaluate the results of the proposed \cachename\ mechanisms discussed in Section \ref{section-hashcache}. We also compare \cachename\ approach against some of the related works. Further, we show that \cachename\ solution is robust and scales well by performing sensitivity study for the various components.
+In this chapter, we first show the effect of CPU and GPU sharing a memory subsystem in an IHS architecture. As shown in section \ref{motivation}, addition of a naive DRAMCache does has a limited performance improvement on the CPU and GPU in the IHS architecture. We then evaluate the results of the proposed \cachename\ mechanisms discussed in chapter \ref{chap:hashcache} and show that \cachename\ is able to improve the performance of IHS. We also compare \cachename\ approach against some of the related works. Further, we show that \cachename\ solution is robust and scales well by performing sensitivity study for the various components.
+
+\section{Effect of Interference in IHS architecture}
+In this section, we quantify the effect of CPU and GPU co-running in a basic IHS architecture while sharing the memory subsystem. Figure ?? shows the performance of (a)CPU and (b)GPU 
 
 \section{\cachename\ Mechanisms}
 In this section, we present the performance of the different \cachename\ mechanisms (\prioname, \bypassname\ and \chaining) and some combinations of them. We examine the impact of these mechanisms on CPUs, GPUs and the performance of the IHS system as a whole. Figure \ref{results-speedup} (a) and (b) presents the performance improvement in terms of Harmonic Mean of IPC, for CPU and GPU respectively, normalized to the baseline without a DRAMCache. We report the performance improvement due to the introduction of DRAMCache (Naive),  and then the different HASHCache mechanisms  and their combinations.
