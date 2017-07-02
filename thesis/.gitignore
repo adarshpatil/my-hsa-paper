@@ -19,3 +19,5 @@
 *.nlo
 *.dvi
 *.ps
+*.idx
+*.loa

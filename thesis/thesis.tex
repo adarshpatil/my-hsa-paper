@@ -1,65 +1,98 @@
-\documentclass[oneside,12pt]{iiscmastersthesis}
-% \pagestyle{bfheadings}
-%\usepackage{psfig}
+\documentclass[12pt,twoside,a4paper, openright]{report}
+\usepackage{iisc_thesis}
+\usepackage{etoolbox}
+\AtBeginEnvironment{algorithm}{\setstretch{1}}
+\AtBeginEnvironment{figure}{\setstretch{1}}
+\AtBeginEnvironment{lstlisting}{\setstretch{1}}
+\AtBeginEnvironment{SCfigure}{\setstretch{1}}
+\AtBeginEnvironment{table}{\setstretch{1}}
+\pagestyle{bfheadings}
+
+
 \usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage{latexsym}
-\usepackage{multicol}
-\usepackage{booktabs}
-\usepackage{multirow}
+\usepackage[caption=false]{subfig}
+\usepackage{sidecap}
+%\usepackage{subcaption}
+\captionsetup[table]{font={stretch=1}}     %% change 1.2 as you like
+\captionsetup[figure]{font={stretch=1}}    %% change 1.2 as you like
+%\captionsetup{belowskip=0pt,aboveskip=2pt}
+%\usepackage[outdir=./]{epstopdf}
+\usepackage[cmex10]{amsmath}
+\usepackage{enumitem}
+\usepackage{leqno}
+\newtheorem{mydef}{Definition}
+\newtheorem{theorem}{Theorem}
+
+\usepackage[ruled]{algorithm2e}
+\SetAlgoLined
+\SetKwFor{ForEach}{for each}{do}{endfor}
+\SetKwInput{KwData}{Input}
+\SetKwInput{KwResult}{Output}
+\SetCommentSty{}
+
+\usepackage[scaled]{beramono}
+\usepackage[T1]{fontenc}
+\usepackage[bitstream-charter]{mathdesign}
+\usepackage{listings, multicol}
+\lstset{ %
+	basicstyle=\ttfamily,
+	keywordstyle=\bfseries,
+	language=Python,                     % choose the language of the code
+	numbers=none,                   % where to put the line-numbers
+	numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+	stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+	numbersep=3pt,                  % how far the line-numbers are from the code
+	backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+	showspaces=false,               % show spaces adding particular underscores
+	showstringspaces=false,         % underline spaces within strings
+	showtabs=false,                 % show tabs within strings adding particular underscores
+	frame=false,                    % adds a frame around the code
+	tabsize=1,                      % sets default tabsize to 2 spaces
+	captionpos=b,                   % sets the caption-position to bottom
+	breaklines=true,                % sets automatic line breaking
+	breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+	escapeinside={(*}{*)},         % if you want to add a comment within your code
+	framerule=0pt,
+	morekeywords={Domain,Function,Interval,Reduction,Variable,
+		Constant,Parameter,Kernel2D,Correlate,Min,Max,Sum,
+		Image,Case,Default,Upsample,Downsample,Replicate,
+		Reduce, UChar, Char, Float, Double, Int, UInt, 
+		Short, UShort, Long, ULong, Condition, Stencil,
+		TStencil, Grid, Interp, Restrict}
+}
+
+\makeatletter
+\newcommand\footnoteref[1]{\protected@xdef\@thefnmark{\ref{#1}}\@footnotemark}
+\makeatother
+
 \usepackage{fancyhdr}
-\usepackage[numbers]{natbib}
-\usepackage{cleveref}
-\usepackage{wrapfig}
-%\usepackage{algorithm}
-%\usepackage{algorithmic}
-\usepackage{algorithm2e}
-\usepackage{enumerate}
-\usepackage{cancel}
-\usepackage{mathrsfs}
-% \usepackage{sfgame}
-\usepackage{color}
-%\usepackage[compact]{titlesec}
-\usepackage{mdwlist}
-\usepackage{tikz}
+
+\fancyhf{}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}{}}
+% \renewcommand{\headrulewidth}{0.8pt}
+\fancyhead[RO,LE]{\thepage}
+\fancyhead[LO]{\rightmark}
+\fancyhead[RE]{\leftmark}
+
 \usepackage{varwidth}
-\usepackage[vertfit]{breakurl}
-% \usepackage{biblatex}
-%\usetikzlibrary{shapes,arrows, trees}
-\input{newcommands}
 \usepackage{multirow}
-% \newcommand{\nobibentry}[1]{{\let\nocite\ignore\bibentry{#1}}}
+\usepackage{tabularx,booktabs, array}
+\usepackage{url}
 
-\newcommand{\sn}[1]  {\noindent \textcolor{blue}{{\bf SN: }{``{\em #1}''}}}
-\newcommand{\blankpage}{
-\newpage
-\thispagestyle{empty}
-\mbox{}
-\newpage
-}
-
-\newcommand{\blankpagewithnumber}{
-\newpage
-% \thispagestyle{empty}
-\mbox{}
-\newpage
-}
-
-\crefname{observation}{observation}{observations}
-\crefname{algorithm}{algorithm}{algorithms}
-\crefname{align}{equation}{equations}
-\crefname{eqnarray}{equation}{equations}
-
-% turn of those nasty overfull and underfull hboxes
-\hbadness=10000
-\hfuzz=50pt
-
-% Put all the style files you want in the directory StyleFiles and usepackage like this:
-% \usepackage{StyleFiles/watermark}
-
-% Comment out the next line to get single spacing
-\onehalfspacing
+\usepackage{tikz}
+\usepackage{tkz-graph}
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{positioning, fit}
+\usetikzlibrary{matrix}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+\graphicspath{{./images/}}
+\pgfdeclarelayer{bg}    % declare background layer
+\pgfdeclarelayer{nodelayer}
+\pgfdeclarelayer{edgelayer}
+\pgfsetlayers{bg,main,nodelayer,edgelayer}  % set the order of the layers (main is the standard layer)
 
 
 % ADARSH MARCRO's
@@ -68,102 +101,84 @@
 \newcommand{\prioname}{\textit{PrIS}}
 \newcommand{\chaining}{\textit{Chaining}}
 
-\renewcommand{\baselinestretch}{1.4}
+\newcommand{\blankpage}{
+	\newpage
+	\thispagestyle{empty}
+	\mbox{}
+	\newpage
+}
+
 
 \begin{document}
 
-\title{Heteogenity aware shared DRAMCache for \\ Intergrated Heterogenous Architectures} 
-
-\submitdate{JULY 2017} 
-\degree{Master of Science} 
-\dept{Computer Science and Automation}
-\faculty{Computer Science and Engineering}
+\begin{frontmatter}
+\title{Heterogeneity aware shared DRAMCache for \\ Integrated Heterogeneous Architectures}
 \author{Adarsh Patil}
-
-% Using the watermark package which is in StyleFiles/
-% and to remove DRAFT COPY ONLY appearing on the top of all pages comment out below line
-%\watermark{DRAFT COPY ONLY}
-
-
+\dept{Department of Computer Science and Automation}
+\enggfaculty
+\degreein{Computer Science and Engineering}
+\mscengg
+\iisclogotrue % Default is false
+\figurespagefalse %default is true
+\tablespagetrue %default is false
 \maketitle
 
-\newpage
-
 \vspace*{\fill}
 \begin{center}
-\large\bf \textcopyright \ Adarsh Patil\\
-\large\bf July 2017\\
-\large\bf All rights reserved
+	\large\bf \textcopyright \ Adarsh Patil\\
+	\large\bf July 2017\\
+	\large\bf All rights reserved
+\end{center}
+\vspace*{\fill}
+\pagenumbering{gobble}
+\thispagestyle{empty}
+
+
+\begin{dedication}
+\newpage
+\vspace*{\fill}
+\begin{center}
+	DEDICATED TO \\[2em]
+	\Large\it My Parents \\ and Kumudha
 \end{center}
 \vspace*{\fill}
 \thispagestyle{empty}
-
 \newpage
-
-\vspace*{\fill}
-\begin{center}
-DEDICATED TO \\[2em]
-\Large\it My Parents \\ and Kumudha
-\end{center}
-\vspace*{\fill}
 \thispagestyle{empty}
+\end{dedication}
 
-\blankpage
 
-%\vspace*{\fill}
-%\begin{tabular}{p{0.4\columnwidth}p{0.5\columnwidth}}
-% {\em Signature of the Author}: & \dotfill \\
-% & Your Name \\
-% & Dept.\ of Computer Science and Automation \\ 
-% & Indian Institute of Science, Bangalore \vspace{1in}\\
-% {\em Signature of the Thesis Supervisor}: & \dotfill \\
-% & Your Advisor's Name \\
-% & Professor \\
-% & Dept.\ of Computer Science and Automation \\ 
-% & Indian Institute of Science, Bangalore
-%\end{tabular}
-%\vspace*{\fill}
-%\thispagestyle{empty}
-
-%\blankpage
-
-%set the number of sectioning levels that get number and appear in the contents
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{3}
-
-\frontmatter % book mode only
+\acknowledgements
 \pagenumbering{roman}
-
-
-% \include{Dedication/dedication}
-\prefacesection{Acknowledgements}
 \input{acknowledgments}
 
 
-\prefacesection{Publications from the Thesis}
+\publications
 \begin{enumerate}
 	\item A. Patil, R. Govindarajan. HAShCache: Heterogeneity Aware Shared DRAMCache for Integrated Heterogeneous Systems. Submitted to ACM \textit{Trasactions on Architecture and Code Optimization (TACO)}
 \end{enumerate}
 
 
-\blankpage
 
-\prefacesection{Abstract}
+\begin{abstract}
 \input{abstract}
+\end{abstract}
 
+\makecontents
 
-\tableofcontents
-\blankpagewithnumber
+	
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\listfigurename}
 \listoffigures
-\listoftables
-%\blankpagewithnumber
-% \printnomenclature  %% Print the nomenclature
-% \addcontentsline{toc}{chapter}{Nomenclature}
+
+\newpage
+\addcontentsline{toc}{chapter}{List of Algorithms}
+\listofalgorithms
+
+\end{frontmatter}
 
 \input{figures}
 
-\mainmatter % book mode only
-\setcounter{page}{1}
 \input{introduction}
 \input{hashcache}
 \input{simulation}
@@ -172,16 +187,9 @@ DEDICATED TO \\[2em]
 \input{related-work}
 \input{conclusion}
 
-% \backmatter % book mode only
-% \appendix
-% \include{Appendix1/appendix1}
-% \include{Appendix2/appendix2}
 
-\bibliographystyle{plainnat}
-%\bibliographystyle{Classes/CUEDbiblio}
-%\bibliographystyle{Classes/jmb}
-%\bibliographystyle{Classes/jmb} % bibliography style
-% \renewcommand{\bibname}{References} % changes default name Bibliography to References
-% \bibliography{References/references} % References file
+
+\bibtitle{References}
 \bibliography{references}
+\bibliographystyle{plain}
 \end{document}
