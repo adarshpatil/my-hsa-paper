@@ -56,7 +56,7 @@ The Ruby cache and memory hierarchy in gem5-gpu is authored using the domain spe
 \end{table}
 
 The gem5-gpu is configured to run 5 CPU cores (4-wide out of order cores, operating at 2.5GHz) with a 32KB private L1 Cache (split I/D), and a 1MB shared L2 Cache (shared across all CPU cores). The IHS also consists of 8 Fermi-like compute units, operating at 700MHz with a private 64KB L1 and 512KB shared L2 cache (shared across all CUs). The details of the IHS configuration are given in Table \ref{configuration}. The private L1 of CUs are non-inclusive of the shared GPU L2 cache and can hold stale data. However, GPU L2 cache is coherent with all levels of the CPU hierarchy. The CPU caches and GPU L2 cache are kept coherent in the simulator. Table \ref{configuration} provides the simulator setup details. 
-Our simulator also respects all significant timing and functional parameters for the stacked DRAMCache (including refresh, data bus, request queues, scheduling algorithms, command signaling and clock frequencies) using the DRAMCtrl \cite{dramctrl} model.
+Our simulator also respects all significant timing and functional parameters for the stacked DRAMCache (including refresh, data bus, request queues, scheduling algorithms, command signalling and clock frequencies) using the DRAMCtrl \cite{dramctrl} model.
 
 \section{Workloads} 
 Our goal is to study the performance impact of the large last level shared DRAMCache in IHS architectures. Hence we run multiple applications in parallel on the multi-cores and the GPGPU. Applications having high and medium memory intensive behaviours from SPEC CPU2006 suite \cite{spec2006} were chosen to form a multi-programmed workload that run completely on the CPU. Table \ref{single-cpu-mpki} classifies the CPU benchmarks into low, medium and high memory intensity based on the observed MPKI values as seen at the L2 cache when running alone. We create a multi-programmed workload with 4 SPEC benchmarks each. We use the Rodinia benchmark suite \cite{rodinia} to represent GPU applications that offload kernel computation to a GPU CUs. These Rodinia applications are modified to elide the \textit{memcpy} api calls so as to run with unified virtual and physical address spaces (Rodinia-nocopy). 
@@ -85,7 +85,7 @@ Our goal is to study the performance impact of the large last level shared DRAMC
 	\label{single-gpu-mpki}
 \end{table}
 
-For the Rodinia-nocopy benchmarks we used \textit{needle}, \textit{k-means}, \textit{gaussian}, \textit{hotspot}, \textit{srad}, \textit{streamcluster} and \textit{lud}. The rest of the programs either could not be compiled or could not run without causing forward progress deadlock errors in the modified simulator. The Rodinia benchmarks use an extra fifth CPU to run the intialization section before offloading to GPU. Thus, our IHS simulates five CPU cores and a eight GPU SMs. Table \ref{single-gpu-mpki} categorizes the Rodinia-nocopy benchmarks into Low, Medium and High based on the observed MPKI values (Instructions here refer to thread instructions) at the L2 cache.
+For the Rodinia-nocopy benchmarks we used \textit{needle}, \textit{k-means}, \textit{gaussian}, \textit{hotspot}, \textit{srad}, \textit{streamcluster} and \textit{lud}. The rest of the programs either could not be compiled for IHS architecture or could not run without causing forward progress deadlock errors in the modified simulator. The Rodinia benchmarks use an extra fifth CPU to run the initialization section before offloading to GPU. Thus, our IHS simulates five CPU cores and a eight GPU SMs. Table \ref{single-gpu-mpki} categorizes the Rodinia-nocopy benchmarks into Low, Medium and High based on the observed MPKI values (Instructions here refer to thread instructions) at the L2 cache.
 
 
 \par Combinations of these SPEC quad-core multi-programmed workloads were coupled with a full Rodinia-nocopy benchmark to create a representative mix of applications that would run in an IHS system. These composite workloads embody different levels of total memory intensity produced by the CPU and GPU cores.
@@ -160,6 +160,6 @@ Weighted Speedup = \sum_{i=1}^{n_{cpu}} \frac{IPC_i^{CPU_{IHS}}}{IPC_i^{SP}} + \
 }
 where ${IPC_i^{CPU_{IHS}}}$ and $IPC_i^{GPU_{IHS}}$ denote the IPC achieved by the $i^{th}$ CPU core and the $i^{th}$ GPU CU when running in a IHS setup respectively; whereas $IPC_i^{SP}$ and $IPC^{GPU}$ denote the same when $i^{th}$ CPU core and the $i^{th}$ GPU CU are running stand-alone respectively. 
 
-\section{Conclusion}
-In this section, we presented the simulator extensions done to simulate a DRAMCache for an IHS architecture. 
+\section{Summary}
+In this chapter, we presented the simulator extensions done to simulate a DRAMCache for an IHS architecture. We showed the workloads created to evaluate the proposed design and stated the simulation methodology. Finally, we state the comprehensive performance metrics used to measure the IHS system performance for the various configurations.
 
