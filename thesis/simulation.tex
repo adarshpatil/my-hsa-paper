@@ -135,7 +135,7 @@ As stated earlier, the Rodinia application uses an extra 5\textsuperscript{th} C
 This is done as the first loop represents the true run of the GPU kernel. The number of \textit{conditioned loops} executed depends on the length of the simulation and the IPC achieved by the GPU. Also, Subsequent loops can achieve better hit rates in cache due to the data fetched by the earlier loops thus not corroborating with the true performance achieved.
 In cases where the ROI is longer than the complete run of the CPU workloads, the statistics for the last completed kernel are used. 
 
-\section{Performance Metrics} 
+\section{Performance Metrics} \label{perf-metrics}
 Our study concerns the performance of the IHS architecture, in which multiple single threaded CPU programs and GPU program run in parallel and contend for the shared DRAMCache. When CPU and GPU programs are run simultaneously in parallel make different progress as compared to when running homogeneously and the performance impact of the shared DRAMCache is not same on the each of the CPU benchmarks as well as the GPU benchmark. We require to define metrics that combine IPC meaningfully without biasing the system performance to either CPU or GPU cores. Hence, we report a multitude of performance metrics to holistically determine the performance of the IHS processor with the DRAMCache and our optimizations. 
 \par We report performance of each processor using the intuitive metric of harmonic mean of IPC for the CPU cores and GPU CUs which is defined as 
 {

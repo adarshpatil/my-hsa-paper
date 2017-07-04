@@ -1,0 +1,59 @@
+\begin{algorithm}
+	\normalsize
+	\KwIn{DRAMCache Queue}
+	\KwOut{selected\_req to be scheduled}
+	all bool variables are initialize to \textit{false}\\
+	%found\_seamless\_gpu\_req = false\\
+	%found\_prepped\_req = false\\
+	%found\_prepped\_cpu\_req = false \\
+	%found\_earliest\_req = false \\
+	%found\_earliest\_cpu\_req = false \\
+	
+	\While{not at end of Queue}{
+		read \textit{rank}, \textit{bank} and \textit{row} of current\_req \\
+		\If{rank.isAvailable} {
+			\uIf{row.isOpen}{
+				\uIf{bank.colAllowedAt <= minColAt}{
+					\tcc{seamless row buffer hit}
+					\uIf{req.isCPU}{
+						selected\_req = current\_req \\
+						break \\
+					}
+					\ElseIf{!found\_seamless\_gpu} {
+						selected\_req = current\_req \\
+						found\_seamless\_gpu = true \\
+					}
+				} \ElseIf {!found\_hidden\_bank \&\& !found\_prepped\_cpu \&\& !found\_seamless\_gpu} {
+				\tcc{req to prepped row}
+				\uIf{req.isCPU}{
+					selected\_req = current\_req \\
+					found\_prepped\_cpu = true \\
+					found\_prepped = true \\
+				}
+				\ElseIf{!found\_seamless\_gpu} {
+					selected\_req = current\_req \\
+					found\_prepped = true  \\
+				}
+			}
+		} \ElseIf {!found\_earliest\_cpu \&\& !found\_seamless\_gpu} {
+		\tcc{earliest bank that can be issued hidden cmd}
+		\tcc{executed only once per scheduling decision}
+		found\_hidden\_bank, earliest\_bank = find\_earliest\_bank() \\
+		\If{earliest\_bank == bank \&\& \\ (found\_hidden\_bank || !found\_prepped)} {
+			\uIf{req.isCPU}{
+				selected\_req = current\_req \\
+				found\_earliest\_cpu = true \\
+				found\_earliest = true
+			}
+			\ElseIf{!found\_seamless\_gpu} {
+				selected\_req = current\_req\\
+				found\_earliest = true \\
+			}
+		}
+		
+	}
+}
+}
+\caption{\prioname\ DRAMCache scheduling policy}
+\label{algo-pris}
+\end{algorithm}

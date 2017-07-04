@@ -1,12 +1,12 @@
 \chapter{Conclusion} \label{chap:conclusion}
 We conclude by summarizing the \cachename\ solution and discuss potential avenues for future work.
 \section{Summary}
-Stacked DRAMCaches require careful design to be able to improve performance of workloads. There are several conflicting factors that require careful consideration and tradeoffs. This is compounded by the fact that in IHS architectures the processors are hetergenous and require different services from the DRAMCache i.e. latency for CPUs vs throughput for GPUs.
-\par In this work, we presented a case for performance improvement of an IHS processors by addition of a stacked DRAMCache. 
-We quantify the effects of interference due to co-running on each processor and show that the heterogeneity adversely effects CPU performance compared to the GPU. 
-We carefully design an effective DRAMCache organization for IHS processors and show that addition of such a cache can be a very good fit for each processor type to better the system performance.
-We improve IHS performance using three simple and effective heterogeneity aware techniques - a DRAMCache scheduler, a spatial bypass and a temporal occupancy control. 
-\par We develop the simulation infrastructure and accurate methodology for detailed simulation of \cachename. Using this experimental setup we show that 
+Stacked DRAMCaches require careful design to be able to improve performance of workloads. There are several conflicting factors that require careful consideration and trade-offs. This is compounded by the fact that in IHS architectures the processors are themselves heterogeneous and require different services from the DRAMCache i.e. latency for CPUs vs throughput for GPUs.
+\par In this work, we first demonstrated that current memory hierarchy requires to be revisited for IHS architectures to be able to perform upto capacity. We presented a case for performance improvement of an IHS processors by addition of a stacked DRAMCache. 
+We quantify the effects of interference due to co-running on each processor and show that the heterogeneity adversely effects CPU performance as compared to the GPU. 
+Consequently, we carefully design an effective DRAMCache organization for IHS processors by evaluating the design space of DRAMCaches.
+Further, we propose three simple and effective heterogeneity aware techniques - a heterogeneity aware DRAMCache scheduler (\prioname), a heterogeneity aware temporal bypass (\bypassname) and a heterogeneity aware spatial occupancy control (\chaining) to improve the performance IHS architectures.
+\par We develop the simulation modules and infrastructure to simulate an IHS architecture with a DRAMCache. We use a suitable methodology for detailed simulation of \cachename and adapt metrics to measure performance of the proposed system. Using this experimental setup we show that 
 \cachename\ achieves significant improvement of 200\% in overall system performance on an average over a baseline system with no DRAMCache and 41\% over a heterogeneity unaware DRAMCache. 
 We also show that \cachename\ mechanisms scale very well with stacked DRAMs of larger capacity, higher bandwidth and even with access latencies of off-chip DRAMs.
 This work, thus shows that there are significant benefits of using a stacked DRAMCache for IHS processors, far exceeding the usefulness of such devices in homogeneous GPUs and multi-core CPU systems.

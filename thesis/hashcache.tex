@@ -61,8 +61,12 @@ For this, \cachename\ applies a CPU Prioritized FR-FCFS algorithm over each of t
 The scheduler is cognizant of the request heterogeneity and searches the short queues for either a first CPU row buffer hit request or a first CPU row activation request to schedule before scheduling a GPU request in a FR-FCFS manner. For GPU requests, starvation is avoided firstly, by allowing GPU requests to be scheduled to a prepped (open) row after the CPU has completed access to that row and secondly by allowing GPU to schedule its requests to a bank immediately, when the queue has no more CPU requests to that bank. These scheduling decisions are made subject to the device timing constraints, similar to an FR-FCFS scheduler.
 \par Prioritization of CPU requests alone may not help, as the flood of memory requests from  GPU can quickly fill the precious buffer at the DRAMCache controller, resulting in CPU requests not even entering the buffer. \cachename\ overcomes this problem by guaranteeing certain minimum occupancy for CPU requests in the buffer at the DRAMCache Controller. This is accomplished using a selective reject-retry mechanism for GPU requests when the queues reach certain critical level.  Together these two mechanisms attempt to reduce the DRAMCache latency experienced by CPU requests.  We refer to these  mechanisms collectively as \prioname\ (CPU \emph{Pr}ioritized FR-FCFS with \emph{I}HS aware \emph{S}cheduling). 
 \par \prioname\ differentiates requests broadly as CPU or GPU requests and not within individual CPU cores or GPU CUs for scheduling. We find that in an IHS architecture the interference between CPU and GPU applications vastly overwhelms the interference between homogeneous application workloads. Hence, \prioname\ only has to make a binary selection for scheduling which greatly simplifies the scheduling algorithm. \prioname\ is a simple yet effective, single stage modified FR-FCFS algorithm that does not incur any hardware overhead in terms of multiple or large requests queues or batching stages as in \cite{sms}.
-The complete \prioname\ scheduling algorithm is stated in Algorithm \ref{algo-pris}
-
+\par The complete \prioname\ scheduling algorithm is stated in Algorithm \ref{algo-pris}. \prioname\ picks requests to be scheduled from the input queue. The exact selection of input queue (Read, Write or Fill Queue) is done external to this algorithm based on certain heuristics and constraints which is beyond the scope of this scheduler algorithm. The algorithm picks one of the 3 types of requests - seamless row buffer hit, hidden bank prep or prepped row, in that strict order of priority. 
+\par A seamless row buffer hit request refers to a request that can issue a column access to an already activated row in the bank, without any further delay. A hidden bank prep request is a request that can overlap the current operation in other banks (in the same rank) and issue a request to activate or precharge a row in the requested bank. The first packet that can issue a hidden bank prep command is selected. A prepped row request refers to a request that needs to wait for the current column access to complete to the currently active row in a bank. Thus choosing a prepped row leads to a bubble in the pipeline of the scheduler where the request has to wait.
+\par The \prioname\ algorithm picks a request in the priority order of \\
+CPU seamless row buffer hit $>$ CPU hidden bank prep $>$ CPU prepped row $>$ GPU seamless row buffer hit $>$ GPU hidden bank prep $>$ GPU prepped row buffer hit\\ 
+We experimented with several combinations of this priority order and find that prioritizing CPU requests at all levels provides best performance for CPU requests while the reduction in GPU performance due to de-prioritization between the schemes was not significant.
+\par Thus, \prioname\ is able to reduce access latencies by reducing waiting delay and queue latencies for CPU requests at DRAMCache.
 \input{pris-algorithm}
 
 \subsection{Heterogeneity aware Temporal Bypass} \label{mechanism-bye}
@@ -92,6 +96,7 @@ Secondly, this allows \bypassname\ to reduce some of the bloat caused by a Miss 
 \par All write requests and GPU read requests proceed serially after looking into the cache. \bypassname\ does not bypass any write requests as it would otherwise require a back-invalidation of the cache line, if present in the DRAMCache, which would need a full DRAMCache access.
 \par We find that a small 2-bit counting bloom filter implemented with two $H_3$ hash functions \cite{h3} and 512K entries per controller is sufficient 
 to produce reasonable bypass efficiency with a tolerable mis-prediction rate. The total overhead for \bypassname\ is 256KB for a 64MB DRAMCache which is less than 0.4\% of the cache size.
+\par Thus, \bypassname\ is able to improve performance by achieving a better bandwidth balance between the DRAMCache and the off-chip main memory.
 
 
 \subsection{Heterogeneity aware Spatial Occupancy Control} \label{mechanism-chaining}
@@ -148,5 +153,5 @@ Lastly, this scheme is dynamic and allows to adaptively set CPU occupancy thresh
 
 \vspace{-1em}
 \section{Summary}
-In this chapter we presented the \cachename\ organization and mechanisms. We firstly showed the conscientious design designs made and substantiated them with experiments of DRAMCache for IHS architecture. We then details the principle and workings of \prioname, \bypassname\ and \chaining\ mechanisms in the \cachename.
+In this chapter we presented the \cachename\ organization and mechanisms. We firstly showed the conscientious design designs made and substantiated them with experiments of DRAMCache for IHS architecture. We then detail the principles and working of \prioname, \bypassname\ and \chaining\ mechanisms in \cachename.
 
