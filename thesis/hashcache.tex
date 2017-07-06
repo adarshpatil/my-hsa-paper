@@ -28,7 +28,7 @@ The access latency provided by a stacked DRAM is only slightly better (say 0.7x)
 
 \subsection{Row Buffer Hits (RBH) vs Bank Level Parallelism (BLP)} 
 
-Stacked DRAMs are organized as vaults (channels), layers (ranks) and banks within each layer as shown in Figure \ref{fig:stackdram}. Each vault has several TSVs which constitute lanes in a channel. Stacked DRAMs provide large bandwidth by organizing DRAMs as several smaller banks within layers. Given this abundant BLP, should DRAMCaches exploit this parallelism over improved RBH? In other words, should the addressing scheme of a DRAMCache be organized as RoCoRaBaCh (Row,Column,Rank,Bank,Channel) - referred to as the BLP-scheme - which distributes the cache blocks in banks of different ranks as opposed to RoRaBaCoCh - referred to as the RBH-scheme - which stores cache blocks consecutively in the row of a bank. We experimented with both the addressing schemes for an IHS processor with a DRAMCache. Figure \ref{fig:design-rbhblp} shows the performance of a DRAMCache that uses a BLP addressing scheme normalized to the performance of a RBH addressed DRAMCache. We observe that both the CPU and GPU perform on an average 3\% and 1\% worse respectively when using the BLP scheme. Consequently, \cachename\ is addressed using a RBH friendly addressing scheme (RoRaBaCoCh scheme). 
+Stacked DRAMs, similar to commodity off-chip DRAMs, are organized as vaults (channels), layers (ranks) and banks within each layer as shown in Figure \ref{fig:stackdram}. Each vault has several TSVs which constitute lanes in a channel. Each layer shares a command, address and data bus and each bank is  operated and accessed independently. Hence, DRAMs exploit this parallelism, called Bank Level Parallelism (BLP), to improve effective memory bandwidth. Given this abundant BLP in stacked DRAMs, we ask the question should DRAMCaches exploit this parallelism over improved RBH? In other words, should the addressing scheme of a DRAMCache be organized as RoCoRaBaCh (Row,Column,Rank,Bank,Channel) - referred to as the BLP-scheme - which distributes a cache block in banks of different banks as opposed to RoRaBaCoCh - referred to as the RBH-scheme - which stores cache blocks consecutively in the row of a bank. We experimented with both the addressing schemes for an IHS processor with a DRAMCache. Figure \ref{fig:design-rbhblp} shows the performance of a DRAMCache that uses a BLP addressing scheme normalized to the performance of a RBH addressed DRAMCache. We observe that both the CPU and GPU perform on an average 3\% and 1\% worse respectively when using the BLP scheme. Consequently, \cachename\ is addressed using a RBH friendly addressing scheme (RoRaBaCoCh scheme). 
 
 \begin{figure}[!htb]
 	\centering
@@ -54,7 +54,7 @@ As noted  in Figure \ref{fig:motivation}, despite the addition of such a careful
 
 \subsection{Heterogeneity aware DRAMCache scheduling} 
 Objective: Reduce the large access latencies for CPU requests at DRAMCache
-\par DRAM devices operate at a much lower clock rate compared to the processor. Moreover DRAM cells need to be periodically refreshed to preserve the data which further reduces the available time for accessing the device. The imbalance in request arrival rate and service times creates a queuing effect. Hence, DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However, we observe that in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions (buffer locations) at the DRAMCache controller leading to requests being rejected causing the DRAMCache to be blocked. 
+\par As introduced in Chapter \ref{chap:introduction}, DRAM devices operate at a strict timing constraints and require careful coordination of operations to achieve best efficiency. Moreover, DRAM cells requiring periodic refresh to preserve the data further reduces the available time for accessing the device. The imbalance in request arrival rate and service times creates a queuing effect. Hence, DRAM devices have traditionally had limited size queues to hold requests until they can be serviced by the device. However, we observe that in an IHS processor the large burst of requests from the GPU quickly exhausts the available queue positions (buffer locations) at the DRAMCache controller leading to requests being rejected causing the DRAMCache to be blocked. 
 The CPU requests, which are interleaved with the GPU requests, are few and far spaced and thus suffer large waiting time due to retries. This is compounded by the fact that GPU exploits good row buffer locality and is preferentially scheduled by the DRAMCache controller (under FR-FCFCS scheduling \cite{sms}), causing increased queue latencies for CPU requests. Increasing queue lengths beyond a certain measure increases scheduling overheads as DRAM schedulers search the queues for the most suitable request to schedule based on certain heuristics.
 \par \cachename\ reduces waiting time of CPU requests by prioritizing them at the DRAMCache controller without starving GPU requests. 
 For this, \cachename\ applies a CPU Prioritized FR-FCFS algorithm over each of the Read, Write and Fill queues to schedule a request at each bank. 
@@ -124,7 +124,7 @@ The chain dirty bit field (Figure \ref{fig:chain-access}(a)) in the metadata ind
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[scale=1]{figures/chaining}
+	\includegraphics[scale=0.96]{figures/chaining}
 	\caption{\cachename\ Row Organization and Access Path of a request}	
 	\label{fig:chain-access}
 \end{figure}
@@ -151,7 +151,6 @@ Additionally, each tag also stores 1 bit information about the owner of the bloc
 (iii) avoid forcing eviction of hot GPU lines while also avoiding storing of dead lines in the cache.
 Lastly, this scheme is dynamic and allows to adaptively set CPU occupancy threshold \textit{$l_{cpu}$} based on the workloads requirements. This occupancy control mechanism does not incur any additional storage and uses the unused space in the DRAMCache rows. Once the GPU finishes kernel execution \cachename\ returns to a direct mapped cache as the CPU lines inserted into the DRAMCache occupy \textit{chained blocks} thereby unlinking chains. 
 
-\vspace{-1em}
 \section{Summary}
 In this chapter we presented the \cachename\ organization and mechanisms. We firstly showed the conscientious design designs made and substantiated them with experiments of DRAMCache for IHS architecture. We then detail the principles and working of \prioname, \bypassname\ and \chaining\ mechanisms in \cachename.
 
