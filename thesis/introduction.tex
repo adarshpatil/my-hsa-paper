@@ -68,7 +68,7 @@ A DRAM stores information in a cell, which is a transistor-capacitor pair. A DRA
 	\item Waiting time: Time spent by the request waiting in the queue.
 	\item Service time: Time taken by the request at the head of the queue to be serviced.
 \end{itemize}
-Further, two widely accepted factors that influence DRAM memory system performance are 
+Further, two widely accepted factors that impact DRAM memory system performance are
 \begin{itemize}
 	\item Row Buffer Hit (RBH): When a column access is performed to a row which is currently in the row buffer, a single column access is required to retrieve data. Thus, such an access would incur a single $t_{CL}$ access latency without requiring any row operations. This scenario is referred to as a Row buffer hit and the corresponding parameter for a stream of accesses is known as the row buffer hit rate. Incurring row buffer hit would reduce the service time for the request. 
 	\item Bank Level Parallelism (BLP): Requests to independent banks can proceed in parallel and thus the temporal overlap can help hide the additional latencies incurred. The amount of parallelism that can be exploited directly influences the waiting time for the requests.
