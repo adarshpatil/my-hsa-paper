@@ -10,16 +10,32 @@ The Ruby cache and memory hierarchy in gem5-gpu is authored using the domain spe
 
 \begin{figure}[!htb]
 	\centering
-	\def\svgwidth{0.9\columnwidth}
+	\def\svgwidth{\columnwidth}
 	\input{figures/simulator-memory.pdf_tex}
 	\caption{Simulator Memory Hierarchy Augmented with a DRAMCache}
 	\label{fig:simulator-memory}
 \end{figure}
 
-\par The DRAMCache we evaluate here is a memory-side \cite{skylake} shared cache between the 2 split cache hierarchies of CPUs and GPUs. A memory-side cache is one which are outside the coherence domain as show in Figure \ref{fig:simulator-memory}. They are logically just in front of the memory and serve to reduce the average latency of memory accesses and increase the memory's effective bandwidth. Access to memory is interleaved across multiple memory controllers. To avoid a biased interleaving due to uniformly strided address patterns, a basic XOR-based address hashing mechanism is employed. Each memory controller manages a 4GB DDR3 memory device and a 32MB stacked DRAM vault. The stacked DRAM vault caches data from the corresponding 4GB memory device that the controller is responsible for. This setup ensures that there are no cross bus requests between controllers. Since our simulation setup has the limitations of having a 1-to-1 channel mapping between a stacked DRAM vault and a off-chip DRAM channel, our model does not provide sufficient channel level parallelism as is essential in a stacked DRAM device. To circumvent this limitation we increase the number of layers (ranks) to provide higher amount of parallelism in our stacked DRAM. However, the the bank capacity is retained as would be in a standard stacked DRAM. The DRAMCache is non-inclusive  \cite{coherence-dramcache} of the L2 caches above it and uses a write no-allocate policy. Our stacked DRAMCache also faithfully models  a Fill Queue \cite{dca} for fill requests to insert data into the cache on the return path from main memory. We also model MSHR and WriteBuffers with their associated latencies to realize the precise working of caches. To simplify data management and ensure correctness we choose not implement a backing store for the DRAMCache and instead share the backing store instance of the off-chip DRAM itself.
+\par The DRAMCache we evaluate here is a memory-side \cite{skylake} shared cache between the 2 split cache hierarchies of CPUs and GPUs. A memory-side cache is one which are outside the coherence domain as show in Figure \ref{fig:simulator-memory}. They are logically just in front of the memory and serve to reduce the average latency of memory accesses and increase the memory's effective bandwidth. Access to memory is interleaved across multiple memory controllers. To avoid a biased interleaving due to uniformly strided address patterns, a basic XOR-based address hashing mechanism is employed. Each memory controller manages a 4GB DDR3 memory device and a 32MB stacked DRAM vault. The stacked DRAM vault caches data from the corresponding 4GB memory device that the controller is responsible for. This setup ensures that there are no cross bus requests between controllers. Since our simulation setup has the limitations of having a 1-to-1 channel mapping between a stacked DRAM vault and a off-chip DRAM channel, our model does not provide sufficient channel level parallelism as is essential in a stacked DRAM device. To circumvent this limitation we increase the number of layers (ranks) to provide higher amount of parallelism in our stacked DRAM. However, the the bank capacity is retained as would be in a standard stacked DRAM. The DRAMCache is non-inclusive  \cite{coherence-dramcache} of the L2 caches above it and uses a write no-allocate policy. 
+
+\subsection{DRAMCache Controller Design}
+\begin{figure}[!htb]
+	\centering
+	\def\svgwidth{\columnwidth}
+	\input{figures/dramcache-ctrl.pdf_tex}
+	\caption{DRAMCache Controller Design}
+	\label{fig:dramcache-ctrl}
+\end{figure}
+The DRAMCache Controller consists of several constituent components as shown in Figure \ref{fig:dramcache-ctrl}. DRAMCache controllers similar to conventional off-chip DRAM controllers consists of a read queue and write queue. Each request in the queue corresponds to the address of a single burst of data from the stacked DRAM device.
+In our design, a cache line is stored as a TAD unit and is divided into 2 bursts, where each burst corresponds to the width of the data bus of the stacked DRAM.
+However, more subtly unlike conventional DRAM devices each in request in the write queue entails a tag read and match followed by a write to the TAD unit if the tag matches. Thus, both read and write requests 
+The highlighted components in Figure \ref{fig:dramcache-ctrl} corresponds to the components that are unique/exclusive to a DRAMCache controller and are not present in a conventional DRAM controller. These supplementary components of the DRAMCache controller - MSHRs, Write Buffers and Fill Queue, incur added complexity to the controller design. An MSHR is allocated on a cache line miss in the DRAMCache and subsequent requests to the cache line are coalesced and added as targets in the MSHR. A single fetch request is sent to memory corresponding to an MSHR. A Write Buffer is allocated on a write miss in the DRAMCache. Since our cache is modelled with a write no-allocate policy, write misses in DRAMCache are forwarded to the memory and a Write Buffer is allocated to ??
 
 
-\subsection{Configuration} 
+Our stacked DRAMCache also faithfully models  a Fill Queue \cite{dca} for fill requests to insert data into the cache on the return path from main memory. We also model MSHR and WriteBuffers with their associated latencies to realize the precise working of caches. To simplify data management and ensure correctness we choose not implement a backing store for the DRAMCache and instead share the backing store instance of the off-chip DRAM itself.
+
+
+\subsection{System Configuration} 
 
 \begin{table}[h]
 	\centering
