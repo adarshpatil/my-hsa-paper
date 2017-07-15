@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{515.43623047bp}%
+    \setlength{\unitlength}{512.85908203bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.30125001)%
+  \begin{picture}(1,0.30276381)%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{figures/dramcache-ctrl.pdf}}%
   \end{picture}%
 \endgroup%
