@@ -1,0 +1,150 @@
+\chapter{Background and Motivation} \label{chap:background}
+\section{Background}
+
+\subsection{IHS Architecture}
+
+\begin{figure}[!htb]
+	\centering
+	\def\svgwidth{0.9\columnwidth}
+	\input{figures/arch.pdf_tex}
+	\caption{Architecture of an Integrated Heterogeneous System}
+	\label{fig:hsa-arch}
+\end{figure}
+\par A key feature of IHS is the unified memory model.  Figure \ref{fig:hsa-arch} illustrates a typical IHS architecture. It consists of multiple CPU cores with private L1 and shared L2 caches (shared among CPU cores). Alongside are multiple GPU cores or Compute Units (CUs) with private L1 and shared L2 cache (shared among GPU cores). In addition the IHS architecture features the following components.
+\begin{itemize}
+	\item Shared page table: IHS allows the CPUs and GPUs to operate in a globally shared address space. Thus, address translations are to be shared across CPU and GPUs. Consequently, TLBs and page table walkers on CPUs and GPUs utilize a single page table in memory.
+	\item Coherent caches: The memory shared between CPUs and GPUs is coherent. This greatly simplifies the programming paradigm and reduces the programmer burden. As noted it also enables fine grained offloading and efficient work sharing between the processors. Coherence is achieved using a region based Heterogeneous Coherence protocol similar to the proposal in \cite{hsc-coherence}.
+	\item Shared Physical Memory System: IHS architectures share a single physical address space. Thus, the cores share memory controllers, channels and the physical memory devices itself.
+	\item Shared Network-on-Chip (NoC): A common NoC connects the CPU and GPU cores with the caches and the memory controllers.
+\end{itemize}
+As IHS platforms gain widespread adoption in HPC systems, improving the performance of these platforms will become of paramount importance in the near future. \cite{apu-exascale,amd-exascale1}. 
+
+\subsection{DRAM Fundamentals and Operation}
+Dynamic Random Access Memory (DRAM) forms the backbone of main memory in modern processors. DRAMs provide relatively large, fast and cost effective storage capacity to be used as main memory. In this section, we first describe the basics and operation of DRAM  devices. We then discuss the die-stacking technology that has shown tremendous promise to scale the bandwidth and reduce the access latency of DRAMs.
+
+A DRAM stores information in a cell, which is a transistor-capacitor pair. A DRAM device organization contains banks where each bank contains a 2D array (grid) of storage cells. A row decoder circuitry decodes the row address and activates the transistors of the corresponding row, thus reading the data out of the coupled transistors into data lines (\textit{row activation}). A row of sense amplifiers (called row buffers) is used to sense this charge and hold it temporarily for purpose of transferring the data over the data bus. Subsequent requests to the column in this activated row are served from the row buffer. A \textit{column access} command transfers a number of columns to/from the row buffer. Since the read from the DRAM array is destructive i.e. the charge on the capacitor in the cells is lost, a \textit{precharge} operation writes back contents from the sense amplifiers back to the corresponding row.
+\begin{figure}[!htb]
+	\centering
+	\def\svgwidth{\columnwidth}
+	\input{figures/dram-basics.pdf_tex}
+	\caption{Organization of an DRAM Memory System}
+	\label{fig:dram-basics}
+\end{figure}
+\par In order to improve efficiency of the DRAM systems, DRAM devices are organized hierarchically. Banks are further organized into ranks which share command buses but have separate data buses. A chip select is used to select a bank to issue a command.  The banks in a rank operate in parallel and serve data independently to match the data bus width. A typical memory system would consist of multiple channels with completely independent DRAM devices having separate data and address buses. A DDRx (double data rate) DRAM transfers data on both edges of the bus clock (rising and falling). DDR increases the n-bit prefetch operation in each successive generation of DRAMs from 4n in DDR2 to 8n in DDR3. Here the "8n-prefetch" means that at each cycle a DDR3 DRAM transmits 8 bits of information from internal DRAM banks into the I/O buffers before sending them out. In other words, the minimum number of bits a DRAM column read/write performs in each operation for a DDR3 DRAM is 8 bits. This effectively increases the bandwidth without changing the core of the DRAM.
+\par Each operation on the DRAM takes a certain fixed number of cycles. The timing cycles for the primary operations of row activation, column read, row precharge on the DRAM are denoted as $t_{RCD}$ , $t_{CL}$ and $t_{PRE}$. There are also several other timing parameters of DRAM circuits that also need to be respected during the operation of DRAMs due to the electrical constraints imposed by them. For example, $t_{WR}$: write recovery time for the written data to propagate into the DRAM arrays, $t_{WTR}$:write-to-read turnaround time, $t_{CCD}$: minimum column-to-column command spacing to be adhered, $t_{FAW}$: a rolling time-frame in which a maximum of four row activations on the same DRAM device can be engaged, $t_{RRD}$: a minimum row-to-row activation spacing to be maintained between two row activations and several others as specified by JEDEC \cite{jedec-ddr3}. The above timing constrains are complicated by the "dynamic" nature of these devices i.e., the transistors storing the charge in the DRAM are not perfect and leak charge, requiring periodic refresh. This also limits the read and write operations that can be performed on DRAM devices.
+Further, two widely accepted factors that impact DRAM memory system performance are
+\begin{itemize}
+	\item Row Buffer Hit (RBH): When a column access is performed to a row which is currently in the row buffer, a single column access is required to retrieve data. Thus, such an access would incur a single $t_{CL}$ access latency without requiring any row operations. This scenario is referred to as a Row buffer hit and the corresponding parameter for a stream of accesses is known as the row buffer hit rate. Incurring row buffer hit would reduce the service time for the request. 
+	\item Bank Level Parallelism (BLP): Requests to independent banks can proceed in parallel and thus the temporal overlap can help hide the additional latencies incurred. The amount of parallelism that can be exploited directly influences the waiting time for the requests.
+\end{itemize}
+\par To achieve best efficiency from the DRAM requires careful scheduling of requests to extract maximum parallelism while respecting the timing constrains of the DRAM. A memory controller controls and coordinates the operation of the DRAM device while respecting timing constrains and bus conflicts. The memory access scheduler, picks a request to service from read or write queues. Reordering requests allows memory controller to schedule requests to available banks while other requests wait for access. However, reordering does not compromise correctness as requests to the same address are coalesced but performed in the order that the accesses were received. For the memory access scheduler, performance is determined by the following parameters
+\begin{itemize}
+	\item Waiting time: Time spent by the request waiting in the queue.
+	\item Service time: Time taken by the request at the head of the queue to be serviced.
+\end{itemize}
+\par Commercially, DRAMs are available as DIMMs (Dual in-line memory module) containing several DRAM devices with a standard interface. In this work, we model a JEDEC DDR3 DRAM \cite{jedec-ddr3} as the off-chip memory device.
+\par Subsequently, in Chapter \ref{chap:hashcache}, we revisit these DRAM performance parameters to evaluate suitable DRAM addressing schemes for the new family of die stacked DRAMs. We also subsequently develop a DRAM memory access scheduler that factors in the idiosyncrasy of the requesting processor.
+
+\subsection{DRAMCache}
+
+\section{Terminology and Keywords}
+We describe some of the terminology used in the rest of this thesis.
+\begin{itemize}
+	\item IHS - Integrated Heterogeneous Systems - refers to the platforms which have an GPGPU integrated on chip alongside the multi-core CPU. As shown in Figure \ref{fig:hsa-arch}, these processors have a cache coherent interconnect between the CPU and GPU and share a unified physical memory.
+	\item HeA - Heterogeneous Applications - refers to the workload where multiple single threaded CPU benchmarks and a single GPGPU application are co-run in a IHS architecture.
+	\item HoA - Homogeneous Applications - contextually refers to either (multiple single threaded) CPU benchmarks that are run on a multi-core CPU architecture (HoA CPU) or a single GPGPU application is run alone on one CPU and multiple GPU SMs (HoA GPU).
+	\item DRAMCache - vertically die stacked DRAM, used as a hardware managed cache.
+	\item D\$ - Refers to the die stacked DRAMCache as discussed above (disambiguation against data cache).
+	\item \cachename\ - Refers to the set of all designs and mechanisms that constitute our DRAMCache.
+\end{itemize}
+We refer to OpenCL \cite{opencl} and CUDA \cite{cuda} terminology interchangeably in the rest of this document.
+
+
+
+\section{Motivation} \label{motivation}
+The IHS architecture integrates two different classes of compute devices i.e. latency oriented CPU and throughput oriented GPUs on a single chip sharing a physical memory. In this section, we motivate the need for better memory class devices that can cater to the requirements of IHS architectures. Specifically, we show that the die stacked class of DRAMs are a good fit for IHS architecture since they provide the necessary bandwidth and latency capabilities to deliver data to the processing units. However, managing contention in these DRAMs for a heterogeneous processor architecture which have asymmetric sensitivity and demands introduces novel challenges.
+
+\subsection{Memory subsystem in IHS Architecture}
+We first analyse the the effects of CPU and GPU sharing the memory subsystem in an IHS architecture with a traditional DDR3-1600 like memory, similar to the one in modern multi-core systems. Figure \ref{results-interference} shows the performance of (a)CPU and (b)GPU in terms of Harmonic Mean of IPC, normalized to the baseline without a DRAMCache. We observe that the performance of CPU drops by 319\% in an IHS architecture compared to its homogeneous performance (HoA CPU) while the performance of the on-chip GPU reduces only marginally by 7\%. When a GPU kernel is launched it creates large number of concurrent threads which run in lock-step SIMD execution model and sends a large number of requests into the memory hierarchy. The memory system does not provide sufficient bandwidth to cater to these large number of requests, causing congestion and severely hampering CPU performance. Further, GPUs are designed to tolerate longer memory latencies while the memory hierarchy of typical CPUs have been designed to optimize memory access latencies for CPUs. The GPUs hide the latency of memory access using interleaved scheduling of hundreds of concurrently running threads while CPU designs have a limited size reorder buffers (typically 128 entries) which is exhausted quickly leading to the processor stalling. This jeopardizes the overall performance of the IHS, quickly diminishing the benefits provided by integration of the on-chip GPU.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics{graphs/results-cpu-nodc}
+	\includegraphics{graphs/results-gpu-nodc}
+	\caption{Effect of interference in IHS architecture due to co-running on (a) CPU (b) GPU}
+	\label{results-interference}
+\end{figure}
+
+\par Large computational capabilities of the IHS architecture require proportionately capable and aggressive memory system to deliver data to the computation engines as demanded. Current DRAM memory systems like DDR3, DDR4 etc. are designed for multi-core CPUs and provide small number of channels (typically 2 to 4), yielding a total memory bandwidth of a few GB/s. On-chip SRAM caches can only provide capacities of a few tens of MBs which will not be able to contain the working set requirements of IHS architectures. Hence, we infer that the memory hierarchy needs be revisited to support IHS architectures effectively.
+
+
+\subsection{Addition of die stacked DRAMCache to IHS}
+To avoid the performance degradation due to co-running in IHS we propose addition of a large capacity die stacked DRAM, used as a hardware managed cache. The immense bandwidth provided by these DRAM class devices can improve the performance of throughput-oriented GPU while the reduced latency of access can assist in improving the performance latency-oriented CPUs. The large capacity provided by the stacked DRAM is in line with the working set requirements of IHS processors. Using this capacity as a hardware managed cache could provide performance gains without any application modifications. The bandwidth benefits and modestly improved latency provided by the DRAMCache help improve performance of IHS processors. Several independent studies regarding roadmaps to exascale computing \cite{apu-exascale,amd-exascale1} also concur that die-stacked memory technology is a necessary cog to achieve the exascale bandwidth requirements with the targetted energy efficiency. 
+\par To design an effective DRAMCache for IHS requires balancing conflicting set of design parameters. A DRAMCache design that offers lower hit-time and hence a lower miss penalty for the previous level caches (L2 cache) would thus benefit the CPUs. While on the other hand, the GPU cores would benefit from higher bandwidth and higher hit-rates in DRAMCache even at the cost of higher hit-time. This necessitates the need for a careful design of the DRAMCache for IHS processors, that can handle the GPGPU bursty behaviour as well as service requests for the CPU with a consistent latency without idling resources while delivering improved system throughput at lower energy.
+
+\par In this work, we assume a cache organization similar to Alloy cache \cite{alloy} with a block size of 128 bytes and study the problems and challenges in using the DRAMCache for IHS architectures. We justify these design decisions in the chapter \ref{chap:hashcache}. 
+Each CPU core has a private L1 cache and a shared split L2 cache across the CPU cores. The GPU cores have private L1 and shared L2 cache among themselves.  
+The stacked DRAMCache (of size 64MB) is the first level shared cache across CPU cores and GPU cores. In our experiments, we consider a multi-programmed workload on the CPU cores and a GPGPU application on a single CPU core and multiple CUs 
+\footnote{It should be noted here that the GPU application has a CPU component and alternates execution on CPU core and the CUs (kernel execution)}. 
+%We refer to this workload as Heterogeneous Application (HeA), as the CPU and GPU applications are co-run. We use the terms Homogeneous Application (HoA-CPU and HoA-GPU) to refer to the cases when (multiple) CPU applications are run alone and GPU application is run alone. 
+%Our study on the interference due to co-running CPU and GPU application reports performance numbers of the GPU application when the GPU kernel is running on the CUs.
+Additional details relating to the experimental methodology and workloads are described in chapter \ref{chap:simulator}
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=1]{graphs/motivation-cpu}
+	\includegraphics[scale=1]{graphs/motivation-gpu}
+	\caption{Performance comparison of (a) CPU (b) GPU when running alone, co-run, with and w/o DRAMCache}
+	\label{fig:motivation}
+\end{figure}
+
+
+\par First, we evaluate the benefits of having a large DRAMCache for the CPU in an IHS architecture. Figure \ref{fig:motivation}(a) presents the performance improvement for CPU cores due to the addition of a stacked DRAMCache (in terms of harmonic mean of IPCs, normalized to HeA without a DRAMCache) when co-run with a GPU and when run alone.
+% that is obtained by adding a stacked DRAMCache when co-run with the GPU application and also when run alone. 
+As can be seen from the figure, the addition of a stacked DRAMCache improves performance of CPU applications in an IHS architecture, on an average by just 42\%. However, when the CPU runs alone with a stacked DRAMCache it achieves a 372\% better performance than that achieved in IHS without a DRAMCache. 
+%In other words, the performance gain by adding a DRAMCache is on an average 2.6x lesser in IHS. 
+%We observe that this huge performance gap is primarily due to the interference of GPU applications.
+Although this HoA-CPU performance cannot be achieved in IHS (interference effects cannot be removed) there still exists a significant opportunity for improvement.
+This gap in performance can be attributed to the unmanaged heterogeneity and interference in the DRAMCache organization.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=1]{graphs/motivation-cpu-cache}
+	\caption{DRAMCache CPU Access Latency \& Hit rate}
+	\label{fig:motivation-cpu-cache}
+\end{figure}
+
+\par We further investigate the cause of this performance gap. Figures \ref{fig:motivation-cpu-cache} presents the DRAMCache access latency experienced by a CPU request (in terms of CPU cycles) on the primary y-axis and the CPU hit rates on the secondary y-axis, while running alone and co-run with the GPU application. We find that the presence of GPU application increases the average access latency of the DRAMCache by 213\% while hit rates of the CPU are marginally impacted (only by about 4\%) when co-running.
+This increase in average access latency is primarily attributed to the large
+number of GPU requests flooding the DRAMCache controller when the GPU kernels are co-running with the CPU applications.
+It should be noted here that, even though we use the terms CPU and GPU requests separately, they may refer to the same data. This terminology only indicates the source of the request. 
+%We also note that the GPGPU application has some amount of sharing of data within the DRAMCache between the CPU and GPU processors (i.e. constructive interference - blocks brought in by the CPU and then used by the GPU and vice versa).
+\par Next, we study the impact of co-running on the GPU applications. Figure \ref{fig:motivation}(b) presents GPU performance obtained by addition of a stacked DRAMCache when co-run with the CPU and when run alone.
+We observe that with the introduction of DRAMCache in an IHS, the GPU performance improves on an average by 24\%. This performance is within 10\% of its HoA GPU performance with DRAMCache. 
+Thus, co-running with CPU applications has only a minor impact on the GPU performance. 
+%Some cache-sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads, that do not significantly reuse cached data, show no performance benefits.
+%\begin{figure}[htb]
+%   \centering
+%   \includegraphics[scale=0.8]{graphs/motivation-gpu-cache}
+%   \caption{GPU Miss reduction with 2-way associativity}
+%   \label{fig:motivation-gpu-cache}
+%\end{figure}
+%\par Additionally, we observe that providing associativity in DRAMCache reduces the number of GPU misses going to the relatively constricted off-chip DRAM bus. 
+%Figure \ref{fig:motivation-gpu-cache} plots the reduction in number of GPU misses in log scale, by introducing 2-way associativity over our direct mapped DRAMCache. The GPU misses reduce by an average of $10^5$ for 2-way associative cache with half the number of sets and $10^6$ for a 2-way associative cache with the same number of sets.
+%In comparison, the total number of CPU read requests to the DRAM are in the order of $10^7$. This considerable reduction in GPU misses leads to lower congestion for CPU requests at the DRAM. While associativity leads to only a modest improvements in hit rates for the GPU, it avoids incurring double queuing latency for all the reduced GPU misses. This corroborates the observation by other works \cite{oscar} that the number of requests from the GPU are orders of magnitude higher than CPU.
+%Thus, providing some associativity can increase DRAMCache bandwidth utilization and improve the system performance.
+
+While the above discussion indicate that the design decisions of heterogeneity aware DRAMCache are influenced by the latency-sensitive CPU applications, we emphasize the need to effectively utilize the large capacity and the higher bandwidth of DRAMCache by GPU applications. Towards this goal, we experimented with a DRAMCache of 128MB and 2-way associativity. We observe that the hit rate for GPU applications improves, on an average, by 5\%. While the improvement in hit-rate is not significant, as the number of GPU requests is very large (2 or 3 orders of magnitude higher than the CPU requests), even such a small increase in the hit rate leads to large improvements in utilization of the DRAMCache bandwidth by the GPU application. This makes a case for improving the associativity for GPU requests by introducing some pseudo-associativity in the DRAMCache, without impacting the hit-time offered by a direct-mapped tag-and-data (TAD) cache.
+
+\par Based on the above motivation study we conclude that (a) there is significant performance impact of co-running of CPUs and GPUs in IHS architectures with the standard DDRx like memory interfaces (b) there are significant performance benefits that could be obtained 
+with the introduction of the stacked DRAMCache for the latency-sensitive CPU applications. However, in a naive implementation
+of the DRAMCache, these benefits can be lost due to interference from the co-running GPU application.  Hence it is important to carefully 
+architect the DRAMCache organization to ensure CPU applications are not hampered due to this interference.
+This requires the design to be aware of the heterogeneity of the applications (CPU vs GPU) and their demands on the 
+memory hierarchy.  Hard partitioning of DRAMCache would not be an effective design as it leads to under-utilization of the large capacity 
+stacked DRAM, as the effects of interference due to co-running GPU application is felt only when the kernel is run on the GPU sporadically. 
+Further, effectively utilizing the under-utilized main memory bandwidth \cite{micro-refresh, mainak-hpca, bear}
+is also important to achieve higher performance.  Lastly, the design should ensure that the CPU applications and the 
+GPU application are able to utilize the large capacity of the stacked DRAM effectively, to meet the working set 
+requirements of the respective applications in the best possible way.
