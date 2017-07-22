@@ -21,7 +21,7 @@ There has been considerable effort in recent years to develop GPU implementation
 \begin{itemize}
 	\item Discrete GPUs required programmers to identify data that would be operated on by the GPU. These would then have to be explicitly copied to GPU memory. IHS architectures feature a physical memory shared with GPUs. Hence, the GPU now touches only the data required by the application, removing the programmer burden of identifying the required data structures.	
 	\item In discrete GPUs, operating on data structures with pointers such as linked lists, trees, graphs etc. required special handling by the programmer (such as deep copy) which impeded porting applications to GPU. With IHS, GPU can dereference and process pointers shared with CPU. Thus, the GPU can operate on the same application data structures as the CPU.
-	\item In discrete GPUs, when CPUs and GPUs use the same memory region, the graphics driver is required to flush and invalidate the GPU caches in order for CPU and GPU to share results. However, IHS provides a fully coherent shared memory similar to multi-core CPUs. This enables authoring applications of the produce-consumer paradigm that closely couple the CPU and GPU executions.
+	\item In discrete GPUs, when CPUs and GPUs access the same memory region \cite{uva}, the graphics driver is required to flush and invalidate the GPU caches in order for CPU and GPU to share results. However, IHS provides a fully coherent shared memory similar to multi-core CPUs. This enables authoring applications of the produce-consumer paradigm that closely couple the CPU and GPU executions.
 	\item Traditional discrete GPU have strictly limited support for multi-process offloading. They either resort to hard partitioning of GPU cores or serialize executions of programs. IHS processors allow for Read/Write protection to be enforced by MMU units and TLBs. This allows support for preemption and content switching to maintain high throughput by co-scheduling in a multi-process environment.
 	\item GPU can invoke operating system kernel routines for demand paging and page faults with much lesser overheads \cite{tlb-translation}. This provides the benefit to be able to run GPU programs whose dataset sizes are not constrained by the memory size. 
 	\item The HSA foundation \cite{hsafoundation} was setup to develop and define cross-vendor hardware specifications and software development tools needed to allow applications software to better use IHS architectures. HSA provides additional features such as the runtime system on IHS architectures. The HSA runtime provides support for "platform atomics" like Read Modify Write (RMW) operations as opposed to the atomics provide on a discrete PCIe based GPU which were restricted to PCIe provided atomics. 
@@ -62,23 +62,10 @@ To improve the memory subsystem of IHS and thus enhance its performance, we intr
 This necessitates the need for a careful design of memory system for IHS processors, that can handle the GPGPU bursty behaviour as well as service requests for the CPU with a consistent latency without idling resources while delivering improved system throughput at lower energy.
 \par Our organization, \cachename, is aware of the asymmetric and contrasting requirements from the heterogeneous processors. \cachename\ attempts to meet CPUs requirement of reduced hit times and lower miss penalties while at the same time improving hit rates for GPU to allow it to better use the DRAMCache bandwidth. In the common case when CPU is running alone, \cachename\ is an aggressive direct mapped DRAMCache optimized for hit times and lower miss penalty through hit/miss prediction as in \cite{alloy}. 
 
-[Expand the following 3 enumerated items, PriS, ByE, and Chaining, into 3
-paragraphs (4 or 5 sentences)-- briefly explaining what these ideas are
-and why they are likely to achieve the design goals --
---
-However, when GPU is active we propose (i) PrIS - a DRAMCache controller
-scheduling algorithm to prioritize scheduling of CPU requests in the
-queues to reduce the large waiting time caused due to burst of GPU
-requests (ii) ByE - a mechanism to allow some of the CPU requests (access
-requests that are clean data in DRAMCache or data that is currently not in
-DRAMCache) to be temporally bypassed to utilize the under-utilized
-off-chip memory bandwidth (iii) Chaining - a technique to force spatial
-occupancy control by providing a pseudo associativity for GPUs to improve
-hit rates while still allowing certain guaranteed occupancy for CPU lines.
+\par However, when GPU is active we propose (i) PrIS - a DRAMCache controller scheduling algorithm to prioritize scheduling of CPU requests in the queues to reduce the large waiting time caused due to burst of GPU requests (ii) ByE - a mechanism to allow some of the CPU requests (access requests that are clean data in DRAMCache or data that is currently not in DRAMCache) to be temporally bypassed to utilize the under-utilized off-chip memory bandwidth (iii) Chaining - a technique to force spatial occupancy control by providing a pseudo associativity for GPUs to improve hit rates while still allowing certain guaranteed occupancy for CPU lines.
 
 \cachename\ achieves these goals using a lightweight and dynamic scheme which does not impose hard partitions on the shared DRAMCache. To evaluate
-\cachename, we extend the gem5-gpu \cite{gem5-gpu} in a number of ways.  [Write a
-few lines on how it has been extended]
+\cachename, we extend the gem5-gpu \cite{gem5-gpu} by adding the stacked DRAM as a memory-side hardware managed cache.
 
 Using detailed simulations, we show that the techniques proposed in the thesis  help to effectively address the disparate demands of IHS
 processors and improve performance of both CPU and GPU cores by 211\% and 20\% respectively, over a IHS processor with no DRAMCache.  Further the proposed optimizations improve overall system performance, on an average by 41\% over a carefully designed, but heterogeneity unaware DRAMCache.  
