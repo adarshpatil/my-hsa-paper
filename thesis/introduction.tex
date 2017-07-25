@@ -14,10 +14,10 @@ There has been considerable effort in recent years to develop GPU implementation
 	\centering
 	\def\svgwidth{\columnwidth}
 	\input{figures/ihs-schematic.pdf_tex}
-	\caption{A high level schematic of IHS Architecture}
+	\caption{A High Level Schematic of IHS Architecture}
 	\label{fig:ihs-schematic}
 \end{figure}
-\par Recently, modern processor chips (e.g. AMD APUs \cite{amd-apu}, Intel Iris \cite{inteliris}, and NVIDIA Denver \cite{denver}) have heterogeneous processors which integrate CPU and GPU on the same die as shown in figure \ref{fig:ihs-schematic}. In doing so, these IHS architectures address some of the obstacles for programmability of these GPU devices. Specifically, the IHS architectures support a fully shared virtual and physical memory address space. This greatly simplifies programming as it provides the following features.
+\par Recently, modern processor chips (e.g., AMD APUs \cite{amd-apu}, Intel Iris \cite{inteliris}, and NVIDIA Denver \cite{denver}) have heterogeneous processors which integrate CPU and GPU on the same die as shown in figure \ref{fig:ihs-schematic}. In doing so, these IHS architectures address some of the obstacles for programmability of these GPU devices. Specifically, the IHS architectures support a fully shared virtual and physical memory address space. This greatly simplifies programming as it provides the following features.
 \begin{itemize}
 	\item Discrete GPUs required programmers to identify data that would be operated on by the GPU. These would then have to be explicitly copied to GPU memory. IHS architectures feature a physical memory shared with GPUs. Hence, the GPU now touches only the data required by the application, removing the programmer burden of identifying the required data structures.	
 	\item In discrete GPUs, operating on data structures with pointers such as linked lists, trees, graphs etc. required special handling by the programmer (such as deep copy) which impeded porting applications to GPU. With IHS, GPU can dereference and process pointers shared with CPU. Thus, the GPU can operate on the same application data structures as the CPU.
@@ -45,7 +45,7 @@ However, to be effective these DRAMs require careful architecting of the plethor
 	\centering
 	\def\svgwidth{\columnwidth}
 	\input{figures/stackedDRAM.pdf_tex}
-	\caption{Proposed architecture of DRAM Stacking}
+	\caption{Proposed Architecture of DRAM Stacking}
 	\label{fig:stackdram}
 \end{figure}
 \par The advent of die-stacking technology \cite{3d-stacking} provides a way to integrate disparate silicon die of NMOS DRAM chips and CMOS logic chips with better interconnects. The implementation is accomplished either by 3D vertical stacking of DRAM chips using through-silicon vias (TSV) interconnects or horizontally/2.5D stacking on an interposer chip as depicted in Figure \ref{fig:stackdram}. This allows the addition of a sizeable DRAM chip of capacities ranging from a couple of hundreds of megabytes to a few gigabytes close to the processing cores. These stacked DRAM devices provide high bandwidths of close to 400GB/s compared to the 90GB/s of DDR4 bandwidth \cite{xeonphi}. The better interconnect also lowers the latency of access compared to off-chip memory \cite{alloy}. Several independent studies regarding roadmaps to exascale computing \cite{apu-exascale,amd-exascale1} also concur that die-stacked memory technology is a necessary cog to achieve the exascale bandwidth requirements with the targetted energy efficiency. 
@@ -68,9 +68,9 @@ This necessitates the need for a careful design of memory system for IHS process
 \cachename, we extend the gem5-gpu \cite{gem5-gpu} by adding the stacked DRAM as a memory-side hardware managed cache.
 
 Using detailed simulations, we show that the techniques proposed in the thesis  help to effectively address the disparate demands of IHS
-processors and improve performance of both CPU and GPU cores by 211\% and 20\% respectively, over a IHS processor with no DRAMCache.  Further the proposed optimizations improve overall system performance, on an average by 41\% over a carefully designed, but heterogeneity unaware DRAMCache.  
-[you can add a few more key results -- e.g., comparison with other schemes
-or sensitivity results here! ]
+processors and improve performance of both CPU and GPU cores by 211\% and 20\% respectively, over a IHS processor with no DRAMCache.  Further the proposed optimizations improve overall system performance, on an average by 41\% over a carefully designed, but heterogeneity unaware DRAMCache. 
+\par Further, we show that our solution, \cachename, is robust and performs well even with a wide variety of system configurations. \cachename\ performs better with larger capacity DRAMCache and latest generations of aggressive off-chip DRAMs compared to a naive DRAMCache. We also show \cachename\ scales well when operating with projected stacked DRAMs of higher bandwidths, outperforming a naive DRAMCache for CPU applications and GPU applications.
+We also show that \cachename\ performs better than the state-of-the-art DRAM scheduling scheme for IHS architectures i.e., Staged Memory Scheduler \cite{sms} and state-of-the-art DRAMCache bypass technique - Mostly Clean DRAMCache \cite{mostly-clean}.
 
 \par To summarize, the thesis makes the following contributions:
 \begin{itemize}
@@ -78,7 +78,7 @@ or sensitivity results here! ]
 	\item We design an effective DRAMCache organization that is aware of this inherent heterogeneity in IHS processors. Beside tailoring the organization of the DRAMCache itself, we propose 3 heterogeneity aware mechanisms, \prioname, \bypassname\ and \chaining\ to improve the performance of the DRAMCache.
 	\item To evaluate \cachename, we develop simulator modules and extend gem5-gpu simulator to simulate IHS architectures with stacked DRAM as cache.
 	\item We demonstrate using detailed simulation of co-running CPU and GPU workloads that, compared to a naive DRAMCache, the proposed \cachename\ solution significantly improves the performance of CPU cores albeit with a small reduction in performance of GPU cores. Further, \cachename\ outperforms a naive DRAMCache on all IHS system performance metrics.
-	\item We compare \cachename\ against state-of-the-art DRAMCache proposals, namely Staged Memory Scheduling \cite{sms} and Mostly Clean DRAMCache \cite{mostly-clean} and demonstrate that \cachename\ outperforms these schemes.
+	\item We show that \cachename\ is robust and scales well even for projected memory system configurations. We also compare performance of our \cachename\ against state-of-the-art DRAM/DRAMCache proposals, namely Staged Memory Scheduling \cite{sms} and Mostly Clean DRAMCache \cite{mostly-clean} and demonstrate that \cachename\ outperforms these schemes.
 \end{itemize}
 
 \section{Thesis Organization}

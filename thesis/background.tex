@@ -21,7 +21,7 @@ In this section, we describe the necessary rudiments on which this thesis is bas
 \end{itemize}
 As IHS platforms gain widespread adoption in HPC systems, improving the performance of these platforms will become of paramount importance in the near future. \cite{apu-exascale,amd-exascale1}. 
 
-\subsection{DRAM Fundamentals and Operation}
+\subsection{DRAM Fundamentals and Operation} \label{dram-background}
 Dynamic Random Access Memory (DRAM) forms the backbone of main memory in modern processors. DRAMs provide relatively large, fast and cost effective storage capacity to be used as main memory. In this section, we first describe the basics and operation of DRAM  devices.
 
 \par A DRAM stores information in a cell, which is a transistor-capacitor pair \cite{dram-book}. A DRAM device organization contains banks where each bank contains a 2D array (grid) of storage cells. A row decoder circuitry decodes the row address and activates the transistors of the corresponding row, thus reading the data out of the coupled transistors into data lines (\textit{row activation}). A row of sense amplifiers (called row buffers) is used to sense this charge and hold it temporarily for purpose of transferring the data over the data bus. Subsequent requests to columns in this activated row are served from the row buffer. A \textit{column access} command transfers a number of columns (consecutive bytes) to/from the row buffer. Since the read from the DRAM array is destructive i.e., the charge on the capacitor in the cells is lost, a \textit{precharge} operation writes back contents from the sense amplifiers back to the corresponding row.
@@ -49,22 +49,22 @@ A popular DRAM access scheduler is the first-ready, first-come-first-service (FR
 \par Commercially, DRAMs are available as DIMMs (Dual in-line memory module) containing several DRAM devices with a standard interface. In this work, we model a JEDEC DDR3 DRAM \cite{jedec-ddr3} as the off-chip memory device.
 \par Subsequently, in Chapter \ref{chap:hashcache}, we revisit these DRAM performance parameters to evaluate suitable DRAM addressing schemes for the new family of die stacked DRAMs. We also develop a DRAM memory access scheduler that factors in the idiosyncrasy of the requesting processor.
 
-\subsection{DRAMCache}
+\subsection{Stacked DRAM as Hardware Managed Cache} \label{dramcache-background}
 As alluded to earlier, DRAMCaches require careful design to be effective. Traditional SRAM caches provide capacities of upto few tens of megabytes, have fast access times but expend higher energy and also have higher circuit costs. DRAMCaches on the other hand, provide much larger capacity (several hundred megabytes to few gigabytes) at lower power and higher density. However, they are constrained by access times. 
 Logically, the working of DRAMCaches is very similar to that of SRAM caches. Thus, cache design parameters like cache block size, set-associativity, miss penalty etc. remain pertinent parameters even in DRAMCaches.
 %When a request arrives for the data that is currently unavailable in the cache, the cache controllers request for a fixed size block or chunk of data from the memory or other caches behind it. The data is then resident in the cache until it is evicted by another request. 
-However, these design decisions require to be re-examined in context of the DRAMCache characteristics.
+However, some design decisions require to be re-examined in context of the DRAMCache characteristics.
 \par Due to large capacity, DRAMCaches have a large amount of metadata. This metadata includes tags, valid, dirty and replacement bits. This metadata size is of the order of megabytes even for reasonably sized DRAMCaches. To illustrate this problem, consider a 256MB DRAMCache with 128B cache block size and with metadata of 8B per cache block. This DRAMCache organization incurs a metadata overhead of 16MB. Even allocating at larger granularity as DRAMCache capacities increase continues to incur similar metadata overheads. Considering a 1GB DRAMCache organized at 1KB cache block size still incurs a metadata overhead of 8MB.
 \subsubsection{Metadata Management and Access Latencies}
 \begin{figure}[!htb]
 	\centering
 	\def\svgwidth{\columnwidth}
 	\input{figures/dramcache-lat.pdf_tex}
-	\caption{Access Latencies for various organizations of DRAMCache assuming a Tag Hit}
+	\caption{Access Latencies for Various Organizations of DRAMCache assuming a Tag Hit}
 	\label{fig:dramcache-lat}
 \end{figure}
 Metadata management is critical in caches as this is in the critical path of all cache requests (hit or miss). There have been 2 design approaches to tackle the metadata issue. With the running example of a cache block hit we explain the latencies incurred by each approach and accordingly figure \ref{fig:dramcache-lat} shows the timeline and sequence of events for each approach. The corresponding operation for a cache block miss would only perform the tag retrieval without the data retrieval. The first proposal called \textit{Tags-in-SRAM} proposes to store metadata in SRAMs \cite{footprint}. This proposals allocates blocks at large granularity and stores metadata in SRAM. However, large blocks waste off-chip bandwidth due to fetching of unused data. Nevertheless, metadata and tag lookup is fairy fast due to SRAM structure employed as shown in figure \ref{fig:dramcache-lat}(a). The second set of proposals called \textit{Tags-in-DRAM} \cite{loh-hill,alloy,bimodal,atcache} store metadata within the DRAMCache. This incurs no additional SRAM costs but are subject to higher access latency since the tags have to be read from the DRAMCache. Figure \ref{fig:dramcache-lat}(b) shows the access latencies for a naive \textit{Tags-in-DRAM} implementation. Further, a \textit{Tags-in-DRAM} organization can be optimized by placing tag and data of a set in the same row of the DRAMCache. This organization, called compound access \cite{loh-hill}, allows the subsequent data retrieval burst after a tag match to be a row buffer hit as shown in figure \ref{fig:dramcache-lat}(c). A small metadata cache \cite{atcache} or predictor \cite{loh-hill} structure is usually employed for \textit{Tags-in-DRAM} organization to reduce DRAMCache lookups for tags.
-\subsubsection{Alloy Cache}
+\subsubsection{Alloy Cache} \label{alloy-background}
 \begin{figure}[!htb]
 	\centering
 	\def\svgwidth{\columnwidth}
@@ -89,9 +89,9 @@ We refer to OpenCL \cite{opencl} and CUDA \cite{cuda} terminology interchangeabl
 
 
 \section{Motivation} \label{motivation}
-The IHS architecture integrates two different classes of compute devices i.e. latency oriented CPU and throughput oriented GPUs on a single chip sharing a physical memory. In this section, we motivate the need for better memory class devices that can cater to the requirements of IHS architectures. Specifically, we show that the die stacked class of DRAMs are a good fit for IHS architecture since they provide the necessary bandwidth and latency capabilities to deliver data to the processing units. However, managing contention in these DRAMs for a heterogeneous processor architecture which have asymmetric sensitivity and demands introduces novel challenges.
+The IHS architecture integrates two different classes of compute devices i.e., latency oriented CPU and throughput oriented GPUs on a single chip sharing a physical memory. In this section, we motivate the need for better memory class devices that can cater to the requirements of IHS architectures. Specifically, we show that the die stacked class of DRAMs are a good fit for IHS architecture since they provide the necessary bandwidth and latency capabilities to deliver data to the processing units. However, managing contention in these DRAMs for a heterogeneous processor architecture which have asymmetric sensitivity and demands introduces novel challenges.
 
-\subsection{Memory subsystem in IHS Architecture}
+\subsection{Memory Subsystem in IHS Architecture}
 We first analyse the impact of CPU cores and GPU cors co-running in an IHS architecture. 
 We use the gem5-gpu \cite{gem5-gpu} simulator for this exercise. We follow experimental methodology as described in section \ref{simulation-methodology}. The IHS has 5 CPU cores with private per CPU L1 caches (32KB I/D split) and CPU shared L2 cache (1MB) along with 8 GPU SMs with per SM private L1 cache (64KB) and GPU shared L2 cache (512KB).
 The shared off-chip memory is modelled after a traditional DDR3-1600 like memory, similar to the one in modern multi-core systems. 
@@ -103,14 +103,14 @@ The shared off-chip memory is modelled after a traditional DDR3-1600 like memory
 	\centering
 	\includegraphics{graphs/results-cpu-nodc}
 	\includegraphics{graphs/results-gpu-nodc}
-	\caption{Effect of interference in IHS architecture due to co-running on (a) CPU (b) GPU}
+	\caption{Effect of Interference in the IHS architecture due to the co-running on (a) CPU (b) GPU}
 	\label{results-interference}
 \end{figure}
 
 \par Large computational capabilities of the IHS architecture require proportionately capable and aggressive memory system to deliver data to the computation engines as demanded. Current DRAM memory systems like DDR3, DDR4 etc. are designed for multi-core CPUs and provide small number of channels (typically 2 to 4), yielding a total memory bandwidth of a few GB/s. On the other hand, on-chip SRAM caches can only provide capacities of a few tens of MBs which will not be able to contain the working set requirements of IHS architectures. Even with non-volatile STT-RAM caches the device characteristics introduce challenges in the operation and the die sizes restrict the capacities that they can provide. Hence, we infer that the memory hierarchy needs be revisited to support IHS architectures effectively.
 
 
-\subsection{Addition of die stacked DRAMCache to IHS}
+\subsection{Addition of Die-Stacked DRAMCache to IHS}
 To avoid the performance degradation due to co-running in IHS we propose addition of a large capacity die stacked DRAM, used as a hardware managed cache. The immense bandwidth provided by these DRAM class devices can improve the performance of throughput-oriented GPU while the reduced latency of access can assist in improving the performance latency-oriented CPUs. The large capacity provided by the stacked DRAM is in line with the working set requirements of IHS processors. Using this capacity as a hardware managed cache could provide performance gains without any application modifications. The bandwidth benefits and modestly improved latency provided by the DRAMCache help improve performance of IHS processors. 
 \par To design an effective DRAMCache for IHS requires balancing conflicting set of design parameters. A DRAMCache design that offers lower hit-time and hence a lower miss penalty for the previous level caches (L2 cache) would thus benefit the CPUs. While on the other hand, the GPU cores would benefit from higher bandwidth and higher hit-rates in DRAMCache even at the cost of higher hit-time. This necessitates the need for a careful design of the DRAMCache for IHS processors, that can handle the GPGPU bursty behaviour as well as service requests for the CPU with a consistent latency without idling resources while delivering improved system throughput at lower energy.
 
@@ -127,7 +127,7 @@ Additional details relating to the experimental methodology and workloads are de
 	\centering
 	\includegraphics[scale=1]{graphs/motivation-cpu}
 	\includegraphics[scale=1]{graphs/motivation-gpu}
-	\caption{Performance comparison of (a) CPU (b) GPU when running alone, co-run, with and w/o DRAMCache}
+	\caption{Performance Comparison of (a) CPU (b) GPU when running alone, co-run, with and w/o DRAMCache}
 	\label{fig:motivation}
 \end{figure}
 
