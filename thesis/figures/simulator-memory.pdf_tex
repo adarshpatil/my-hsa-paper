@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{687.02304687bp}%
+    \setlength{\unitlength}{681.55600586bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.39655174)%
+  \begin{picture}(1,0.39839573)%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{figures/simulator-memory.pdf}}%
   \end{picture}%
 \endgroup%
