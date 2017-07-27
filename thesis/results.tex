@@ -1,4 +1,4 @@
-\chapter{\cachename\ Results} \label{chap:results}
+\chapter{Performance Evaluation of \cachename} \label{chap:results}
 In this chapter, we evaluate the performance of the proposed \cachename\ mechanisms discussed in Chapter \ref{chap:hashcache} and show that \cachename\ is able to improve the performance of IHS. Further, we show that \cachename\ solution is robust and scales well by performing sensitivity study for the various components in Section \ref{sensitivity-results}. Lastly, we compare our schemes quantitatively with a couple of state-of-the-art techniques in Section \ref{comparison}
 
 \section{\cachename\ Mechanisms}
@@ -16,12 +16,12 @@ In this section, we present the performance of \cachename\ mechanisms (\prioname
 \subsection{PrIS DRAMCache scheduling}
 Prioritizing CPU requests with our \prioname\ scheduler at the DRAMCache controller leads to considerable performance benefits for the CPU applications. By using \prioname, the average access latency of the DRAMCache for CPU requests reduces by an average of 15.3\% and upto 48.9\% over a naive DRAMCache (see Figure \ref{results-pris}). Hence, \prioname\ is able to improve the performance of the CPU by an average of 35\% over a naive DRAMCache. However, on the flip side giving aggressive priority to all CPU requests reduces the performance of GPU by 10\% despite the GPU being able to tolerate larger memory access latencies. For some of the benchmarks like Qg3, Qg10, Qg11 and Qg12 the high priority given to CPU requests by \prioname\ impacts the GPU, causing the GPU performance to reduce marginally below the baseline IHS architecture without a DRAMCache. Note however that, in these workloads, the introduction of DRAM cache (naive) itself improves performance only marginally. Our mechanisms (\bypassname and \chaining) further aim to reduce this performance drop for the GPU by ensuring (a) there are fewer CPU requests in the DRAMCache queues (b) GPU requests, despite being de-prioritized at DRAMCache, have a better hit rate in the DRAMCache and avoid accessing the off-chip DRAM.
 
-\begin{figure}[htb]
-	\centering
-	\includegraphics{graphs/results-pris}
-	\caption{DRAMCache Memory Memory Access Latency with }
-	\label{results-pris}
-\end{figure}
+%\begin{figure}[htb]
+%	\centering
+%	\includegraphics{graphs/results-pris}
+%	\caption{DRAMCache Memory Memory Access Latency with }
+%	\label{results-pris}
+%\end{figure}
 
 \subsection{ByE for Temporal bypass}
 \bypassname\ attempts to improve performance by directing some CPU requests to be served from the off-chip DRAM, thus achieving improved resource utilization and bandwidth balance in the process. \bypassname\ alone achieves 12\% improvement in CPU performance and a 3\% improvement in GPU performance over a naive DRAMCache.
@@ -64,7 +64,7 @@ We now holistically examine the performance improvements due to the introduction
 	\caption{(a)Harmonic Mean (b)Weighted Speedup of IHS with \cachename}
 	\label{results-system}
 \end{figure}
-\par We now examine aggregate IHS performance using system metrics discussed in section \ref{perf-metrics}. Firstly, Figure \ref{results-system}(a) plots the performance improvement as a Harmonic mean of IPCs of IHS IPC (combined CPU cores and GPU CUs), normalized to our baseline IHS architecture without a DRAMCache. Overall with simple heterogeneity aware management of the stacked DRAMCache, IHS systems can achieve on an average 200\% (upto 400\%) performance improvement while a naive DRAMCache is able to achieve just 41.8\% improvement.
+\par We now examine aggregate IHS performance using system metrics discussed in Section \ref{perf-metrics}. Firstly, Figure \ref{results-system}(a) plots the performance improvement as a Harmonic mean of IPCs of IHS IPC (combined CPU cores and GPU CUs), normalized to our baseline IHS architecture without a DRAMCache. Overall with simple heterogeneity aware management of the stacked DRAMCache, IHS systems can achieve on an average 200\% (upto 400\%) performance improvement while a naive DRAMCache is able to achieve just 41.8\% improvement.
 \par Secondly, Figure \ref{results-system}(b) plots the weighted speedup normalized to the baseline of IHS without DRAMCache. Adding a DRAMCache to IHS processors naively achieves an improvement of merely 3\%. In fact for some workloads like Qg3 and Qg11 adding a DRAMCache without careful considerations can lead to negative performance impact. However, our heterogeneity-aware mechanisms are able to achieve on an average of 16\% and 15\%  improvement in performance over a IHS architecture without a DRAMCache. This improvement corresponds to a 12.9\% and 11.5\% improvement for each of the schemes over a carefully designed but heterogeneity unaware DRAMCache for the IHS processors.
 
 
@@ -111,8 +111,8 @@ Although we expect the smaller sizes of stacked DRAMs to have lower latency than
 
 We carry out experiments for \cachename\ with a stacked DRAMCache of 80GB/s. We achieve this by doubling the burst length of the stacked DRAMCache devices. Again, Figure \ref{results-ddr3-2133}  presents the performance of a naive DRAMCache and \cachename\ for (a)CPU and (b)GPU. We observe that our mechanisms scale with increased DRAMCache bandwidth and \bypassname+\prioname\ performs 51\% better and \chaining+\prioname\ performs 47.3\% better than a naive DRAMCache for CPU. GPU performs also improves by 1.9\% and 2.4\% over a naive DRAMCache. Notably for GPU benchmarks like \textit{streamcluster} and \textit{gaussian}, \chaining+\prioname\ performs better than \bypassname+\prioname.
 
-\section{Comparison with related work} \label{comparison}
-The objectives of \bypassname\ and \prioname\ are similar to the Mostly Clean DRAMCache (MCC) \cite{mostly-clean} and Staged Memory Scheduling (SMS) \cite{sms} respectively. A more comprehensive description of the working and mechanisms of SMS and MCC can be found in Section \ref{chap:related-work}. Here we quantitatively compare our work with MCC (adapted for IHS architecture) and SMS in Figure \ref{results-comparison} which presents performance of (a)CPU and (b)GPU normalized to a IHS with no DRAMCache. 
+\section{Comparison with Related Work} \label{comparison}
+The objectives of \bypassname\ and \prioname\ are, respectively, similar to the Mostly Clean DRAMCache (MCC) \cite{mostly-clean} and Staged Memory Scheduling (SMS) \cite{sms} respectively. A more comprehensive description of the working and mechanisms of SMS and MCC can be found in Section \ref{chap:related-work}. Here we quantitatively compare our work with MCC (adapted for IHS architecture) and SMS.
 
 \begin{figure}[!htb]
 	\centering
@@ -122,8 +122,9 @@ The objectives of \bypassname\ and \prioname\ are similar to the Mostly Clean DR
 	\label{results-comparison}
 \end{figure}
 
+\par Figure \ref{results-comparison} presents performance of CPU and GPU normalized to a IHS with no DRAMCache. 
 \par Overall, \bypassname\ performs 7.8\% better than MCC in terms of CPU IPC. This is because when a page (row) is marked as write-through in MCC, all requests to that page are bypassed oblivious of source of the request. The large number of GPU requests to the cache lines in the write-through (clean) pages quickly exhausts the available MSHR entires which leads to the DRAMCache being blocked for subsequent requests. For workloads Qg9, Qg10 and Qg12 the GPU workloads are relatively less intensive and MCC tends to perform slightly better than \bypassname. The GPU performance is comparable for both approaches.
-\par The striped bars in Figure \ref{results-comparison} show the performance of the \prioname\ and SMS for (a)CPU and (b)GPU. For SMS implementation, we proportionally scale down the total hardware requirements to the same size as that of \prioname\ (128 entries). We observe that \prioname\ performs on-par with SMS for almost all CPU workloads. For workloads like Qg2 and Qg12 SMS performs marginally better than \prioname\ as it is able to better manage CPU inter-application interference using SJF scheduling. However for the GPU, SMS performs 4\% better than \prioname\ due to its batching algorithm that is able to admit row buffer hit requests into the queues which leads to improved row buffer hit rate (9\% better). Our combined mechanism of \prioname+\bypassname\ proposed in this work performs better then each of prior compared schemes for both CPU and GPU.
+\par The striped bars in Figure \ref{results-comparison} show the performance of the \prioname\ and SMS for (a)CPU and (b)GPU. For SMS implementation, we proportionally scale down the total hardware requirements to the same size as that of \prioname\ (128 entries). We observe that \prioname\ performs on-par with SMS for almost all CPU workloads. For workloads like Qg2 and Qg12 SMS performs marginally better than \prioname\ as it is able to better manage CPU inter-application interference using Shortest Job First (SJF) scheduling. However for the GPU, SMS performs 4\% better than \prioname\ due to its batching algorithm that is able to admit row buffer hit requests into the queues which leads to improved row buffer hit rate (9\% better). Our combined mechanism of \prioname+\bypassname\ proposed in this work performs better then each of prior compared schemes for both CPU and GPU.
 
 \section{Summary}
 In this chapter, we evaluated the performance of \cachename\ and its constituent mechanisms and some of their combinations, first on individual CPU and GPU cores and subsequently on IHS architecture as a whole. Finally, we also perform sensitivity studies for capacity, bandwidth and latencies.
