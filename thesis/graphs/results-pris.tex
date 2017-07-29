@@ -6,7 +6,7 @@
 
 \input{barcolors}
 
-\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\pgfplotsset{compat=newest,label style={font=\Large}, tick label style={font=\Large}} % Allows to place the legend below plot
 \usepgfplotslibrary{units} % Allows to enter the units nicely
 
 \begin{document}
@@ -15,7 +15,8 @@
     \pgfplotstableread[col sep = comma]{data/results-pris.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Reduction in Avg D\$ Access Lat (in \%),
+	    ylabel style={align=center},
+        ylabel = Reduction in Average \\ D\$ Access Lat (in \%),
         ybar=1pt,
         bar width=15pt,
         xlabel=Workloads,
@@ -37,8 +38,8 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.4, -0.2)},
-             font=\tiny,
+             at={(0.2, -0.2)},
+             font=\large,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -52,7 +53,7 @@
 
         \addplot [bar1] table[x=X,y=reduction] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU Memory Acc Latency}}
+        \addlegendentry{CPU Memory Acc Latency}
 
     \end{axis}
 \end{tikzpicture}

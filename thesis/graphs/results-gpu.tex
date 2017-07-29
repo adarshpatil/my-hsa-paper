@@ -6,7 +6,7 @@
 
 \input{barcolors}
 
-\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\pgfplotsset{compat=newest,label style={font=\Large}, tick label style={font=\Large}} % Allows to place the legend below plot
 \usepgfplotslibrary{units} % Allows to enter the units nicely
 
 \begin{document}
@@ -39,7 +39,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.57, 0.85)},
-             font=\tiny,
+             font=\large,
              anchor=west,
              legend columns=6,
              % default spacing:
@@ -58,12 +58,12 @@
         \addplot [bar5] table[x=X,y=Chaining+PrIS] {\datatable};
         \addplot [bar6] table[x=X,y=GPUalone] {\datatable};
 
-        \addlegendentry{\footnotesize{Naive}}
-        \addlegendentry{\footnotesize{PrIS}}
-        \addlegendentry{\footnotesize{ByE}}
-        \addlegendentry{\footnotesize{ByE+PrIS}}
-        \addlegendentry{\footnotesize{Chaining+PrIS}}
-        \addlegendentry{\footnotesize{HoA GPU}}
+        \addlegendentry{Naive}
+        \addlegendentry{PrIS}
+        \addlegendentry{ByE}
+        \addlegendentry{ByE+PrIS}
+        \addlegendentry{Chaining+PrIS}
+        \addlegendentry{HoA GPU}
 
     \end{axis}
 \end{tikzpicture}

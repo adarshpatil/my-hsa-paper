@@ -6,7 +6,7 @@
 
 \input{barcolors}
 
-\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\pgfplotsset{compat=newest,label style={font=\Large}, tick label style={font=\Large}} % Allows to place the legend below plot
 \usepgfplotslibrary{units} % Allows to enter the units nicely
 
 \begin{document}
@@ -15,7 +15,8 @@
 	\pgfplotstableread[col sep = comma]{data/motivation-gpu-cache.csv}\datatable
 	
 	\begin{axis}[
-	ylabel style={}, ylabel = Reduction in Num of Requests to DRAM,
+    ylabel style={align=center},	
+	ylabel = Reduction in Num of \\ Requests to DRAM,
 	ybar=1pt,
 	ymode=log,
 	ymin=1e0,
@@ -39,8 +40,8 @@
 	legend style={
 		text depth=0pt,
 		legend cell align=left,
-		at={(0.1, -0.2)},
-		font=\tiny,
+		at={(0.01, -0.2)},
+		font=\large,
 		anchor=north west,
 		legend columns=4,
 		% default spacing:
@@ -56,8 +57,8 @@
 	\addplot [bar3] table[x=X,y=128M-2way] {\datatable};
 	
 	
-	\addlegendentry{\footnotesize{GPU Rd Req 64M 2way D$\$$}}
-	\addlegendentry{\footnotesize{GPU Rd Req 128M 2way D$\$$}}
+	\addlegendentry{GPU Rd Req 64M 2way D$\$$}
+	\addlegendentry{GPU Rd Req 128M 2way D$\$$}
 	
 	\end{axis}
 	
@@ -73,12 +74,13 @@
 	axis x line=none,
 	axis y line*=right,
 	enlarge x limits={abs=1cm},
-	ylabel = Total Num of Requests to DRAM,
+    ylabel style={align=center},	
+	ylabel = Total Num of \\ Requests to DRAM,
 	legend style={
 		text depth=0pt,
 		legend cell align=left,
 		at={(0.6, -0.2)},
-		font=\tiny,
+		font=\large,
 		anchor=north west,
 		legend columns=4,
 		% default spacing:
@@ -96,7 +98,7 @@
 	%			] table[x=X,y=inc] {\datatable};
 	\addplot [mark=triangle*, mark size=7pt, black!90!green,fill=green, forget plot, only marks,  xshift=-2] table[x=X,y=cpu] {\datatable};
 	\label{cpureq}
-	\addlegendimage{/pgfplots/refstyle=cpureq}\addlegendentry{\footnotesize{CPU Rd Req 64M 1way D\$}}
+	\addlegendimage{/pgfplots/refstyle=cpureq}\addlegendentry{CPU Rd Req 64M 1way D\$}
 	
 	
 	\end{axis}

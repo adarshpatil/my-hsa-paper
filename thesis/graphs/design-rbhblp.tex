@@ -6,7 +6,7 @@
 
 \input{barcolors}
 
-\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\pgfplotsset{compat=newest,label style={font=\Large}, tick label style={font=\Large}} % Allows to place the legend below plot
 \usepgfplotslibrary{units} % Allows to enter the units nicely
 
 \begin{document}
@@ -37,8 +37,8 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.4, -0.2)},
-             font=\tiny,
+             at={(0.3, -0.2)},
+             font=\large,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -53,8 +53,8 @@
         \addplot [bar1] table[x=X,y=CPU] {\datatable};
         \addplot [bar3] table[x=X,y=GPU] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU}}
-        \addlegendentry{\footnotesize{GPU}}
+        \addlegendentry{CPU}
+        \addlegendentry{GPU}
 
     \end{axis}
 \end{tikzpicture}

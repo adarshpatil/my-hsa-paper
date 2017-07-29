@@ -7,7 +7,7 @@
 
 \input{barcolors}
 
-\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\pgfplotsset{compat=newest,label style={font=\Large}, tick label style={font=\Large}} % Allows to place the legend below plot
 \usepgfplotslibrary{units} % Allows to enter the units nicely
 
 \begin{document}
@@ -18,7 +18,7 @@
     \begin{axis}[
         ylabel style={}, ylabel = Normalized H-Mean of CPU IPC,
         ybar=1pt,
-        bar width=7pt,
+        bar width=8pt,
         xlabel=Workloads,
         xticklabels from table={\datatable}{X},
         xtick=data,
@@ -42,7 +42,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.57, 0.9)},
-             font=\tiny,
+             font=\large,
              anchor=west,
              legend columns=5,
              % default spacing:
@@ -57,14 +57,14 @@
         \addplot [bar1] table[x=X,y=bypass] {\datatable};
         \addplot [bar3] table[x=X,y=mcc] {\datatable};
         \addplot [bar4, postaction={pattern=north east lines}] table[x=X,y=pris] {\datatable};
-        \addplot [bar5, postaction={pattern=north east lines}] table[x=X,y=sms] {\datatable};        
-        \addplot [bar2] table[x=X,y=pris+bye] {\datatable};                
+        \addplot [bar2, postaction={pattern=north east lines}] table[x=X,y=sms] {\datatable};        
+        \addplot [bar5] table[x=X,y=pris+bye] {\datatable};                
 
-        \addlegendentry{\footnotesize{ByE}}
-        \addlegendentry{\footnotesize{MCC}}       
-        \addlegendentry{\footnotesize{PrIS}}
-        \addlegendentry{\footnotesize{SMS}}
-        \addlegendentry{\footnotesize{PrIS+ByE}}        
+        \addlegendentry{ByE}
+        \addlegendentry{MCC}
+        \addlegendentry{PrIS}
+        \addlegendentry{SMS}
+        \addlegendentry{PrIS+ByE}
 
     \end{axis}
 \end{tikzpicture}
