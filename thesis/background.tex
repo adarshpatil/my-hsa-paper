@@ -157,7 +157,7 @@ number of GPU requests flooding the DRAMCache controller when the GPU kernels ar
 It should be noted here that, even though we use the terms CPU and GPU requests separately, they may refer to the same data. This terminology only indicates the source of the request. 
 %We also note that the GPGPU application has some amount of sharing of data within the DRAMCache between the CPU and GPU processors (i.e. constructive interference - blocks brought in by the CPU and then used by the GPU and vice versa).
 \par Next, we study the impact of co-running applications on the GPU cores. Figure \ref{fig:motivation}(b) presents GPU performance obtained by addition of a stacked DRAMCache.
-We observe that with the introduction of DRAMCache in an IHS, the GPU performance improves on an average by 24\%. This performance is within 10\% of its HoA GPU performance with DRAMCache when the GPU application is cor-un with CPU applications (HeA) and without them (HoA).
+We observe that with the introduction of DRAMCache in an IHS, the GPU performance improves on an average by 24\%. This performance is within 10\% of its HoA GPU performance with DRAMCache when the GPU application is co-run with CPU applications (HeA) and without them (HoA).
 Thus, co-running with CPU applications has only a minor impact on the GPU performance. 
 %Some cache-sensitive GPU workloads show benefits from the addition of the DRAMCache while other workloads, that do not significantly reuse cached data, show no performance benefits.
 \begin{figure}[htb]
