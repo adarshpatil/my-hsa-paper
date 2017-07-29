@@ -15,7 +15,7 @@
     \pgfplotstableread[col sep = comma]{data/motivation-bandwidth.csv}\datatable
 
     \begin{axis}[
-        ylabel style={}, ylabel = Avg Bandwidth Utilization (\% of max),
+        ylabel style={align=center}, ylabel = Avg Bandwidth Utilization \\ (\% of max),
         ybar=1pt,
         bar width=12pt,
         xlabel=Workloads,
