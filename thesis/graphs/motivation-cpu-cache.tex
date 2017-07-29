@@ -8,7 +8,7 @@
 
 \usepgfplotslibrary{units} % Allows to enter the units nicely
 
-\pgfplotsset{width=7cm,compat=newest}
+\pgfplotsset{width=7cm,compat=newest,label style={font=\Large}, tick label style={font=\Large} }
 
 \begin{document}
 
@@ -26,15 +26,16 @@
         axis x line*=left,
         axis y line*=left,
         enlarge x limits={abs=1cm},
-        ylabel = {\scriptsize Avg D\$ Access Lat (in CPU cycles)},
+        ylabel style={align=center},
+        ylabel = {Avg D\$ Access Lat \\ (in CPU cycles)},
         legend image code/.code={%
                     \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
         },  
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.1, -0.27)},
-             font=\tiny,
+             at={(0.2, -0.27)},
+             font=\large,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -51,8 +52,8 @@
         \addplot [bar1] table[x=X,y=onlyCPUD] {\datatable};\label{onlycpumemacc}
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};\label{cpu+gpumemacc}
 
-        \addlegendentry{\footnotesize{HoA CPU}}
-        \addlegendentry{\footnotesize{HeA}}
+        \addlegendentry{HoA CPU}
+        \addlegendentry{HeA}
 
     \end{axis}
     
@@ -70,8 +71,8 @@
         legend style={
              text depth=0pt,
              legend cell align=left,
-             at={(0.5, -0.25)},
-             font=\tiny,
+             at={(0.6, -0.25)},
+             font=\large,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -88,8 +89,8 @@
    
 %        \addlegendentry{\footnotesize{Hit Rate CPU}}
 %        \addlegendentry{\footnotesize{Hit Rate CPU\+GPU}}
-   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{\footnotesize{HitRate HoA CPU}}
-   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{\footnotesize{HitRate HeA}}
+   \addlegendimage{/pgfplots/refstyle=onlycpuhitrate}\addlegendentry{HitRate HoA CPU}
+   \addlegendimage{/pgfplots/refstyle=cpu+gpuhitrate}\addlegendentry{HitRate HeA}
   
    \end{axis}
    
