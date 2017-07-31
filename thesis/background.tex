@@ -29,7 +29,7 @@ Dynamic Random Access Memory (DRAM) forms the backbone of main memory in modern 
 	\centering
 	\def\svgwidth{\columnwidth}
 	\input{figures/dram-basics.pdf_tex}
-	\caption{Organization of an DRAM Memory System}
+	\caption{Organization of a DRAM Memory System}
 	\label{fig:dram-basics}
 \end{figure}
 \par In order to improve efficiency of the DRAM systems, DRAM devices are organized hierarchically. Banks are further organized into ranks which share command buses but have separate data buses. A chip select is used to select a bank to issue a command.  The banks in a rank operate in parallel and serve data independently to match the data bus width. A typical memory system would consist of multiple channels with completely independent DRAM devices having separate data and address buses. A DDRx (double data rate) DRAM transfers data on both edges of the bus clock (rising and falling). DDR increases the n-bit prefetch operation in each successive generation of DRAMs from 4n in DDR2 to 8n in DDR3. Here the "8n-prefetch" means that at each cycle a DDR3 DRAM transmits 8 bits of information from internal DRAM banks into the I/O buffers before sending them out. In other words, the minimum number of bits a DRAM column read/write performs in each operation for a DDR3 DRAM is 8 bits. This effectively increases the bandwidth without changing the core of the DRAM.
