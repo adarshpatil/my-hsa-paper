@@ -1,6 +1,8 @@
 \documentclass[12pt,a4paper]{report}
-\usepackage{iisc_thesis}
-\renewcommand{\abstractname}{Synopsis}
+\usepackage[affil-it]{authblk}
+\renewcommand{\abstractname}{}
+\usepackage{setspace}
+\onehalfspacing
 
 
 % ADARSH MARCRO's
@@ -9,13 +11,24 @@
 \newcommand{\prioname}{\textit{PrIS}}
 \newcommand{\chaining}{\textit{Chaining}}
 
+\title{A Synopsis of MSc(Engg.) thesis \\ 
+ \textbf{Heterogeneity Aware Shared DRAMCache for Integrated Heterogeneous Architectures}}
+  \author{ by\\ \vspace{2mm} \textbf{Adarsh Patil}\\SR No: 04-04-00-10-21-14-1-11600\\ 
+\vspace{2mm} \textit {Under the supervision of}\\\vspace{2mm} \textbf{Prof. R. Govindarajan}}
+   \affil{Department of Computer Science and Automation,\\
+Indian Institute of Science, Bangalore}
+
+
 \begin{document}
+\maketitle
 
 
-\section*{Synopsis}
+\begin{abstract}
+
+\section*{Introduction}
 Integrated Heterogeneous System (IHS) processors pack throughput-oriented GPGPUs alongside latency-oriented CPUs on the same die sharing certain resources, e.g., shared last level cache, network-on-chip (NoC), and the main memory. They also share virtual and physical address spaces and unify the memory hierarchy. The IHS architecture allows for easier programmability, data management and efficiency. However, the significant disparity in the demands for memory and other shared resources between the GPU cores and CPU cores poses significant problems in exploiting the full potential of this architecture. We immediately show that an IHS architecture with a DDR3 memory system, similar to modern multi-core CPUs, causes severe performance degradation for both CPU cores and GPU cores compared to their performance when run homogeneously i.e., only multi-core CPU cores and only GPU cores.
 \par In this thesis, we propose adding a large capacity stacked DRAM, used as a shared last level cache, for the IHS processors. The reduced latency of access and large bandwidth provided by the DRAMCache can help improve performance respectively of CPU and GPGPU while the large capacity can help contain the working set of the IHS workloads. 
-
+\section*{Contributions}
 \par DRAMCaches unlike SRAM caches, require careful design to be effective. We carefully tailor the DRAMCache organization by exploring the various design parameters in context of IHS architectures. First, the large metadata overheads incurred due to the large capacities of stacked DRAMCaches require careful examination of trade-offs while (i) selecting cache line sizes --- larger cache lines can improve hit rates in the presence of good locality in accesses but would suffer from wasted fetching of data into DRAMCache when there is a lack of locality, (ii) placement of tags --- tags-in-SRAM allows fast lookup but incurs high cost vs tags-in-DRAM suffers from slower access but is cost effective. Second, providing associativity in DRAMCaches comes at a cost of increased access latency when tags are stored in DRAMCache due to the multiple DRAMCaches accesses required to retrieve and compare tags. Third, DRAMCaches incur large miss penalties due to high lookup latencies of DRAMCache. Fourth, the addressing scheme of DRAMCaches can influence the access latency for lookups. 
 After experimentally evaluating these options for IHS architectures, we find that a 128 byte cache line size with tags-in-DRAM (tags are alloyed with data as TADs) organization performs well for IHS architectures. A direct mapped cache facilitates fast retrieval of these TAD units from the DRAMCache thereby decreasing DRAMCache access latencies compared to high associative designs. Further, a hit-miss predictor for CPU requests allows CPU to hide miss penalty by starting early access to off-chip DRAM memory when a request predicted as a miss in the DRAMCache. Lastly, the DRAMCache is addressed using a Row Buffer Hit rate friendly addressing scheme.
 \par With this organization we then explore the sources of inefficiency in the DRAMCache for IHS architectures. Adding this DRAMCache in a heterogeneity-unaware manner (naively) to IHS architectures, leaves significant performance on the table due to the disparate demands from CPU and GPU cores for DRAMCache and memory accesses.
@@ -31,6 +44,12 @@ In particular, the imbalance can significantly reduce the performance benefits t
 \end{itemize}
 The resulting cache, \cachename, is heterogeneity-aware and can adapt dynamically to address the inherent disparity of demands in an IHS architecture with simple light weight schemes. 
 
-\par We enhance the gem5-gpu simulator to model an IHS architecture with stacked DRAM as a cache, coherent GPU L2 cache and CPU caches and a shared unified physical memory. Using this setup we perform detailed experimental evaluation of the proposed \cachename\ and demonstrate an average system performance (combined performance of CPU  and GPU cores) improvement of 41\% over a naive DRAMCache and over 100\% improvement over a baseline system with no stacked DRAMCache.
+\section*{Evaluation and Experimental Results}
+\par We enhance the gem5-gpu simulator to model an IHS architecture with stacked DRAM as a cache, coherent GPU L2 cache and CPU caches and a shared unified physical memory. We model a detailed stacked DRAM as a hardware managed cache including components like Fill Queue, MSHRs and MSHRs. We develop system performance metrics to measure performance of these IHS architectures when there are co-running CPU and GPU applications. Using this setup we perform detailed experimental evaluation of the proposed \cachename\ and demonstrate an average system performance (combined performance of CPU  and GPU cores) improvement of 41\% over a naive DRAMCache and over 100\% improvement over a baseline system with no stacked DRAMCache.
 \par Further, we perform sensitivity study with various memory system parameters and show that \cachename\ mechanisms are robust and scale well. We also comparex \cachename\ with related work and show that our heterogeneity-aware DRAMCache outperforms state-of-the-art DRAMCache proposals.
+
+\section*{Conclusion}
+IHS architectures allow for improved programmer productivity and increased application performance. However, the memory system in an IHS architecture requires to be carefully designed as the co-running of applications causes interference at the memory subsystem reducing the performance of both CPU and GPU cores. In this thesis, we show that DRAMCaches as a memory system technology provide the necessary bandwidth and latency capabilities to improve performance of IHS processors. We carefully design a DRAMCache organization suitable for IHS architectures. Further, we propose three hetergeniety aware schemes -- \prioname, \bypassname\ and \chaining.
+\end{abstract}
+
 \end{document}          
