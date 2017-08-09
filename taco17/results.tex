@@ -37,7 +37,8 @@ Prioritizing CPU requests with our \prioname\ scheduler at the DRAMCache control
 As discussed in \ref{mechanism-chaining}, \chaining\ mechanism improves hit rates for GPU while guaranteeing some occupancy for the CPU in the DRAMCache. We empirically determine a suitable low occupancy threshold of the CPU (\textit{$l_{cpu}$}) to be 20\% for all our workloads. Chaining alone performs no better than a naive cache as the queuing latencies overwhelm any improvements in hit rates. However, when chaining is coupled with \prioname, the increased hit rates reduces the performance drop caused by \prioname\ for the GPU from 10\% to 5.2\% (i.e 4.8\% performance improvement over \prioname). For the CPU, guaranteed occupancy in the DRAMCache and the secondary effect of lower congestion at off-chip DRAM allows CPU requests to be serviced with lower delays. This improves performance of CPU by 7\%, over only \prioname.
 \par Overall \chaining+\prioname\ improves CPU performance by 44.7\% while degrading GPU performance by merely 7\% over a naive DRAMCache.
 % %This improves overall system throughput by a significant 37.7\% over a un-optimized DRAMCache.
-\\
+%TACO REVIEW CHANGES HERE
+%We expect \chaining to show even better performance as the workload footprints and working sets increase in the case of collaborative work sharing heterogenous workloads like Chai \cite{chai}
 \begin{figure}[!htb]
     \centering
     \includegraphics[scale=0.66]{graphs/results-system}

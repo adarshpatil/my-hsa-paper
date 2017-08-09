@@ -6,18 +6,21 @@
 \par \textbf{Metadata overhead:} The metadata requirement for DRAMCaches, even for caches of size 64MB, is large and is in the order of few MBs. The large storage requirement along with the associated cost if it has to be stored in SRAM, has driven DRAMCache designs to either use larger block sizes (of size 2KB or 4KB \cite{footprint,unison-cache}) to reduce metadata overhead or co-locate metadata alongside data in the DRAMCache \cite{loh-hill,alloy,atcache}. 
 %In the former case, misses waste precious off-chip bandwidth in the absence of spatial locality while the latter design faces tag-serialization. 
 \par To understand the spatial locality characteristics of large blocks in a IHS configuration, we experimented with 512 byte block organization for the DRAMCache. 
+%TACO REVIEW CHANGES HERE
+The 512 byte block size provides a good trade-off of between increased hit rates and reduced metadata for multi-core CPU workloads \cite{bimodal}.
 %However, the tag for the sub-blocks is stored for every 128 byte block separately. This simple organization achieves the benefits of a single access for tag-and-data \cite{alloy} for cache lookups, albiet at the cost of some wasted storage for the replicated tags. We observe that the 512 byte block under performs the 128 byte block cache by 12.2\% and 10.6\% for the CPU and GPU respectively. Despite a 11\% and 8\% improvement in hit rate in the DRAMCache for CPU and GPU respectively the average memory access latency increases by an average of 75\% for the 512 byte block cache. The increased hit rate comes at the cost of wasted bandwidth and increased off-chip DRAM latency as some of the sub blocks fetched are not used. 
-On an average for 65\% of the 512B blocks that are brought into the cache, at most 2 sub blocks are used.
+%TACO REVIEW CHANGES HERE
+While we increase the cache line size of DRAMCache, the higher caches (CPU and GPU L2) operate at 128 byte cache line size and requests to and responses from the DRAMCache are of 128 byte size. We find that on an average for 65\% of the 512B blocks that are brought into the cache, at most 2 sub blocks of 128 byte are requested/used.
 This implies wasted capacity in the DRAMCache and wasted off-chip bandwidth.  Although with the increased cache line size of 512 byte, we observe a 11\% and 8\% improvement in hit rate in the DRAMCache for CPU and GPU respectively, the performance (normalized H-Mean of IPC) degrades by 12.2\% and 10.6\%, respectively, for the CPU and GPU cores. The poor performance of  a large cache block size is attributed to increased average access latency of the DRAMCache (due to larger block size fetch) and the wasted off-chip bandwidth.
 %\footnote{Efficient sub-block management in this context is complicated as the both the memory and cache are slower DRAM devices. We leave the exploration of critical word first and early restart for reducing miss penalty to future work}
 \par Tags-in-DRAM designs have further focused on improving access latencies by removing tag-serialization overhead using overlapped tag lookups \cite{loh-hill} or storing TAD units \cite{alloy}. These designs come close to tags-in-SRAM like access latency without concerns of spatial locality characteristics of large block sizes. 
 Hence, \cachename\ organizes data at 128 byte block size and stores data in DRAMCache as a cohesive TAD unit.
 
-%\begin{figure}[htbp]
-%   \includegraphics[scale=1.0]{graphs/design-bigblock}
-%   \caption{Performance of 512B vs 128B block size}	
-%   \label{fig:design-bigblock}
-%\end{figure}
+\begin{figure}[htbp]
+   \includegraphics[scale=0.8]{graphs/design-bigblock}
+   \caption{Performance of 512B vs 128B block size}	
+   \label{fig:design-bigblock}
+\end{figure}
 
 \par \textbf{Associativity:} Providing set associativity is known to improve cache hit rates by reducing conflict misses. In DRAMCaches where tag is stored in DRAM,  associativity comes at a cost. Hit latencies increase due to the tag requiring to be burst out of the stacked DRAM. Hence there is an implicit trade-off between providing better hit-rates and reduced access latency. A higher associativity design is suitable for a GPGPU processor which can trade increased access latency for higher hit rates to make better use of the larger bandwidth of the DRAMCache. On the other hand, the CPU would suffer when using such a design due to the increased hit-latency, and  would instead prefer a latency-optimized direct-mapped cache \cite{alloy}.
 %The large performance decline for CPUs due to co-running requires \cachename to be organized as a direct mapped cache to achieve better hit time for improved CPU performance. 
