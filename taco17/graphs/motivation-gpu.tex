@@ -39,7 +39,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.57, 0.8)},
-             font=\tiny,
+             font=\normalsize,
              anchor=west,
              legend columns=4,
              % default spacing:
@@ -56,10 +56,10 @@
         \addplot [bar3] table[x=X,y=CPU+GPUD] {\datatable};
         \addplot [fill= black!30!kellygreen,fill=kellygreen] table[x=X,y=onlyGPUD] {\datatable};
 
-        %\addlegendentry{\footnotesize{HoA GPU w/o D$\$$}}
-        \addlegendentry{\footnotesize{HeA w/o D$\$$}}
-        \addlegendentry{\footnotesize{HeA w/ D$\$$}}
-        \addlegendentry{\footnotesize{HoA GPU w/ D$\$$}}
+        %\addlegendentry{HoA GPU w/o D$\$$}
+        \addlegendentry{HeA w/o D$\$$}
+        \addlegendentry{HeA w/ D$\$$}
+        \addlegendentry{HoA GPU w/ D$\$$}
 
     \end{axis}
 \end{tikzpicture}

@@ -41,7 +41,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.2, -0.2)},
-             font=\tiny,
+             font=\normalsize,
              anchor=north west,
              legend columns=5,
              % default spacing:
@@ -62,11 +62,11 @@
                   nodes near coords={\pgfmathprintnumber{\rawy}} % Print values
                  ] table[x=X,y=CPUalone] {\datatable};
 
-        \addlegendentry{\footnotesize{naive D$\$$}}
-        \addlegendentry{\footnotesize{PrIS}}
-        \addlegendentry{\footnotesize{chaining+PrIS D$\$$}}
-        \addlegendentry{\footnotesize{ByE+PrIS D$\$$}}
-        \addlegendentry{\footnotesize{CPU alone D$\$$}}
+        \addlegendentry{naive D$\$$}
+        \addlegendentry{PrIS}
+        \addlegendentry{chaining+PrIS D$\$$}
+        \addlegendentry{ByE+PrIS D$\$$}
+        \addlegendentry{CPU alone D$\$$}
 
     \end{axis}
 \end{tikzpicture}

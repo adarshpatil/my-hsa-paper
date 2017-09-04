@@ -40,7 +40,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.1, -0.2)},
-             font=\tiny,
+             font=\normalsize,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -56,9 +56,9 @@
         \addplot [bar3] table[x=X,y=128M-2way] {\datatable};
         \addplot [bar4] table[x=X,y=cpu] {\datatable};
 
-        \addlegendentry{\footnotesize{Reduction in misses 64M 2way D$\$$}}
-        \addlegendentry{\footnotesize{Reduction in misses 128M 2way D$\$$}}
-        \addlegendentry{\footnotesize{Total Number of CPU Rd Reqs}}
+        \addlegendentry{Reduction in misses 64M 2way D$\$$}
+        \addlegendentry{Reduction in misses 128M 2way D$\$$}
+        \addlegendentry{Total Number of CPU Rd Reqs}
 
     \end{axis}
 \end{tikzpicture}

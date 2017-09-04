@@ -40,7 +40,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.1, -0.2)},
-             font=\tiny,
+             font=\normalsize,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -55,8 +55,8 @@
         \addplot [bar1] table[x=X,y=cpuReq] {\datatable};
         \addplot [bar3] table[x=X,y=gpuReq] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU Req at D$\$$}}
-        \addlegendentry{\footnotesize{GPU Req at D$\$$}}
+        \addlegendentry{CPU Req at D$\$$}
+        \addlegendentry{GPU Req at D$\$$}
 
     \end{axis}
     
@@ -75,7 +75,7 @@
                  text depth=0pt,
                  legend cell align=left,
                  at={(0.6, -0.2)},
-                 font=\tiny,
+                 font=\normalsize,
                  anchor=north west,
                  legend columns=4,
                  % default spacing:
@@ -97,9 +97,9 @@
        \label{64m-2way}
        \addplot+[mark=square*, mark size=4.5pt, black!90!blue,fill=blue, forget plot, only marks] table[x=X,y=128M-2way] {\datatable};
        \label{128m-2way}              
-       %\addlegendimage{/pgfplots/refstyle=64m-direct}\addlegendentry{\footnotesize{64M Direct}};
-       \addlegendimage{/pgfplots/refstyle=64m-2way}\addlegendentry{\footnotesize{64M 2-way}};
-       \addlegendimage{/pgfplots/refstyle=128m-2way}\addlegendentry{\footnotesize{128M 2-way}};
+       %\addlegendimage{/pgfplots/refstyle=64m-direct}\addlegendentry{64M Direct};
+       \addlegendimage{/pgfplots/refstyle=64m-2way}\addlegendentry{64M 2-way};
+       \addlegendimage{/pgfplots/refstyle=128m-2way}\addlegendentry{128M 2-way};
        
        
        \end{axis}    

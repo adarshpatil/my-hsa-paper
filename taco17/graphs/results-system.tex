@@ -39,7 +39,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.03, 0.85)},
-             font=\tiny,
+             font=\normalsize,
              anchor=west,
              legend columns=6,
              % default spacing:
@@ -58,12 +58,12 @@
         \addplot [bar4] table[x=X,y=bye+prio] {\datatable};
         \addplot [bar5] table[x=X,y=chain+prio] {\datatable};
 
-        %\addlegendentry{\footnotesize{w/o DRAM$\$$}}
-        \addlegendentry{\footnotesize{naive}}
-        \addlegendentry{\footnotesize{PrIS}}
-        \addlegendentry{\footnotesize{ByE}}
-        \addlegendentry{\footnotesize{ByE+PrIS}}
-        \addlegendentry{\footnotesize{Chaining+PrIS}}
+        %\addlegendentry{w/o DRAM$\$$}
+        \addlegendentry{naive}
+        \addlegendentry{PrIS}
+        \addlegendentry{ByE}
+        \addlegendentry{ByE+PrIS}
+        \addlegendentry{Chaining+PrIS}
 
     \end{axis}
 \end{tikzpicture}

@@ -41,7 +41,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.57, 0.9)},
-             font=\tiny,
+             font=\normalsize,
              anchor=west,
              legend columns=5,
              % default spacing:
@@ -57,9 +57,9 @@
         \addplot [bar3] table[x=X,y=bypass] {\datatable};
         \addplot [bar4] table[x=X,y=chaining] {\datatable};
 
-        \addlegendentry{\footnotesize{naive}}
-        \addlegendentry{\footnotesize{ByE+PrIS}}       
-        \addlegendentry{\footnotesize{Chaining+PrIS}}
+        \addlegendentry{naive}
+        \addlegendentry{ByE+PrIS}  
+        \addlegendentry{Chaining+PrIS}
 
     \end{axis}
 \end{tikzpicture}

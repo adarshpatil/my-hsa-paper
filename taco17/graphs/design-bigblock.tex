@@ -39,7 +39,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.4, -0.2)},
-             font=\tiny,
+             font=\normalsize,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -54,8 +54,8 @@
         \addplot [bar1] table[x=X,y=cpu] {\datatable};
         \addplot [bar3] table[x=X,y=gpu] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU}}
-        \addlegendentry{\footnotesize{GPU}}
+        \addlegendentry{CPU}
+        \addlegendentry{GPU}
 
     \end{axis}
     
@@ -73,7 +73,7 @@
                  text depth=0pt,
                  legend cell align=left,
                  at={(0.6, -0.2)},
-                 font=\tiny,
+                 font=\normalsize,
                  anchor=north west,
                  legend columns=4,
                  % default spacing:
@@ -91,7 +91,7 @@
        %			] table[x=X,y=inc] {\datatable};
        \addplot+[mark=triangle*, mark size=4.5pt, black!90!green,fill=green, forget plot, only marks,  xshift=-2] table[x=X,y=inc] {\datatable};
        \label{memacc}
-       \addlegendimage{/pgfplots/refstyle=memacc}\addlegendentry{\footnotesize{Inc Mem Acc}}
+       \addlegendimage{/pgfplots/refstyle=memacc}\addlegendentry{Inc Mem Acc}
        
        
        \end{axis}

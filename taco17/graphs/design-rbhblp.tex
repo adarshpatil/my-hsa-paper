@@ -38,7 +38,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.4, -0.2)},
-             font=\tiny,
+             font=\normalsize,
              anchor=north west,
              legend columns=4,
              % default spacing:
@@ -53,8 +53,8 @@
         \addplot [bar1] table[x=X,y=CPU] {\datatable};
         \addplot [bar3] table[x=X,y=GPU] {\datatable};
 
-        \addlegendentry{\footnotesize{CPU}}
-        \addlegendentry{\footnotesize{GPU}}
+        \addlegendentry{CPU}
+        \addlegendentry{GPU}
 
     \end{axis}
 \end{tikzpicture}

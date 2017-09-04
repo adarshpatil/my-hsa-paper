@@ -41,7 +41,7 @@
              text depth=0pt,
              legend cell align=left,
              at={(0.57, 0.9)},
-             font=\tiny,
+             font=\normalsize,
              anchor=west,
              legend columns=5,
              % default spacing:
@@ -59,11 +59,11 @@
         \addplot [bar5, postaction={pattern=north east lines}] table[x=X,y=sms] {\datatable};
         \addplot [bar2] table[x=X,y=pris+bye] {\datatable};
 
-        \addlegendentry{\footnotesize{ByE}}
-        \addlegendentry{\footnotesize{MCC}}       
-        \addlegendentry{\footnotesize{PrIS}}
-        \addlegendentry{\footnotesize{SMS}}
-        \addlegendentry{\footnotesize{PrIS+ByE}}
+        \addlegendentry{ByE}
+        \addlegendentry{MCC}   
+        \addlegendentry{PrIS}
+        \addlegendentry{SMS}
+        \addlegendentry{PrIS+ByE}
 
     \end{axis}
 \end{tikzpicture}
