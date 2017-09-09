@@ -56,9 +56,20 @@ with the introduction of the stacked DRAMCache for the latency-sensitive CPU app
 of the DRAMCache, these benefits can be lost due to interference from the co-running GPU application.  Hence it is important to carefully 
 architect the DRAMCache organization to ensure CPU applications are not hampered due to this interference.
 This requires the design to be aware of the heterogeneity of the applications (CPU vs GPU) and their demands on the 
-memory hierarchy.  Hard partitioning of DRAMCache would not be an effective design as it leads to under-utilization of the large capacity 
-stacked DRAM, as the effects of interference due to co-running GPU application is felt only when the kernel is run on the GPU sporadically. 
+memory hierarchy.  
+%TACO CHANGES HERE
+\par To quantify the effect of interference between CPU and GPU we further experimented with a hard partitioned DRAMCache. We partition the request queues and allocate different set of banks for CPU and GPU data. We divide the 32 banks in the DRAMCache into 5 banks (62.5\% cache size) and 3 banks (37.5\% cache size) to alleviate bank conflicts. We use an oracular-data management and coherence such that the data requested by the core is found in its corresponding partition of the DRAMCache. Cache misses within the partition incur memory access latency. Although such a partitioning scheme is not realistic, it gives us the ceiling for the performance that can be expected with a partitioning approach. With this setup, we experiment with allocating larger cache partition for the CPU first. The second bar in Figure \ref{fig:motivation-partition}(a) and (b) shows the performance of the CPU and GPU with such a partitioning scheme (in terms of harmonic mean of IPCs, normalized to HeA with an un-partitioned DRAMCache). We observe that the performance of the CPU reduces by mean of 5.2\% while the performance of the GPU too reduces by a mean of 2.6\%.
+Next we allocate the larger DRAMCache partition to the GPU cores. The third bar in Figure \ref{fig:motivation-partition}(a) and (b) shows the performance of CPU and GPU for such a partitioning scheme respectively. We observe that the performance of the CPU and GPU cores reduces by 7.7\% and less than 0.1\%.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.6]{graphs/motivation-cpu-partition}
+	\includegraphics[scale=0.6]{graphs/motivation-gpu-partition}
+	\caption{Performance comparison of (a) CPU (b) GPU when with un-partitioned D\$ and partitioned D\$}
+	\label{fig:motivation-partition}
+\end{figure}
+Thus, hard partitioning of DRAMCache is not an effective design as it leads to under-utilization of the large capacity 
+stacked DRAM, as the effects of interference due to co-running GPU application is felt only when the kernel is run on the GPU sporadically.
 Further, effectively utilizing the under-utilized main memory bandwidth \cite{micro-refresh, mainak-hpca, bear}
 is also important to achieve higher performance.  Lastly, the design should ensure that the CPU applications and the 
 GPU application are able to utilize the large capacity of the stacked DRAM effectively to meet the working set 
-requirements of the respective applications in the best possible way. In the next section we present our Heterogeneity-aware Shared DRAMCache (\cachename) design which addresses these issues.
+requirements of the respective applications in the best possible way. In the next section we present our Heterogeneity-Aware Shared DRAMCache (\cachename) design which addresses these issues.

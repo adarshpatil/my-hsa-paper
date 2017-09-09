@@ -1,0 +1,83 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\usetikzlibrary{patterns}
+\input{barcolors}
+
+\makeatletter
+\newcommand\resetstackedplots{
+	\makeatletter
+	\pgfplots@stacked@isfirstplottrue
+	\makeatother
+}
+
+\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.5]
+    \pgfkeys{
+    	/pgfplots/exception/unsupported operation/.code={},
+    }
+    \pgfplotstableread[col sep = comma]{data/results-energy.csv}\datatable
+    \begin{axis}[
+	    ybar stacked,
+        ylabel style={}, 
+        ylabel = Normalized Power of memory system,
+        ybar=1pt,
+        bar width=7pt,
+        xlabel=Workloads,
+        xticklabels from table={\datatable}{X},
+        xtick=data,
+        x tick label style={},
+        xticklabels={Qg1, Qg2, Qg3, Qg4, Qg5, Qg6, Qg7, Qg8, Qg9, Qg10, Qg11, Qg12, Qg13, GEO},
+        x=40pt,
+        ymin=0,
+        %ymax=2,
+        axis x line*=left,
+        axis y line*=left,
+        %enlarge x limits=0.2,
+        enlarge x limits={abs=1cm},
+        %after end axis/.code={\draw ({rel axis cs:0,0}|-{axis cs:0,0}) -- ({rel axis cs:1,0}|-{axis cs:0,0});},
+        after end axis/.code={\draw [red, dashed] ({rel axis cs:0,1}|-{axis cs:0,1}) -- ({rel axis cs:1,1}|-{axis cs:0,1});},
+        legend image code/.code={%
+                    \draw[#1, draw=none] (0cm,-0.1cm) rectangle (0.4cm,0.2cm);
+        },  
+        legend style={
+             text depth=0pt,
+             legend cell align=left,
+             at={(0.47, 0.8)},
+             font=\tiny,
+             anchor=west,
+             legend columns=4,
+             % default spacing:
+             column sep=0.1cm,
+             % The text "Legend:"
+             /tikz/column 2/.style={column sep=1pt},
+             % the space between legend image and text:
+             /tikz/every odd column/.append style={column sep=0cm},
+        }
+       ]
+
+        \addplot [bar1, bar shift=-0.35cm] table[x=X,y=noDC] {\datatable};
+        \resetstackedplots
+        \addplot [bar3, bar shift=-0.1cm] table[x=X,y=naiveD] {\datatable};
+        \addplot [bar3, bar shift=-0.1cm, postaction={pattern=north east lines}, forget plot] table[x=X,y=naiveDC] {\datatable};        \resetstackedplots
+        \addplot [bar4, bar shift=0.15cm] table[x=X,y=bye+prisD] {\datatable};
+        \addplot [bar4, bar shift=0.15cm, postaction={pattern=north east lines}, forget plot] table[x=X,y=bye+prisDC] {\datatable};
+		\resetstackedplots
+		\addplot [bar5, bar shift=0.40cm] table[x=X,y=chaining+prisD] {\datatable};
+		\addplot [bar5, bar shift=0.40cm, postaction={pattern=north east lines}, forget plot] table[x=X,y=chaining+prisDC] {\datatable};        
+
+        \addlegendentry{\footnotesize{HeA w/o D$\$$}}
+        \addlegendentry{\footnotesize{naive D$\$$}}
+        \addlegendentry{\footnotesize{ByE+PrIS D$\$$}}
+        \addlegendentry{\footnotesize{Chaining+PrIS D$\$$}}        
+
+    \end{axis}
+\end{tikzpicture}
+\end{document}
