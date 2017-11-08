@@ -32,7 +32,7 @@ first level shared cache between the 2 split cache hierarchies of CPUs and GPUs.
   \end{tabular}
   \caption{Configuration of the simulated system}
   \label{configuration}
-  \vspace{-2em}
+  %\vspace{-2em}
 \end{table}
 
 \par \textbf{Simulator:} We evaluate the performance of the DRAMCache over a IHS Processor using a modified version of the cycle accurate simulator gem5-gpu \cite{gem5-gpu} which is configured to simulate cache coherent unified CPUs and GPUs. 
@@ -45,44 +45,72 @@ Our simulator also respects all significant timing and functional parameters for
 The smaller footprints obligates us to use a smaller stacked DRAMCache capacity of 64MB for all workloads and configurations to make pertinent observations.
 
 
-
+\begin{comment}
 \begin{table}[h!]
   \footnotesize
   \centering
-  \begin{tabular}{{|l|l|l|}}
+  \begin{tabular}{{|l|l|l||l|l|l|}}
     \hline
-    \textbf{Name} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia}\\
+    \textbf{WID} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia} & \textbf{WID} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia} \\
     \hline
-    Qg1& cactusADM;gcc;bzip2;sphinx3 & needle\\
+    Qg1& cactusADM;gcc;bzip2;sphinx3 & needle & Qg8 & milc;libquantum;gobmk;leslie3d & gaussian \\
     \hline
-    Qg2 & astar;mcf;gcc;bzip2 & needle\\
+    Qg2 & astar;mcf;gcc;bzip2 & needle & Qg9 & astar;milc;gcc;leslie3d & hotspot \\
     \hline
-    Qg3 & gcc;libquantum;leslie3d;bwaves & needle\\
+    Qg3 & gcc;libquantum;leslie3d;bwaves & needle & Qg10 & gcc;gobmk;leslie3d;sphinx3 & hotspot\\
     \hline
-    Qg4 & astar;soplex;cactusADM;libquantum & k-means\\
+    Qg4 & astar;soplex;cactusADM;libquantum & k-means & Qg11 & astar;cactusADM;libquantum;sphinx3 & srad \\
     \hline
-    Qg5 & milc;mcf;libquantum;bzip2 & k-means\\
+    Qg5 & milc;mcf;libquantum;bzip2 & k-means & Qg12 & astar;mcf;gobmk;sphinx3 & stream\\&&&&&cluster\\
     \hline
-    Qg6 & bzip2;gobmk;hmmer;sphinx3 & k-means\\
+    Qg6 & bzip2;gobmk;hmmer;sphinx3 & k-means & Qg13 & astar;cactusADM;libquantum;sphinx3 & lud\\
     \hline
-    Qg7 & soplex;milc;cactusADM;libquantum & gaussian\\
-    \hline
-    Qg8 & milc;libquantum;gobmk;leslie3d & gaussian\\
-    \hline
-    Qg9 & astar;milc;gcc;leslie3d & hotspot\\
-    \hline
-    Qg10 & gcc;gobmk;leslie3d;sphinx3 & hotspot\\
-    \hline
-    Qg11 & astar;cactusADM;libquantum;sphinx3 & srad\\
-    \hline
-    Qg12 & astar;mcf;gobmk;sphinx3 & streamcluster\\
-    \hline
-    Qg13 & astar;cactusADM;libquantum;sphinx3 & lud\\
-    \hline
+    Qg7 & soplex;milc;cactusADM;libquantum & gaussian & & &\\
+    \hline    
   \end{tabular}
-  \caption{Workloads}
+  \caption{Workloads (WID: Workload ID)}
   \label{workloads}
-  \vspace{-2em}
+  %\vspace{-2em}
+\end{table}
+\end{comment}
+
+\begin{table}[h!]
+	\footnotesize
+	\centering
+	\begin{tabular}{{|l|l|l|}}
+		\hline
+		\textbf{Name} & \textbf{Multi-program SPEC2006} & \textbf{Rodinia}\\
+		\hline
+		Qg1& cactusADM;gcc;bzip2;sphinx3 & needle\\
+		\hline
+		Qg2 & astar;mcf;gcc;bzip2 & needle\\
+		\hline
+		Qg3 & gcc;libquantum;leslie3d;bwaves & needle\\
+		\hline
+		Qg4 & astar;soplex;cactusADM;libquantum & k-means\\
+		\hline
+		Qg5 & milc;mcf;libquantum;bzip2 & k-means\\
+		\hline
+		Qg6 & bzip2;gobmk;hmmer;sphinx3 & k-means\\
+		\hline
+		Qg7 & soplex;milc;cactusADM;libquantum & gaussian\\
+		\hline
+		Qg8 & milc;libquantum;gobmk;leslie3d & gaussian\\
+		\hline
+		Qg9 & astar;milc;gcc;leslie3d & hotspot\\
+		\hline
+		Qg10 & gcc;gobmk;leslie3d;sphinx3 & hotspot\\
+		\hline
+		Qg11 & astar;cactusADM;libquantum;sphinx3 & srad\\
+		\hline
+		Qg12 & astar;mcf;gobmk;sphinx3 & streamcluster\\
+		\hline
+		Qg13 & astar;cactusADM;libquantum;sphinx3 & lud\\
+		\hline
+	\end{tabular}
+	\caption{Workloads}
+	\label{workloads}
+	%\vspace{-2em}
 \end{table}
 
 \par \textbf{Simulation Methodology:} We fast-forward the initialization phase of each workloads up until just before the launch of the first kernel of the GPU program. We ensure that each core is fast-forwarded by atleast 2 Billion instructions and in total each quad-core workload runs 20 billion instructions on average in the fast-forward phase. This is accomplished by adding a pause phase to the Rodinia benchmarks for the duration until the initialization quota of the SPEC programs is complete. We then warm the cache until the fastest core completes 250 million instructions. During the warm-up phase the GPU program is not executed. Timing simulations were then run for atleast 250 million instructions for each CPU core, resulting in a total of more than 1 Billion instructions across all the CPU cores. As is the norm, when a core finishes its quota of 250 million instructions, it continues to execute until all the cores have completed. \\

@@ -21,6 +21,7 @@ Additional details relating to the experimental methodology and workloads are de
    \includegraphics[scale=0.8]{graphs/motivation-cpu-cache}
    \caption{DRAMCache CPU Access Latency \& Hit rate}
    \label{fig:motivation-cpu-cache}
+   \vspace{-0.5em}
 \end{figure}
 First, we evaluate the benefits of having a large DRAMCache for the CPU in an IHS architecture. Figure \ref{fig:motivation}(a) presents the performance improvement for CPU cores due to the addition of a stacked DRAMCache (in terms of harmonic mean of IPCs, normalized to HeA without a DRAMCache) when co-run with a GPU and when run alone.
 % that is obtained by adding a stacked DRAMCache when co-run with the GPU application and also when run alone. 
@@ -48,7 +49,6 @@ Thus, co-running with CPU applications has only a minor impact on the GPU perfor
 %Figure \ref{fig:motivation-gpu-cache} plots the reduction in number of GPU misses in log scale, by introducing 2-way associativity over our direct mapped DRAMCache. The GPU misses reduce by an average of $10^5$ for 2-way associative cache with half the number of sets and $10^6$ for a 2-way associative cache with the same number of sets.
 %In comparison, the total number of CPU read requests to the DRAM are in the order of $10^7$. This considerable reduction in GPU misses leads to lower congestion for CPU requests at the DRAM. While associativity leads to only a modest improvements in hit rates for the GPU, it avoids incurring double queuing latency for all the reduced GPU misses. This corroborates the observation by other works \cite{oscar} that the number of requests from the GPU are orders of magnitude higher than CPU.
 %Thus, providing some associativity can increase DRAMCache bandwidth utilization and improve the system performance.
-
 While the above discussion indicate that the design decisions of heterogeneity aware DRAMCache are influenced by the latency-sensitive CPU applications, we emphasize the need to effectively utilize the large capacity and the higher bandwidth of DRAMCache by GPU applications. Towards this goal, we experimented with a DRAMCache of 128MB and 2-way associativity. We observe that the hit rate for GPU applications improves, on an average, by 5\%. While the improvement in hit-rate is not significant, as the number of GPU requests is very large (2 or 3 orders of magnitude higher than the CPU requests), even such a small increase in the hit rate leads to large improvements in utilization of the DRAMCache bandwidth by the GPU application. This makes a case for improving the associativity for GPU requests by introducing some pseudo-associativity in the DRAMCache, without impacting the hit-time offered by a direct-mapped tag-and-data (TAD) cache.
 
 \par Based on the above motivation study we conclude that there are significant performance benefits that could be obtained 
@@ -60,13 +60,6 @@ memory hierarchy.
 %TACO CHANGES HERE
 \par To quantify the effect of interference between CPU and GPU we further experimented with a hard partitioned DRAMCache. We partition the request queues and allocate different set of banks for CPU and GPU data. We divide the 32 banks in the DRAMCache into 20 banks (62.5\% cache size) and 12 banks (37.5\% cache size) to alleviate bank conflicts. We use a data management and coherence policy such that the data requested by the core is found in its corresponding partition of the DRAMCache. Cache misses within the partition incur memory access latency. Although such a partitioning scheme is not realistic, it gives us the ceiling for the performance that can be expected with a partitioning approach. With this setup, we experiment with allocating larger cache partition for the CPU first. The second bar in Figure \ref{fig:motivation-partition}(a) and (b) shows the performance of the CPU and GPU with such a partitioning scheme (in terms of harmonic mean of IPCs, normalized to HeA with an un-partitioned DRAMCache). We observe that the performance of the CPU reduces by mean of 5.2\% while the performance of the GPU too reduces by a mean of 2.6\%.
 Next we allocate the larger DRAMCache partition to the GPU cores. The third bar in Figure \ref{fig:motivation-partition}(a) and (b) shows the performance of CPU and GPU for such a partitioning scheme respectively. We observe that the performance of the CPU and GPU cores reduces by 7.7\% and less than 0.1\%. Some of the workloads, e.g., Qg1, Qg2, and Qg5 experience considerable fall in the H-mean of CPU cores (by more than 30\%), and in none of the workloads the performance of CPU or GPU cores improves significantly.
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[scale=0.6]{graphs/motivation-cpu-partition}
-	\includegraphics[scale=0.6]{graphs/motivation-gpu-partition}
-	\caption{Performance comparison of (a) CPU (b) GPU when with un-partitioned D\$ and partitioned D\$}
-	\label{fig:motivation-partition}
-\end{figure}
 Thus, hard partitioning of DRAMCache is not an effective design as it leads to under-utilization of the large capacity 
 stacked DRAM, as the effects of interference due to co-running GPU application is felt only when the kernel is run on the GPU sporadically.
 Further, effectively utilizing the under-utilized main memory bandwidth \cite{micro-refresh, mainak-hpca, bear}
