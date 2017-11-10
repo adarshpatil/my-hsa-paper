@@ -21,6 +21,7 @@ Prioritizing CPU requests with our \prioname\ scheduler at the DRAMCache control
     \includegraphics[scale=0.8]{graphs/results-bypass}
     \caption{Total MemAccLat reduction with \bypassname\ and \% of bypassed read requests for CPU requests}
     \label{results-bloom}
+    \vspace{-0.5em}
 \end{figure}
 
 \par Combining \prioname\ with \bypassname\ allows for the non-bypassed CPU requests at the DRAMCache to be served with a higher priority and hence reducing the queuing delays. \bypassname+\prioname\ performs better than just \prioname\ by 10\% for CPU and 7\% for GPU. Overall \bypassname+\prioname\ achieves 48.5\% improvement in CPU performance over a naive DRAMCache while degrading GPU performance by just 3\%.
@@ -45,7 +46,7 @@ As discussed in \ref{mechanism-chaining}, \chaining\ mechanism improves hit rate
     \includegraphics[scale=0.66]{graphs/results-weighted-speedup}
     \caption{(a)Harmonic Mean of IHS with \cachename\ (b)Weighted Speedup of IHS with \cachename}
     \label{results-system}
-    %\vspace{-1em}
+    \vspace{-0.5em}
 \end{figure}
 
 %\begin{figure}[!htb]
@@ -69,7 +70,7 @@ We now holistically examine the performance improvements due to the introduction
 	\includegraphics[scale=0.6]{graphs/results-comparison-gpu}
 	\caption{Comparison of \cachename\ against MCC \cite{mostly-clean} and SMS \cite{sms} (a)CPU (b)GPU}
 	\label{results-comparison}
-    %\vspace{-0.5em}
+    \vspace{-0.5em}
 \end{figure}
 
 The objectives of \bypassname\ and \prioname\ are similar to the Mostly Clean DRAMCache (MCC) \cite{mostly-clean} and Staged Memory Scheduling (SMS) \cite{sms} respectively. Hence we compare our work with MCC (adapted for IHS architecture) and SMS in Figure \ref{results-comparison} which presents performance of (a)CPU and (b)GPU normalized to a IHS with no DRAMCache. 
@@ -85,7 +86,7 @@ The striped bars in Figure \ref{results-comparison} show the performance of the 
 	\includegraphics[scale=0.6]{graphs/results-128M-gpu}
 	\caption{Sensitivity Study with 128MB DRAMCache (a)CPU (b)GPU}
 	\label{results-128m}
-    %\vspace{-0.5em}
+    \vspace{-0.5em}
 \end{figure}
 We conduct a sensitivity study for \cachename\ mechanisms with a larger 128MB stacked DRAMCache. Figure \ref{results-128m} presents the performance of a naive DRAMCache and our mechanisms \bypassname+\prioname\ and \chaining+\prioname\ for the (a)CPU and (b)GPU in terms of H-Mean of IPC normalized to an IHS with no DRAMCache. We observe that the larger naive DRAMCache is able to achieve 54.5\% and 29.8\% improvement for CPU and GPU processors. \cachename\ mechanisms continue to provide an average improvement of 46\% and 39\% for the CPU, on an average, above a heterogeneity unaware DRAMCache and 226\% and 215\% over the baseline IHS. 
 \footnote{In the larger DRAMCache, Chaining+PrIS results in 15.8\% improvement over baseline (10\% decrease over naive), we
@@ -100,7 +101,7 @@ expect the scheme to catch up the lost performance (over naive) in benchmarks wi
 	\includegraphics[scale=0.6]{graphs/results-ddr3-2133-gpu}
 	\caption{Sensitivity Study with DDR3-2133 off-chip DRAM (a)CPU (b)GPU}
 	\label{results-2xbw}
-    %\vspace{-0.5em}
+    \vspace{-0.5em}
 \end{figure}
 
 Although we expect the smaller sizes of stacked DRAMs to have lower latency than off-chip DRAMs, commercial stacked DRAM like those in Intel's Knights Landing \cite{xeonphi} have access latencies similar to off-chip DRAMs. Hence, we scale up the off-chip DRAM to DDR3-2133 like device with latencies (13.09ns-13.09ns-13.09ns-33ns) for $t_{CL}$-$t_{RCD}$-$t_{RP}$-$t_{RAS}$. As before, Figure \ref{results-2xbw} presents the performance (H-Mean of IPC) of (a)CPU (b)GPU with a naive DRAMCache and \cachename\ normalized to a IHS system with no DRAMCache. For \prioname+\bypassname, CPU performance impoves by 48\% while reducing merely 3\% of GPU performance. For \prioname+\chaining, CPU performs 47\% better than a naive DRAMCache while decreasing GPU performance by 4.4\%.
@@ -113,7 +114,7 @@ Although we expect the smaller sizes of stacked DRAMs to have lower latency than
 	\includegraphics[scale=0.6]{graphs/results-2xbw-gpu}
 	\caption{Sensitivity Study with 2x Bandwidth for DRAMCache (a)CPU (b)GPU}
 	\label{results-ddr3-2133}
-    %\vspace{-0.5em}
+    \vspace{-0.5em}
 \end{figure}
 
 We carry out experiments for \cachename\ with a stacked DRAMCache of 80GB/s. We achieve this by doubling the burst length of the stacked DRAMCache devices. Again, Figure \ref{results-ddr3-2133}  presents the performance of a naive DRAMCache and \cachename\ for (a)CPU and (b)GPU. We observe that our mechanisms scale with increased DRAMCache bandwidth and \bypassname+\prioname\ performs 51\% better and \chaining+\prioname\ performs 47.3\% better than a naive DRAMCache for CPU. GPU performs also improves by 1.9\% and 2.4\% over a naive DRAMCache. Notably for GPU benchmarks like streamcluster and gaussian \chaining+\prioname\ performs better than \bypassname+\prioname.

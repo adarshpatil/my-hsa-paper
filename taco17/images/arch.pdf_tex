@@ -49,6 +49,6 @@
   \global\let\svgscale\undefined%
   \makeatother%
   \begin{picture}(1,0.50919107)%
-    \put(0,0){\includegraphics[width=\unitlength]{arch.pdf}}%
+    \put(0,0){\includegraphics[width=\unitlength]{images/arch.pdf}}%
   \end{picture}%
 \endgroup%

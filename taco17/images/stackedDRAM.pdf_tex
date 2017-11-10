@@ -49,6 +49,6 @@
   \global\let\svgscale\undefined%
   \makeatother%
   \begin{picture}(1,0.3062147)%
-    \put(0,0){\includegraphics[width=\unitlength]{stackedDRAM.pdf}}%
+    \put(0,0){\includegraphics[width=\unitlength]{images/stackedDRAM.pdf}}%
   \end{picture}%
 \endgroup%
