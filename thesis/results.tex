@@ -114,6 +114,19 @@ Although we expect the smaller sizes of stacked DRAMs to have lower latency than
 
 We carry out experiments for \cachename\ with a higher bandwidth for stacked DRAM cache (80GB/s). We achieve this by doubling the burst length of the stacked DRAM cache devices. Again, Figure \ref{results-ddr3-2133}  presents the performance of a naive DRAM cache and \cachename\ for (a)CPU and (b)GPU. We observe that our mechanisms scale with increased DRAM cache bandwidth and \bypassname+\prioname\ performs 51\% better and \chaining+\prioname\ performs 47.3\% better than a naive DRAM cache for CPU. GPU performs also improves by 1.9\% and 2.4\% over a naive DRAM cache. Notably for GPU benchmarks like \textit{streamcluster} and \textit{gaussian}, \chaining+\prioname\ performs better than \bypassname+\prioname.
 
+\subsection{Larger capacity CPU last level SRAM cache}
+Given the trend in shrinking of transistor sizes, we feel that larger capacity SRAM caches can be accommodated on the die. Hence, we perform a sensitivity study a 2MB L2 CPU SRAM cache (double the capacity of baseline configuration). We have not considered increasing GPU L2 size, as such increase (to 1MB or 2MB) is unlikely to make any significant difference due to the streaming nature of these programs.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics{graphs/results-2xllc-cpu}
+	\includegraphics{graphs/results-2xllc-gpu}
+	\caption{Sensitivity Study with 2x CPU SRAM LLC cache (a)CPU (b)GPU}
+	\label{results-2mb-llc}
+\end{figure}
+
+\par Figure \ref{results-2mb-llc} presents the performance of (a)CPU and (b)GPU in an IHS with a 2MB L2 CPU SRAM LLC for a naive DRAM cache and our \bypassname+\prioname\ mechanism, normalized to a IHS system with no DRAM cache. We observe that our mechanism continues to benefit the CPU, showing an average speedup of 47\% over a naive DRAM cache. Although for the CPU, the performance benefit of adding a naive DRAM cache is lower due to the larger CPU L2 cache (28\% for IHS with 2MB CPU L2 as compared to 42\% for the 1MB CPU L2), yet our mechanism improves performance for CPU workloads over a naive DRAM cache. With the same configuration, the GPU also benefits due to the reduced number of CPU requests at the DRAM cache. \bypassname+\prioname\ mechanism performs, on an average, only 2\% lower than a naive DRAM cache (as compared to the 2.6\% loss in the configuration with 1MB CPU L2).
+
 \section{Comparison with Related Work} \label{comparison}
 The objectives of \bypassname\ and \prioname\ are, respectively, similar to the Mostly Clean DRAM cache (MCC) \cite{mostly-clean} and Staged Memory Scheduling (SMS) \cite{sms} respectively. 
 \par SMS \cite{sms} is a DRAM memory access scheduler for IHS architectures. SMS decouples the various tasks for memory access scheduling into three stages. The first stage groups requests based on row-buffer locality from the same requester core. The second stage focuses on policies for inter-application request scheduling i.e., picking one of the request queues from first stage. The third stage consists of FIFO queues that issue DRAM commands while respecting DRAM timing constraints. We use a total request queue size of 64 entries for the first stage in SMS. For each of the four CPU cores we use a 10 entry first stage request queue and a single 24 entry first stage request queue for all the GPU cores which is similar to the specifications in the original SMS work \cite{sms}. We note that the total request queue size of 64 entries is the same for \prioname\ as well. Additionally, for the second and third stage of SMS we use a simple 10 entry FIFO queue each.
