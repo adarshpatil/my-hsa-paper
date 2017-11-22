@@ -1,0 +1,33 @@
+\documentclass{standalone}
+
+\usepackage{siunitx}
+\usepackage{tikz} % To generate the plot from csv
+\usepackage{pgfplots}
+
+\input{barcolors}
+
+\pgfplotsset{compat=newest,label style={font=\Large}, tick label style={font=\Large}} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
+
+\begin{document}
+
+\begin{tikzpicture}[scale=0.5]
+    \pgfplotstableread[col sep = comma]{data/bw-sample.csv}\datatable
+
+    \begin{axis}[
+        ylabel style={}, ylabel = \normalsize{\% of peak DRAM cache B/W utilized},
+        xlabel=\normalsize{Time},
+        xmin=0,
+        ymin=0,
+        ymax=100,
+        axis lines*=left
+       ]
+
+        \addplot [line width=1pt, mark options={scale=6}, blue] table[x=tick,y=bw-gau] {\datatable};
+        \addplot [line width=1pt, mark options={scale=6}, red] table[x=tick,y=bw-sc] {\datatable};
+
+		\addlegendentry{gaussian}
+		\addlegendentry{streamcluster}
+    \end{axis}
+\end{tikzpicture}
+\end{document}

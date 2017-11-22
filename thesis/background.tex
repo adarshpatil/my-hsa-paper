@@ -177,18 +177,26 @@ In contrast to this, the total number of CPU read requests to the DRAM, as shown
 
 \begin{figure}[htb]
 	\centering
-
 	\includegraphics[scale=1]{graphs/motivation-bandwidth}
 	\caption{Average Bandwidth Utilization for DRAM and DRAM cache as a Percentage of Maximum Bandwidth}
 	\label{fig:motivation-banwdidth}
 \end{figure}
 
+
 \par We also study the bandwidth utilization characteristics of the DRAM cache and DRAM buses in an IHS architectures with a stacked DRAM cache. We simulate an IHS architecture as before with a 64MB stacked DRAM cache having peak bandwidth 40GB/s and an off-chip DRAM having a peak bandwidth of 25.6GB/s. Figure \ref{fig:motivation-banwdidth} shows the average bandwidth utilization of DRAM caches and DRAMs, as a percentage of maximum (peak) bandwidths provided by these devices, for IHS architectures running CPU and GPU applications concurrently. We observe that while on an average 51\% of DRAM cache bandwidth has been utilized, only 24.5\% of the off-chip DRAM bandwidth has been utilized. Stacked DRAMs provide high capacities (compared to SRAM caches) and substantial bandwidths (compared to off-chip DRAMs). Due to the large capacities, the DRAM cache is able to cache and serve most of the data with very high hit rates. This leaves the off-chip bandwidths under-utilized. Hence, to be able to improve IHS performance and achieve improved resource utilization we need to utilize all available memory bandwidth sources in the system i.e., DRAM cache bus and the off-chip DRAM bus effectively.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=2]{graphs/motivation-bw-sample}
+	\caption{Percent of Peak DRAM cache Bandwidth Utilized when GPU application is running}
+	\label{fig:motivation-banwdidth-gpu}
+\end{figure}
+
+\par Further, to understand the bandwidth utilization characteristics of the GPU kernel Figure \ref{fig:motivation-banwdidth-gpu} plots the percentage bandwidth utilization of DRAM cache sampled periodically during the running of only the GPU kernel. We observe that as soon as the gaussian kernel starts execution about 70\% of peak bandwidth of DRAM cache is utilized while about 64\% of peak bandwidth is utilized for streamcluster. Thus when the GPU kernel executes on the GPU the abundant parallelism and concurrent execution on large number of GPU cores creates large number of requests to the DRAM cache, consequently almost saturating its bandwidth. This requires that the underutilized off-chip DRAM bus be put to use immediately on start of execution of the kernel on the GPU.
 
 \par Based on the above motivation study we conclude that (i) there is significant performance impact of co-running of CPUs and GPUs in IHS architectures with the standard DDRx like memory interfaces (ii) there are significant performance benefits that could be obtained 
 with the introduction of the stacked DRAM cache for the latency-sensitive CPU applications. However, in a naive implementation
-of the DRAM cache, these benefits can be lost due to interference from the co-running GPU application.  Hence it is important to carefully 
-architect the DRAM cache organization to ensure CPU applications are not hampered due to this interference.
+of the DRAM cache, these benefits can be lost due to interference from the co-running GPU application.  Hence it is important to carefully architect the DRAM cache organization to ensure CPU applications are not hampered due to this interference.
 This requires the design to be aware of the heterogeneity of the applications (CPU vs GPU) and their demands on the 
 memory hierarchy.  
 
