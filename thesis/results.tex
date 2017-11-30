@@ -115,7 +115,7 @@ Although we expect the smaller sizes of stacked DRAMs to have lower latency than
 We carry out experiments for \cachename\ with a higher bandwidth for stacked DRAM cache (80GB/s). We achieve this by doubling the burst length of the stacked DRAM cache devices. Again, Figure \ref{results-ddr3-2133}  presents the performance of a naive DRAM cache and \cachename\ for (a)CPU and (b)GPU. We observe that our mechanisms scale with increased DRAM cache bandwidth and \bypassname+\prioname\ performs 51\% better and \chaining+\prioname\ performs 47.3\% better than a naive DRAM cache for CPU. GPU performs also improves by 1.9\% and 2.4\% over a naive DRAM cache. Notably for GPU benchmarks like \textit{streamcluster} and \textit{gaussian}, \chaining+\prioname\ performs better than \bypassname+\prioname.
 
 \subsection{Larger capacity CPU last level SRAM cache}
-Given the trend in shrinking of transistor sizes, we feel that larger capacity SRAM caches can be accommodated on the die. Hence, we perform a sensitivity study a 2MB L2 CPU SRAM cache (double the capacity of baseline configuration). We have not considered increasing GPU L2 size, as such increase (to 1MB or 2MB) is unlikely to make any significant difference due to the streaming nature of these programs.
+We perform a sensitivity study with a 2MB L2 CPU SRAM cache (double the capacity of baseline configuration). We have not considered increasing GPU L2 size, as such increase (to 1MB or 2MB) is unlikely to make any significant difference due to the streaming nature of these programs.
 
 \begin{figure}[!htb]
 	\centering
