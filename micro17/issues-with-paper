@@ -1,0 +1,25 @@
+1. HAShCache/PriS/Bye macro with space - fixed
+2. Figure 5 BYE diagram the predictor is before the queue
+3. experimental section - As is the norm, when a core finishes its quota of 250M instructions, it continues - fixed
+
+reference items are broken ([24] and [38]
+
+Compare against SMS and MCC
+
+cite the following work
+A QoS-aware memory controller for dynamically balancing GPU and CPU bandwidth use in an MPSoC, DAC
+  this work worries about mising the frame rendering deadline due to deprioritizing GPU requests at Memory
+  HashCache considers only GPGPU processors and does not worry about frame rendering deadline.
+
+My primary concern with the paper is the Chaining solution which primarily targets improving hit rate at the expense of hit latency
+ONLY FOR GPU
+
+how do you envision handling saturated counters in real life when systems run for long times.
+
+It is unclear how the three mechanisms can be combined
+
+The evaluation baseline is a dumb DRAM cache with no intelligent management. 
+
+simulation run of 250 million instructions for each CPU seems too short to warm up the caches
+
+unrealistic L1/L2 cache latency values
